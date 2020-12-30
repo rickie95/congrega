@@ -178,7 +178,7 @@ class _SignUpPageState extends State<SignUpPage> with SingleTickerProviderStateM
     );
   }
 
-  void formValidationCallback(){
+  Future<void> formValidationCallback() async {
     // Basic validation is already managed by single textFields
     // TODO: perform elaborate checks, such as double check password and username availability
 
@@ -191,15 +191,13 @@ class _SignUpPageState extends State<SignUpPage> with SingleTickerProviderStateM
     }
 
     String username = _usernameController.text.toString();
-    if(!UserController.checkUsernameAvailability(username)){
-      // show dialog
-      return;
-    }
     // Collect optional info
     String name = _nameController.text.toString();
 
     // then send POST, this might be a FUTURE
-    UserController.saveNewUser(User(username, passwordOne, name));
+    UserController.saveNewUser(User(username, passwordOne, name))
+      .then( (_) { debugPrint("Great success!"); })
+      .catchError( (error) { debugPrint("Oh nooo $error"); });
   }
 
 }
