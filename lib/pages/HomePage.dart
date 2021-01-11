@@ -1,33 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:congrega/pages/CongregaDrawer.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' hide BuildContext;
+import 'package:congrega/authentication/AuthenticationBloc.dart';
+import 'package:congrega/authentication/AuthenticationEvent.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  final String labelText ="Hello";
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => HomePage());
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
+      appBar: AppBar(title: const Text('Home')),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(
-              labelText,
+            Builder(
+              builder: (context) {
+                final userId = context.select(
+                      (AuthenticationBloc bloc) => bloc.state.user.id,
+                );
+                return Text('UserID: $userId');
+              },
             ),
-            FlatButton(
-              child: Text('View Details'),
+            RaisedButton(
+              child: const Text('Logout'),
+              onPressed: () {
+                context
+                    .read<AuthenticationBloc>()
+                    .add(AuthenticationLogoutRequested());
+              },
             ),
           ],
         ),
       ),
-      drawer: CongregaDrawer.createDrawer(),
     );
   }
 }

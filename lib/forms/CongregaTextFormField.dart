@@ -2,24 +2,24 @@ import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:flutter/material.dart';
 
 class CongregaTextFormField extends StatelessWidget {
-  final TextEditingController controller;
   final String hintText;
   final String errorText;
   final IconData icon;
   final bool obscureText;
-  final Function validator;
+  final Function onChanged;
+  final IconButton suffixIcon;
 
-  const CongregaTextFormField({Key key, this.controller, this.hintText,
-    this.errorText, this.icon, this.obscureText, this.validator}) : super(key: key);
+  const CongregaTextFormField({Key key, this.hintText,
+    this.errorText, this.icon, this.obscureText, this.onChanged, this.suffixIcon}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
       obscureText: obscureText,
-        decoration: InputDecoration(
+      decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
           prefixIcon: Icon(this.icon),
+          suffixIcon: this.suffixIcon != null ? this.suffixIcon : null,
           border: InputBorder.none,
           enabledBorder: congregaTextFieldBorder(),
           focusedBorder: congregaTextFieldBorder(),
@@ -27,11 +27,11 @@ class CongregaTextFormField extends StatelessWidget {
           focusedErrorBorder: congregaTextFieldBorder(),
           helperText: ' ',
           hintText: this.hintText,
-            errorStyle: TextStyle(
-              color: CongregaTheme.textColor,
-            )
-        ),
-      validator: validator,
+          errorStyle: TextStyle(
+            color: CongregaTheme.textColor,
+          )
+      ),
+      onChanged: onChanged,
     );
   }
 

@@ -15,6 +15,11 @@ void main() {
 }
 
 class WelcomePage extends StatefulWidget {
+
+  static Route route (){
+    return MaterialPageRoute(builder: (_) => WelcomePage());
+  }
+
   @override
   _WelcomePageState createState() => _WelcomePageState();
 }
@@ -33,6 +38,11 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
   final String signUpButtonMessage = "Hi Congrega";
   final String loginButtonMessage = "I already have an account";
 
+  final _navigatorKey = GlobalKey<NavigatorState>();
+
+  NavigatorState get _navigator => _navigatorKey.currentState;
+
+
   @override
   void initState() {
     _controller = AnimationController(
@@ -42,9 +52,10 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
       ),
       lowerBound: 0.0,
       upperBound: 0.1,
-    )..addListener(() {
-      setState(() {});
-    });
+    )
+      ..addListener(() {
+        setState(() {});
+      });
     super.initState();
   }
 
@@ -72,13 +83,15 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
         border: Border.all(width: 1, color: Colors.white),
         borderRadius: BorderRadius.circular(100.0),
       ),
-      padding: const  EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(15.0),
     );
-    
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-          backgroundColor: CongregaTheme.congregaTheme().primaryColor,
+          backgroundColor: CongregaTheme
+              .congregaTheme()
+              .primaryColor,
           body: Center(
             child: Column(
               children: <Widget>[
@@ -115,7 +128,7 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                   delay: delayedAmount + 2000,
                 ),
                 SizedBox(
-                  height: 40.0,
+                  height: 30.0,
                 ),
                 DelayedAnimation(
                   child: Text(
@@ -132,7 +145,7 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                   delay: delayedAmount + 3000,
                 ),
                 SizedBox(
-                  height: 70.0,
+                  height: 50.0,
                 ),
 
 
@@ -141,8 +154,8 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                   delay: delayedAmount + 4000,
                 ),
 
-                
-                SizedBox(height: 50.0,),
+
+                SizedBox(height: 40.0,),
 
 
                 DelayedAnimation(
@@ -162,44 +175,12 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
     );
   }
 
-  void goToLoginPage(){
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) {
-          return LoginPage();}));
+  void goToLoginPage() {
+    Navigator.push(context, LoginPage.route());
   }
 
-  void goToSignUpPage(){
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) {
-          return SignUpPage();}));
+  void goToSignUpPage() {
+    Navigator.push(context, SignUpPage.route());
   }
 
-  Widget get _animatedButtonUI => Container(
-    height: 60,
-    width: 270,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(100.0),
-      color: Colors.white,
-    ),
-    child: Center(
-      child: Text(
-        signUpButtonMessage,
-        style: TextStyle(
-          fontSize: 20.0,
-          fontWeight: FontWeight.bold,
-          color: CongregaTheme.congregaTheme().primaryColor,
-        ),
-      ),
-    ),
-  );
-
-  void _onTapDown(TapDownDetails details) {
-    _controller.forward();
-  }
-
-  void _onTapUp(TapUpDetails details) {
-    _controller.reverse();
-  }
 }
-
-

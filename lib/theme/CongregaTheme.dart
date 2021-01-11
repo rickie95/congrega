@@ -5,8 +5,12 @@ class CongregaTheme {
   static final Color textColor = Colors.white;
   static final Color primaryColor = Colors.indigo;
   static final Color accentColor = Colors.indigoAccent;
-
   static final Brightness brightness = Brightness.dark;
+
+  // Call to actin button
+  static final Color callToActionButtonBackground = Colors.white;
+  static final Color callToActionButtonText = Colors.indigo;
+  static final Color callToActionButtonShadow = Colors.indigo[900];
 
   static ThemeData congregaTheme(){
     return ThemeData(

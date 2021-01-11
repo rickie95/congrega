@@ -1,17 +1,22 @@
+import 'package:congrega/authentication/AuthenticationService.dart';
+import 'package:congrega/forms/CongregaLoginForm.dart';
+import 'package:congrega/login/LoginBloc.dart';
 import 'package:congrega/ui/CongregaCircleLogo.dart';
-import 'package:congrega/controllers/CredentialsController.dart';
 import 'package:flutter/material.dart';
 import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:congrega/ui/animations/DelayedAnimation.dart';
 import 'package:avatar_glow/avatar_glow.dart';
-import 'package:congrega/forms/CongregaTextFormField.dart';
-import 'package:congrega/ui/CongregaCallToActionAnimatedButton.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() {
-  runApp(LoginPage());
-}
 
 class LoginPage extends StatefulWidget {
+
+  static Route route (){
+    return MaterialPageRoute(builder: (_) => LoginPage());
+  }
+
+  LoginPage({Key key}) : super(key: key);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -23,17 +28,11 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
   AnimationController _controller;
 
   final String greetingLineOne = "Welcome back!";
-  final String greetingLineTwo = "";
 
   final String descriptionLineOne = "Enter your credentials";
   final String descriptionLineTwo = "and you'll be ready to play";
 
   final String confirmationButtonMessage = "Login";
-
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _usernameController = new TextEditingController();
-  final TextEditingController _passwordController = new TextEditingController();
-
 
   @override
   void initState() {
@@ -51,45 +50,17 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context){
     final color = Colors.white;
     _scale = 1 - _controller.value;
 
-    final Widget usernameTextFormField =  CongregaTextFormField(
-        controller: _usernameController,
-        hintText: "Username",
-        errorText: "Username can't be empty",
-        icon: Icons.account_circle_sharp,
-        obscureText: false);
 
-    final Widget passwordTextFormField = CongregaTextFormField(
-        controller: _passwordController,
-        hintText: "Password",
-        errorText: "Password can't be empty",
-        icon: Icons.vpn_key,
-        obscureText: true);
-
-    final Widget loginForm = Form(
-              key: _formKey,
-              child: Column(
-                  children: <Widget>[
-                    DelayedAnimation(
-                        child: usernameTextFormField,
-                        delay: delayedAmount + 1500),
-                    SizedBox( height: 10.0,),
-                    DelayedAnimation(
-                        child: passwordTextFormField,
-                        delay: delayedAmount + 1500),
-                  ]
-              )
-          );
-
-    final Widget confirmationButton = CongregaCallToActionAnimatedButton(
-      scale: _scale,
-      controller: _controller,
-      buttonText: confirmationButtonMessage,
-      callback: formValidationCallBack,
-    );
+    final Widget loginForm = CongregaLoginForm(_scale, delayedAmount, _controller);
 
     return MaterialApp(
         home: Scaffold (
@@ -148,15 +119,16 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
                       height: 40.0,
                     ),
 
-                    loginForm,
+                    BlocProvider(
+                      create: (context) {
+                        return LoginBloc(
+                            authenticationRepository:
+                              RepositoryProvider.of<AuthenticationService>(context),
+                        );
+                      },
+                      child: loginForm,
+                    )
 
-                    SizedBox(
-                      height: 30.0,
-                    ),
-                    DelayedAnimation(
-                      child: confirmationButton,
-                      delay: delayedAmount + 2000,
-                    ),
                   ],
                 ),
                 padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 40.0),
@@ -165,21 +137,6 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
           ),
         )
     );
-  }
-
-  void formValidationCallBack(){
-    if (_formKey.currentState.validate()) {
-      String username = _usernameController.text.toString();
-      String password = _passwordController.text.toString();
-      debugPrint('Sending data to NSA: $username $password');
-
-      // send data to controller and ask for authentication
-      CredentialsController.authenticate(username, password, (message){
-        debugPrint(message);
-      });
-
-      //
-    }
   }
 
 }

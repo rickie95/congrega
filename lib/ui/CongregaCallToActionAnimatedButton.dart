@@ -30,6 +30,11 @@ class CongregaCallToActionAnimatedButton extends StatelessWidget {
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(100.0),
       color: Colors.white,
+      boxShadow: [BoxShadow(
+        color: CongregaTheme.callToActionButtonShadow,
+        offset: const Offset(0, 20),
+        blurRadius: 40.0,
+        spreadRadius: 0.0,)]
     ),
     child: Center(
       child: Text( buttonText,

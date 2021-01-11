@@ -1,22 +1,17 @@
-class User {
+import 'package:equatable/equatable.dart';
+
+class User extends Equatable {
+
+  BigInt _id;
 
   String _name;
   String _username;
   String _password;
 
-  BigInt _id;
+  User();
 
-  User(String username, String password, [String name, BigInt id]){
-    this._username = username;
-    this._password = password;
-
-    if(name != null && name.isNotEmpty)
-      this._name = name;
-
-    if(id != null && id.isValidInt)
-      this._id = id;
-
-  }
+  @override
+  List<Object> get props => [id, _username];
 
   @override
   String toString(){
@@ -28,8 +23,20 @@ class User {
   String get name { return this._name; }
   BigInt get id { return this._id; }
 
-  static Future<User> fromJson(jsonDecode) {
-    return User("prova", "prova2");
+  set username (String username){ _username = username; }
+  set password (String password){ _password = password; }
+  set name (String name) { _name = name; }
+  set id (BigInt id) { _id = id; }
+
+  static User fromJson(jsonBody) {
+    User user = User();
+    user.id = jsonBody['id'];
+    user.username = jsonBody['username'];
+    user.password = jsonBody['password'];
+    user.name = jsonBody['name'];
+
+    return user;
   }
+
 
 }

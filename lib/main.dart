@@ -1,35 +1,13 @@
+
+import 'package:congrega/repositories/UserRepository.dart';
 import 'package:flutter/material.dart';
-import 'package:congrega/pages/WelcomePage.dart';
-import 'package:congrega/theme/CongregaTheme.dart';
-import 'package:congrega/controllers/CredentialsController.dart';
-import 'package:congrega/pages/HomePage.dart';
+
+import 'app.dart';
+import 'authentication/AuthenticationService.dart';
 
 void main() {
-  // retrive info about user credentials
-
-  CredentialsController.loadCredentials();
-
-  runApp(MyApp());
+  runApp(Congrega(
+    authenticationRepository: AuthenticationService(),
+    userRepository: UserRepository(),
+  ));
 }
-
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Congrega',
-      theme: CongregaTheme.congregaTheme(),
-      home: getInitialScreen(),
-    );
-  }
-}
-
-Widget getInitialScreen(){
-  if(CredentialsController.isUserAuthenticated())
-    return HomePage(title: "Home");
-
-  return WelcomePage();
-}
-
-
-

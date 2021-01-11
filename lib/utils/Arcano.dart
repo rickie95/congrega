@@ -1,8 +1,8 @@
 class Arcano {
 
-  static const String IP_ADDRESS = "192.168.1.60";
+  static const String IP_ADDRESS = "192.168.1.56:8080";
 
-  static const String BASE_URL = "https://$IP_ADDRESS/arcano";
+  static const String BASE_URL = "http://$IP_ADDRESS/arcano";
 
   static const String USERS_URL ="$BASE_URL/users";
   static const String MATCHES_URL = "$BASE_URL/matches";
