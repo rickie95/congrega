@@ -16,6 +16,7 @@ class CongregaTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       obscureText: obscureText,
+      onChanged: onChanged,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
           prefixIcon: Icon(this.icon),
@@ -31,7 +32,6 @@ class CongregaTextFormField extends StatelessWidget {
             color: CongregaTheme.textColor,
           )
       ),
-      onChanged: onChanged,
     );
   }
 

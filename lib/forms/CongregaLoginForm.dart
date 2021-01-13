@@ -1,3 +1,5 @@
+import 'package:congrega/forms/inputs/PasswordFormInput.dart';
+import 'package:congrega/forms/inputs/UsernameFormInput.dart';
 import 'package:congrega/login/LoginBloc.dart';
 import 'package:congrega/login/LoginEvent.dart';
 import 'package:congrega/login/LoginState.dart';
@@ -23,8 +25,7 @@ class CongregaLoginForm extends StatelessWidget {
         if (state.status == FormzStatus.submissionFailure) {
           Scaffold.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(content: Text('Authentication Failure')),
+            ..showSnackBar(SnackBar(content: Text(errorMessage(state))),
             );
         }
       },
@@ -42,6 +43,21 @@ class CongregaLoginForm extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String errorMessage(LoginState state){
+    String error = "";
+
+    if(state.username.error == UsernameValidationError.empty)
+      error += "your username";
+
+    if(error.isNotEmpty) error += " and ";
+
+    if(state.password.error == PasswordValidationError.empty)
+      error += "your password";
+
+
+    return "Please, enter " + error + ".";
   }
 
 }
@@ -117,6 +133,7 @@ class _LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : CongregaCallToActionAnimatedButton(
           key: const Key('loginForm_continue_raisedButton'),
+          enabled: state.status.isValid,
           scale: _scale,
           controller: _controller,
           buttonText: confirmationButtonMessage,

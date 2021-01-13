@@ -7,17 +7,18 @@ class CongregaCallToActionAnimatedButton extends StatelessWidget {
   final AnimationController controller;
   final String buttonText;
   final Function callback;
+  final bool enabled;
 
 
   CongregaCallToActionAnimatedButton({Key key, this.scale,
-    this.controller, this.buttonText, this.callback}) : super(key: key);
+    this.controller, this.buttonText, this.callback, this.enabled = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context){
     return GestureDetector(
         onTapDown: _onTapDown,
         onTapUp: _onTapUp,
-        onTap: callback,
+        onTap: this.enabled ? callback : null,
         child: Transform.scale(
           scale: scale,
           child: _animatedButtonUI,
@@ -29,7 +30,8 @@ class CongregaCallToActionAnimatedButton extends StatelessWidget {
     width: 270,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(100.0),
-      color: Colors.white,
+      color: this.enabled ? CongregaTheme.callToActionButtonBackground : CongregaTheme.callToActionButtonBackgroundDisabled,
+       // Color.alphaBlend(CongregaTheme.callToActionButtonBackground, CongregaTheme.primaryColor),
       boxShadow: [BoxShadow(
         color: CongregaTheme.callToActionButtonShadow,
         offset: const Offset(0, 20),

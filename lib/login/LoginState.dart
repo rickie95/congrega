@@ -23,7 +23,7 @@ class LoginState extends Equatable {
       status: status ?? this.status,
       username: username ?? this.username,
       password: password ?? this.password,
-      passwordVisibility: passwordVisibility == this.passwordVisibility,
+      passwordVisibility: passwordVisibility ?? this.passwordVisibility,
     );
   }
 

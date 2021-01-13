@@ -59,8 +59,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
   SignUpState _mapPasswordVisibilityChangedToState(SignUpPasswordVisibilityChanged event, SignUpState state) {
     final passwordVisibility = event.isPasswordVisible;
-    return state.copyWith(
-        passwordVisible: passwordVisibility );
+    return state.copyWith( passwordVisible: passwordVisibility );
   }
 
   Stream<SignUpState> _mapSignUpSubmittedToState(SignUpSubmitted event, SignUpState state) async* {

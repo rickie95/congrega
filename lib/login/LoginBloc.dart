@@ -51,10 +51,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   LoginState _mapPasswordVisibilityChangedToState(LoginPasswordVisibilityChanged event, LoginState state){
     final visibility = event.visibility;
-    return state.copyWith(
-      passwordVisibility: visibility,
-      status: Formz.validate([state.password, state.username]),
-    );
+    return state.copyWith( passwordVisibility: visibility );
   }
 
   Stream<LoginState> _mapLoginSubmittedToState(LoginSubmitted event, LoginState state) async* {

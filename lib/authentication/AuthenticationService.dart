@@ -21,9 +21,8 @@ class AuthenticationService {
   }) async {
     assert(username != null);
     assert(password != null);
-
     await Future.delayed(
-      const Duration(milliseconds: 300),
+      const Duration(milliseconds: 5000),
           () => _controller.add(AuthenticationStatus.authenticated),
     );
   }

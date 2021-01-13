@@ -54,7 +54,7 @@ class _NameInput extends StatelessWidget {
         builder: (context, state) {
           return CongregaTextFormField(
             key: const Key('signUpForm_nameInput_textField'),
-            hintText: "Name",
+            hintText: "Name (optional)",
             errorText: state.name.invalid ? 'Empty name' : null, //"Username can't be empty",
             icon: Icons.assignment_ind_rounded,
             obscureText: false,
@@ -138,9 +138,10 @@ class _SignUpButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : CongregaCallToActionAnimatedButton(
           key: const Key('signUpForm_continue_raisedButton'),
+          enabled: state.status.isValid,
           scale: _scale,
           controller: _controller,
-          buttonText: state.status.isValidated? confirmationButtonMessage : "wait",
+          buttonText: confirmationButtonMessage,
           callback: state.status.isValidated ? () {
             context.read<SignUpBloc>().add(const SignUpSubmitted());
           } : null,
