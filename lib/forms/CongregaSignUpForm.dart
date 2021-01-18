@@ -97,7 +97,7 @@ class _PasswordInput extends StatelessWidget {
       builder: (context, state) {
         return CongregaTextFormField(
             key: const Key('loginForm_passwordInput_textField'),
-            hintText: "Password",
+            hintText: "Password (min 8 char)",
             errorText: state.password.invalid
                 ? "Password can't be empty"
                 : null,

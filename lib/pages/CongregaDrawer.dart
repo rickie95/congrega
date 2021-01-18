@@ -1,24 +1,42 @@
+import 'package:congrega/pages/LifeCounterPage.dart';
+import 'package:congrega/theme/CongregaTheme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CongregaDrawer {
+import 'HomePage.dart';
 
-  static Drawer createDrawer(){
+class CongregaDrawer extends StatelessWidget {
+
+  final _navigatorKey = GlobalKey<NavigatorState>();
+
+  NavigatorState get _navigator => _navigatorKey.currentState;
+
+  @override
+  Widget build(BuildContext context){
     return Drawer (
+
       child: ListView(
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
-            child: Text('Drawer Header'),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-            ),
+          _CongregaDrawerHeader(),
+          ListTile(
+              title: Text(HomePage.pageTitle),
+              onTap: () {
+                Navigator.push(context, HomePage.route());
+              }
           ),
           ListTile(
             title: Text('Tournament'),
             onTap: () {
               // Update the state of the app.
               // ...
+            },
+          ),
+          ListTile(
+            title: Text('Life counter'),
+            onTap: () {
+              Navigator.push(context, LifeCounterPage.route());
             },
           ),
           ListTile(
@@ -38,6 +56,30 @@ class CongregaDrawer {
         ],
       ),
     );
+  }
+
+}
+
+class _CongregaDrawerHeader extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return
+      Container(
+        height: 120,
+          child: DrawerHeader(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Congrega', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+                const Padding(padding: EdgeInsets.all(6)),
+                Text('John Doe / DragonSlayer27')
+              ],
+            ),
+
+
+          )
+      );
   }
 
 }
