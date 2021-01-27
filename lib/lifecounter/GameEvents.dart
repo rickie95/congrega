@@ -2,6 +2,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'model/Player.dart';
+import 'model/PlayerPoints.dart';
 
 abstract class GameEvent extends Equatable {
   const GameEvent();

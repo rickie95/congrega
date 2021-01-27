@@ -1,15 +1,10 @@
 import 'package:congrega/pages/LifeCounterPage.dart';
-import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'HomePage.dart';
 
 class CongregaDrawer extends StatelessWidget {
-
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  NavigatorState get _navigator => _navigatorKey.currentState;
 
   @override
   Widget build(BuildContext context){

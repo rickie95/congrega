@@ -29,6 +29,9 @@ dependencies:
   formz: ^0.3.1
   flutter_bloc: ^6.1.0
   meta: ^1.1.6
+  settings_ui: ^0.5.0
+  shared_preferences: ^0.5.12+4
+  flutter_duration_picker: ^1.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

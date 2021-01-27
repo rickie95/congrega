@@ -1,13 +1,18 @@
 import 'package:congrega/lifecounter/GameEvents.dart';
 import 'package:congrega/lifecounter/GameState.dart';
+import 'package:congrega/match/MatchBloc.dart';
+import 'package:congrega/match/MatchEvents.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'model/Player.dart';
+import 'model/PlayerPoints.dart';
 
 class GameBloc extends Bloc<GameEvent, GameState> {
-  GameBloc(GameState state) : super(state);
+  GameBloc(MatchBloc matchBloc, {GameState state = const GameState()}) :
+        assert(matchBloc != null),
+        _matchBloc = matchBloc, super(state);
 
-  // Need reference to MatchBloc/Service
+  final MatchBloc _matchBloc;
 
   @override
   Stream<GameState> mapEventToState(GameEvent event) async* {
@@ -27,7 +32,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     final PlayerPoints pointsToBeUpdated = event.points;
     List<PlayerPoints> updatedList = [];
     for (PlayerPoints pp in event.player.points)
-      pointsToBeUpdated.isTheSameTypeOf(pp)
+      pointsToBeUpdated.isTheSameTypeOf(pp.runtimeType)
           ? updatedList.add(pointsToBeUpdated)
           : updatedList.add(pp);
 
@@ -75,9 +80,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   GameState _mapPlayerQuitsToState(GamePlayerQuits event, GameState state) {
-    final BigInt quittingPlayerId = event.player.id;
-    // TODO: fire event on MatchBloc/Service
-    // matchBloc.playerQuits(quittingPlayerId)
+    _matchBloc.add(MatchPlayerQuitsGame(event.player));
     return state.copyWith(
         status: GameStatus.ended
     );

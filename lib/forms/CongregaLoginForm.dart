@@ -5,7 +5,7 @@ import 'package:congrega/login/LoginEvent.dart';
 import 'package:congrega/login/LoginState.dart';
 import 'package:congrega/ui/CongregaCallToActionAnimatedButton.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' hide BuildContext;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
 import 'CongregaTextFormField.dart';

@@ -38,11 +38,6 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
   final String signUpButtonMessage = "Hi Congrega";
   final String loginButtonMessage = "I already have an account";
 
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  NavigatorState get _navigator => _navigatorKey.currentState;
-
-
   @override
   void initState() {
     _controller = AnimationController(

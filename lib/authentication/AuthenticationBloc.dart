@@ -29,9 +29,7 @@ class AuthenticationBloc
   StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
 
   @override
-  Stream<AuthenticationState> mapEventToState(
-      AuthenticationEvent event,
-      ) async* {
+  Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) async* {
     if (event is AuthenticationStatusChanged) {
       yield await _mapAuthenticationStatusChangedToState(event);
     } else if (event is AuthenticationLogoutRequested) {
