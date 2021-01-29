@@ -1,4 +1,5 @@
 import 'package:congrega/pages/LifeCounterPage.dart';
+import 'package:congrega/tournament/TournamentPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,8 +25,7 @@ class CongregaDrawer extends StatelessWidget {
           ListTile(
             title: Text('Tournament'),
             onTap: () {
-              // Update the state of the app.
-              // ...
+              Navigator.push(context, TournamentPage.route());
             },
           ),
           ListTile(
