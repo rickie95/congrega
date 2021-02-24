@@ -1,13 +1,13 @@
 
-import 'package:congrega/repositories/UserRepository.dart';
+import 'package:congrega/user/UserRepository.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';
-import 'authentication/AuthenticationService.dart';
+import 'authentication/AuthenticationRepository.dart';
 
 void main() {
   runApp(Congrega(
-    authenticationRepository: AuthenticationService(),
+    authenticationRepository: AuthenticationRepository(),
     userRepository: UserRepository(),
   ));
 }

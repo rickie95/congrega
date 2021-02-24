@@ -1,4 +1,4 @@
-import 'package:congrega/authentication/AuthenticationService.dart';
+import 'package:congrega/authentication/AuthenticationRepository.dart';
 import 'package:congrega/forms/CongregaLoginForm.dart';
 import 'package:congrega/login/LoginBloc.dart';
 import 'package:congrega/ui/CongregaCircleLogo.dart';
@@ -123,7 +123,7 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
                       create: (context) {
                         return LoginBloc(
                             authenticationRepository:
-                              RepositoryProvider.of<AuthenticationService>(context),
+                              RepositoryProvider.of<AuthenticationRepository>(context),
                         );
                       },
                       child: loginForm,

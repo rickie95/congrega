@@ -15,12 +15,21 @@ class TimeWidgetSettingsModalBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Container(
+        padding: EdgeInsets.only(top: 10),
+    child: _body(context)
+    );
+  }
+
+  Widget _body(BuildContext context){
     return BlocBuilder<TimeSettingsBloc, TimeSettingsState>(
         buildWhen: (previous, current) => (previous.timeWidgetType != current.timeWidgetType) || (previous.duration != current.duration),
         builder: (context, state) {
           return SettingsList(
+              backgroundColor: Colors.white,
               sections: [
                 SettingsSection(
+                    titleTextStyle: TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.54)),
                     title: settingSectionTitle,
                     tiles: [
                       SettingsTile(

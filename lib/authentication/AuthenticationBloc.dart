@@ -3,16 +3,16 @@ import 'package:bloc/bloc.dart';
 import 'package:congrega/model/User.dart';
 import 'package:meta/meta.dart';
 
-import 'package:congrega/repositories/UserRepository.dart';
+import 'package:congrega/user/UserRepository.dart';
 
 import 'AuthenticationState.dart';
 import 'AuthenticationEvent.dart';
-import 'AuthenticationService.dart';
+import 'AuthenticationRepository.dart';
 
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> { AuthenticationBloc({
-    @required AuthenticationService authenticationRepository,
+    @required AuthenticationRepository authenticationRepository,
     @required UserRepository userRepository,
   })  : assert(authenticationRepository != null),
         assert(userRepository != null),
@@ -24,7 +24,7 @@ class AuthenticationBloc
     );
   }
 
-  final AuthenticationService _authenticationRepository;
+  final AuthenticationRepository _authenticationRepository;
   final UserRepository _userRepository;
   StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
 

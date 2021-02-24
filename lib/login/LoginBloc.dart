@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:congrega/authentication/AuthenticationService.dart';
+import 'package:congrega/authentication/AuthenticationRepository.dart';
 import 'package:formz/formz.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
@@ -13,12 +13,12 @@ import '../forms/inputs/UsernameFormInput.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({
-    @required AuthenticationService authenticationRepository,
+    @required AuthenticationRepository authenticationRepository,
   })  : assert(authenticationRepository != null),
         _authenticationService = authenticationRepository,
         super(const LoginState());
 
-  final AuthenticationService _authenticationService;
+  final AuthenticationRepository _authenticationService;
 
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {

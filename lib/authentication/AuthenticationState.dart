@@ -1,7 +1,7 @@
 import 'package:congrega/model/User.dart';
 import 'package:equatable/equatable.dart';
 
-import 'AuthenticationService.dart';
+import 'AuthenticationRepository.dart';
 
 class AuthenticationState extends Equatable {
   const AuthenticationState._({

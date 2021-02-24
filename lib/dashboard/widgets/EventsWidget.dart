@@ -1,3 +1,6 @@
+import 'package:congrega/tournament/controller/TournamentController.dart';
+import 'package:congrega/tournament/model/Tournament.dart';
+import 'package:congrega/tournament/repository/TournamentRepository.dart';
 import 'package:flutter/material.dart';
 
 import 'DashboardWideTile.dart';
@@ -10,20 +13,25 @@ class EventsWidget extends StatelessWidget {
   Widget _body(BuildContext context){
     return Column (
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        RaisedButton(onPressed: () {}, ),
-        RaisedButton(onPressed: () {}, ),
-        RaisedButton(onPressed: () {}, ),
-      ],
+      children: _getEventListButtons(context)
+    );
+  }
+
+  List<Widget> _getEventListButtons(BuildContext context){
+    TournamentController tournamentController = TournamentController.getInstance();
+    List<Tournament> tournamentList = tournamentController.getEventList().sublist(0, 3);
+    return new List.generate(tournamentList.length, (index) => RaisedButton(
+      onPressed: () {},
+      child: Text(tournamentList[index].name),
+    )
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return DashboardWideTile(
-        title: 'Friends',
+        title: 'Events',
         child: Container(
-          height: 120,
           child: _body(context),
         )
     );

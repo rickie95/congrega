@@ -25,3 +25,12 @@ class MatchPlayerLeaveMatch extends MatchEvent {
   @override
   List<Object> get props => [player];
 }
+
+class MatchPlayerWinsGame extends MatchEvent {
+  const MatchPlayerWinsGame(this.player);
+
+  final Player player;
+
+  @override
+  List<Object> get props => [player];
+}

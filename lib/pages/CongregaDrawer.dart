@@ -1,9 +1,9 @@
-import 'package:congrega/pages/LifeCounterPage.dart';
-import 'package:congrega/tournament/TournamentPage.dart';
+import 'package:congrega/lifecounter/view/LifeCounterPage.dart';
+import 'package:congrega/tournament/views/tournamentPage/TournamentPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'HomePage.dart';
+import '../dashboard/HomePage.dart';
 
 class CongregaDrawer extends StatelessWidget {
 

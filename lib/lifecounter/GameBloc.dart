@@ -30,7 +30,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   GameState _mapPlayerPointsChangedToState(GamePlayerPointsChanged event,
       GameState state) {
     final PlayerPoints pointsToBeUpdated = event.points;
-    List<PlayerPoints> updatedList = [];
+    Set<PlayerPoints> updatedList = {};
     for (PlayerPoints pp in event.player.points)
       pointsToBeUpdated.isTheSameTypeOf(pp.runtimeType)
           ? updatedList.add(pointsToBeUpdated)
@@ -49,7 +49,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   GameState _mapPlayerPointsAddedToState(GamePlayerPointsAdded event,
       GameState state) {
-    List<PlayerPoints> grownList = event.player.points.toList();
+    Set<PlayerPoints> grownList = event.player.points.toSet();
     grownList.add(event.points);
 
     final Player playerToBeUpdated = event.player.copyWith(list: grownList);
@@ -65,7 +65,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   GameState _mapPlayerPointsRemovedToState(GamePlayerPointsRemoved event,
       GameState state) {
-    List<PlayerPoints> reducedList = event.player.points.toList();
+    Set<PlayerPoints> reducedList = event.player.points.toSet();
     reducedList.remove(event.points);
 
     final Player playerToBeUpdated = event.player.copyWith(list: reducedList);

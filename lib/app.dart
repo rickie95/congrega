@@ -1,23 +1,21 @@
 import 'package:congrega/pages/WelcomePage.dart';
 
-import 'authentication/AuthenticationService.dart';
+import 'authentication/AuthenticationRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as BLOC;
 
-import 'package:congrega/pages/HomePage.dart';
-import 'package:congrega/view/SplashPage.dart';
+import 'package:congrega/dashboard/HomePage.dart';
+import 'package:congrega/pages/SplashPage.dart';
 
-import 'package:congrega/repositories/UserRepository.dart';
+import 'package:congrega/user/UserRepository.dart';
 
 import 'package:congrega/authentication/AuthenticationBloc.dart';
 import 'package:congrega/authentication/AuthenticationState.dart';
 
-import 'package:congrega/theme/CongregaTheme.dart';
-
 
 class Congrega extends StatelessWidget {
   final UserRepository userRepository;
-  final AuthenticationService authenticationRepository;
+  final AuthenticationRepository authenticationRepository;
 
   const Congrega({Key key,
     @required this.authenticationRepository,
@@ -55,23 +53,17 @@ class _CongregaViewState extends State<CongregaView>{
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Congrega',
-      theme: CongregaTheme.congregaTheme(),
+     // theme: CongregaTheme.congregaTheme(),
       navigatorKey: _navigatorKey,
       builder: (context, child) {
         return BLOC.BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
             switch (state.status) {
-              case AuthenticationStatus.authenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  HomePage.route(),
-                      (route) => false,
-                );
-                break;
               case AuthenticationStatus.unauthenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  WelcomePage.route(),
-                      (route) => false,
-                );
+                _navigator.pushAndRemoveUntil<void>(HomePage.route(), (route) => false);
+                break;
+              case AuthenticationStatus.authenticated:
+                _navigator.pushAndRemoveUntil<void>(WelcomePage.route(), (route) => false);
                 break;
               default:
                 break;

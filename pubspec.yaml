@@ -24,7 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   avatar_glow:
-  http:
+  http: ^0.12.2
   equatable: ^1.2.5
   formz: ^0.3.1
   flutter_bloc: ^6.1.0
@@ -32,7 +32,7 @@ dependencies:
   settings_ui: ^0.5.0
   shared_preferences: ^0.5.12+4
   flutter_duration_picker: ^1.0.0
-
+  flutter_secure_storage: ^3.3.5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
