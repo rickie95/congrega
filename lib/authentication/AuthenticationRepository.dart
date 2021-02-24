@@ -1,22 +1,23 @@
 import 'dart:async';
 
+import 'package:congrega/authentication/AuthenticationHttpClient.dart';
+import 'package:congrega/authentication/exceptions/HttpExceptions.dart';
+import 'package:congrega/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meta/meta.dart';
-import 'package:http/http.dart' as http;
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
 
   static const TOKEN  = "congrega_auth_token";
-  static const String USER_ENDPOINT_URL = "https://192.168.1.53:8443/arcano/users";
-  static const String AUTH_ENDPOINT_URL = "https://192.168.1.53:8443/arcano/authenticate";
+
+  AuthenticationRepository() : storage = new FlutterSecureStorage(), authClient = new AuthenticationHttpClient();
 
   final FlutterSecureStorage storage;
-  final _controller = StreamController<AuthenticationStatus>();
-  
-  AuthenticationRepository() : storage = new FlutterSecureStorage();
+  final AuthenticationHttpClient authClient;
+  final StreamController<AuthenticationStatus> _controller = StreamController<AuthenticationStatus>();
 
   Stream<AuthenticationStatus> get status async* {
     await Future<void>.delayed(const Duration(seconds: 1));
@@ -28,46 +29,18 @@ class AuthenticationRepository {
     _deleteToken();
     _controller.add(AuthenticationStatus.unauthenticated);
   }
-  
-  Future<void> logIn({
-    @required String username,
-    @required String password,
-  }) async {
-    final body = '{"username":"$username",password:"$password"}';
-    final response = await http.post(AUTH_ENDPOINT_URL, body: body);
 
-    switch(response.statusCode){
-      case(200):
-        persistToken(response.body);
-        _controller.add(AuthenticationStatus.authenticated);
-        break;
-      case(404):
-        debugPrint("ERROR 404 while authenticating towards $USER_ENDPOINT_URL");
-        break;
-      case(403):
-        break;
-    }
-    return 'token';
+  void logIn({@required User user }) async {
+
+    await authClient.logIn(user)
+        .then((String token) {
+          persistToken(token);
+          _controller.add(AuthenticationStatus.authenticated);
+        });
   }
 
-  Future<void> signIn({
-    @required String username,
-    @required String password,
-    String name,
-  }) async {
-    final body = '{"username":"$username","password":"$password","name":"$name"}';
-    final response = await http.post(AUTH_ENDPOINT_URL, body: body);
-
-    switch(response.statusCode){
-      case(201): // CREATED
-        persistToken(response.body);
-        break;
-      case(404): // NOT FOUND
-        break;
-      case(406): // CONFLICT
-        break;
-    }
-
+  Future<void> signIn({@required User user}) async {
+      await authClient.signIn(user).then((value) => null);
   }
 
   Future<void> _deleteToken() async {
