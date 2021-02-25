@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:congrega/authentication/AuthenticationRepository.dart';
+import 'package:congrega/model/User.dart';
 import 'package:formz/formz.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
@@ -58,10 +59,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (state.status.isValidated) {
       yield state.copyWith(status: FormzStatus.submissionInProgress);
       try {
-        await _authenticationService.logIn(
-          username: state.username.value,
-          password: state.password.value,
-        );
+
+        await _authenticationService.logIn(user: User(username: state.username.value, password: state.password.value));
         yield state.copyWith(status: FormzStatus.submissionSuccess);
       } on Exception catch (_) {
         yield state.copyWith(status: FormzStatus.submissionFailure);
