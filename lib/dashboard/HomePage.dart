@@ -3,8 +3,8 @@ import 'package:congrega/dashboard/widgets/FriendsWidget.dart';
 import 'package:congrega/lifecounter/view/LifeCounterPage.dart';
 import 'package:congrega/pages/CongregaDrawer.dart';
 import 'package:flutter/material.dart';
-
 import 'widgets/DashboardTinyTile.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main(){
   runApp(HomePage());
@@ -28,7 +28,7 @@ class HomePage extends StatelessWidget {
           children: [
 
             Container(
-              child: Text('Welcome back John', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              child: Text(AppLocalizations.of(context).dashboard_message + " " + getUsername(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               padding: EdgeInsets.symmetric(vertical: 10.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
@@ -46,12 +46,16 @@ class HomePage extends StatelessWidget {
                   
                   Expanded(
                     flex: 50,
-                    child: DashboardTinyTile("Quick Match", "START A DUEL", Icons.favorite, Colors.redAccent, () => Navigator.of(context).push(LifeCounterPage.route())),
+                    child: DashboardTinyTile(AppLocalizations.of(context).quick_match,
+                        AppLocalizations.of(context).quick_match_subtitle,
+                        Icons.favorite, Colors.redAccent, () => Navigator.of(context).push(LifeCounterPage.route())),
                   ),
                   
                   Expanded(
                     flex: 50,
-                    child: DashboardTinyTile("My Profile", "CHECK YOUR STATS", Icons.account_circle_sharp, Colors.indigo, () => debugPrint("NOT ASSIGNED YET")),
+                    child: DashboardTinyTile(AppLocalizations.of(context).my_profile_title,
+                        AppLocalizations.of(context).my_profile_subtitle,
+                        Icons.account_circle_sharp, Colors.indigo, () => debugPrint("NOT ASSIGNED YET")),
                   ),
                 ],
               ),

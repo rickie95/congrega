@@ -2,6 +2,7 @@ import 'package:congrega/lifecounter/view/LifeCounterPage.dart';
 import 'package:congrega/tournament/views/tournamentPage/TournamentPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../dashboard/HomePage.dart';
 
@@ -17,32 +18,38 @@ class CongregaDrawer extends StatelessWidget {
         children: <Widget>[
           _CongregaDrawerHeader(),
           ListTile(
-              title: Text(HomePage.pageTitle),
+            leading: Icon(Icons.home),
+              title: Text(AppLocalizations.of(context).homepage_title),
               onTap: () {
                 Navigator.push(context, HomePage.route());
               }
           ),
           ListTile(
-            title: Text('Tournament'),
+            leading: Icon(Icons.star),
+            title: Text(AppLocalizations.of(context).tournament_page_title),
             onTap: () {
               Navigator.push(context, TournamentPage.route());
             },
           ),
           ListTile(
-            title: Text('Life counter'),
+            leading: Icon(Icons.favorite),
+            title: Text(AppLocalizations.of(context).lifecounter_page_title),
             onTap: () {
               Navigator.push(context, LifeCounterPage.route());
             },
           ),
+          Divider(),
           ListTile(
-            title: Text('My Profile'),
+            leading: Icon(Icons.account_circle_sharp),
+            title: Text(AppLocalizations.of(context).profile_page_title),
             onTap: () {
               // Update the state of the app.
               // ...
             },
           ),
           ListTile(
-            title: Text('Settings'),
+            leading: Icon(Icons.settings),
+            title: Text(AppLocalizations.of(context).settings_page_title),
             onTap: () {
               // Update the state of the app.
               // ...
