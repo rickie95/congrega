@@ -1,7 +1,8 @@
 import 'package:congrega/tournament/controller/TournamentController.dart';
 import 'package:congrega/tournament/model/Tournament.dart';
-import 'package:congrega/tournament/repository/TournamentRepository.dart';
 import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'DashboardWideTile.dart';
 
@@ -30,7 +31,7 @@ class EventsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DashboardWideTile(
-        title: 'Events',
+        title: AppLocalizations.of(context).events_widget_title,
         child: Container(
           child: _body(context),
         )

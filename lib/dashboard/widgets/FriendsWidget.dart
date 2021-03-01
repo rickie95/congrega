@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'DashboardWideTile.dart';
 
@@ -10,7 +11,7 @@ class FriendsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DashboardWideTile(
-        title: 'Friends',
+        title: AppLocalizations.of(context).friends_widget_title,
         child: Container(
           height: 120,
           child: FriendCardList(),
