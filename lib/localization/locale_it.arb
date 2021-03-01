@@ -1,0 +1,41 @@
+{
+    "homepage_title": "Dashboard",
+    "tournament_page_title": "Tornei",
+    "lifecounter_page_title": "Life Counter",
+    "profile_page_title": "Profilo",
+    "settings_page_title": "Impostazioni",
+
+    "dashboard_message": "Ciao",
+
+    "quick_match": "Match Veloce",
+    "quick_match_subtitle": "Inizia un incontro",
+
+    "my_profile_title": "Profilo",
+    "my_profile_subtitle": "Le tue statistiche",
+
+    "events_widget_title": "Tornei",
+    "friends_widget_title": "Amici",
+
+
+    "events_page_title": "Tornei",
+    "events_action_create": "Crea un nuovo evento",
+    "events_action_search": "Cerca",
+    "events_join_by_code": "Iscriviti con codice",
+    "events_inProgress_label" : "In svolgimento",
+    "events_myevents_label" : "Organizzati da me",
+    "events_nearby_label" : "Nelle vicinanze",
+    "events_notenrolled_msg" : "Non sei iscritto a nessun torneo ancora.",
+
+
+    "opponent": "Avversario",
+
+    "time_widget_settings_title": "Impostazioni widget tempo",
+
+    "widget_section_label": "Tipo di widget",
+
+    "countdown_starting_time_label": "Timer di default",
+
+    "timer_reset_label": "Resetta timer",
+
+    "clock_type_section_title": "Widget orologio"
+}

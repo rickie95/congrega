@@ -1,4 +1,5 @@
 import 'package:congrega/pages/WelcomePage.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'authentication/AuthenticationRepository.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:congrega/user/UserRepository.dart';
 
 import 'package:congrega/authentication/AuthenticationBloc.dart';
 import 'package:congrega/authentication/AuthenticationState.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 class Congrega extends StatelessWidget {
@@ -55,6 +57,16 @@ class _CongregaViewState extends State<CongregaView>{
       title: 'Congrega',
      // theme: CongregaTheme.congregaTheme(),
       navigatorKey: _navigatorKey,
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('it')
+      ],
       builder: (context, child) {
         return BLOC.BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
