@@ -28,7 +28,7 @@ class DashboardTinyTile extends StatelessWidget {
                 children: [
                   Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
                   Padding(padding: EdgeInsets.only(bottom: 1),),
-                  Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey),),
+                  Text(subtitle.toUpperCase(), style: TextStyle(fontSize: 12, color: Colors.grey),),
                   Padding(padding: EdgeInsets.only(bottom: 5),),
                   Align(
                     alignment: Alignment.centerRight,
