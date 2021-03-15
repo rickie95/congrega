@@ -1,11 +1,12 @@
-import 'package:congrega/lifecounter/view/timeWidget/TimeWidget.dart';
+
+import 'package:congrega/features/lifecounter/presentation/widgets/timeWidget/TimeWidget.dart';
 import 'package:congrega/settings/TimeSettingsEvent.dart';
 import 'package:congrega/settings/TimeSettingsState.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TimeSettingsBloc extends Bloc<TimeSettingsEvent, TimeSettingsState> {
-  TimeSettingsBloc({TimeSettingsState initialState}) :
+  TimeSettingsBloc({TimeSettingsState? initialState}) :
         super(initialState ?? const TimeSettingsState());
 
   @override
@@ -52,14 +53,14 @@ class TimeSettingsBloc extends Bloc<TimeSettingsEvent, TimeSettingsState> {
     );
   }
 
-  _mapTimeDurationChangedToState(TimeDurationChanged event, TimeSettingsState state) {
+  TimeSettingsState _mapTimeDurationChangedToState(TimeDurationChanged event, TimeSettingsState state) {
     return state.copyWith(
       status: TimeWidgetStatus.stopped,
       duration: event.duration,
     );
   }
 
-  _mapTimePausedOrResumedToState(TimeWidgetPausedOrResumed event, TimeSettingsState state) {
+  TimeSettingsState _mapTimePausedOrResumedToState(TimeWidgetPausedOrResumed event, TimeSettingsState state) {
     return state.copyWith(
       status: state.status == TimeWidgetStatus.running ? TimeWidgetStatus.paused : TimeWidgetStatus.running
     );

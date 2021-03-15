@@ -1,6 +1,6 @@
 class UnauthorizedException implements Exception {
 
-  const UnauthorizedException({this.message}) : super();
+  const UnauthorizedException({this.message = ""}) : super();
 
   final String message;
 
@@ -8,7 +8,7 @@ class UnauthorizedException implements Exception {
 
 class NotFoundException implements Exception {
 
-  const NotFoundException({this.message}) : super();
+  const NotFoundException({this.message = ""}) : super();
 
   final String message;
 
@@ -16,7 +16,7 @@ class NotFoundException implements Exception {
 
 class ServerErrorException implements Exception {
 
-  const ServerErrorException({this.message}) : super();
+  const ServerErrorException({this.message = ""}) : super();
 
   final String message;
 
@@ -24,7 +24,7 @@ class ServerErrorException implements Exception {
 
 class ConflictException implements Exception {
 
-  const ConflictException({this.message}) : super();
+  const ConflictException({this.message = ""}) : super();
 
   final String message;
 
@@ -32,7 +32,7 @@ class ConflictException implements Exception {
 
 class OtherErrorException implements Exception {
 
-  const OtherErrorException({this.message}) : super();
+  const OtherErrorException({this.message = ""}) : super();
 
   final String message;
 

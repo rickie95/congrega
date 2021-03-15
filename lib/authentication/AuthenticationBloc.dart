@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:congrega/model/User.dart';
-import 'package:meta/meta.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
 
 import 'package:congrega/user/UserRepository.dart';
 
@@ -10,37 +9,35 @@ import 'AuthenticationEvent.dart';
 import 'AuthenticationRepository.dart';
 
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> { AuthenticationBloc({
-    @required AuthenticationRepository authenticationRepository,
-    @required UserRepository userRepository,
-  })  : assert(authenticationRepository != null),
-        assert(userRepository != null),
-        _authenticationRepository = authenticationRepository,
-        _userRepository = userRepository,
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
+
+  AuthenticationBloc({
+    required this.authenticationRepository,
+    required this.userRepository,
+    })  :
         super(const AuthenticationState.unknown()) {
-    _authenticationStatusSubscription = _authenticationRepository.status.listen(
+    _authenticationStatusSubscription = authenticationRepository.status.listen(
           (status) => add(AuthenticationStatusChanged(status)),
     );
   }
 
-  final AuthenticationRepository _authenticationRepository;
-  final UserRepository _userRepository;
-  StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
+  final AuthenticationRepository authenticationRepository;
+  final UserRepository userRepository;
+  late StreamSubscription<AuthenticationStatus> _authenticationStatusSubscription;
 
   @override
   Stream<AuthenticationState> mapEventToState(AuthenticationEvent event) async* {
     if (event is AuthenticationStatusChanged) {
       yield await _mapAuthenticationStatusChangedToState(event);
     } else if (event is AuthenticationLogoutRequested) {
-      _authenticationRepository.logOut();
+      authenticationRepository.logOut();
     }
   }
 
   @override
   Future<void> close() {
-    _authenticationStatusSubscription?.cancel();
-    _authenticationRepository.dispose();
+    _authenticationStatusSubscription.cancel();
+    authenticationRepository.dispose();
     return super.close();
   }
 
@@ -61,11 +58,7 @@ class AuthenticationBloc
   }
 
   Future<User> _tryGetUser() async {
-    try {
-      final user = await _userRepository.getUser();
-      return user;
-    } on Exception {
-      return null;
-    }
+    final user = await userRepository.getUser();
+    return user;
   }
 }

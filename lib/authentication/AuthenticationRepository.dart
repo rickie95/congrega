@@ -1,7 +1,8 @@
 import 'dart:async';
 
-import 'package:congrega/httpClients/AuthenticationHttpClient.dart';
-import 'package:congrega/model/User.dart';
+import 'package:congrega/features/loginSignup/data/AuthenticationHttpClient.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -13,7 +14,9 @@ class AuthenticationRepository {
 
   static const TOKEN  = "congrega_auth_token";
 
-  AuthenticationRepository() : storage = new FlutterSecureStorage(), authClient = new AuthenticationHttpClient(new http.Client());
+  AuthenticationRepository() :
+        storage = new FlutterSecureStorage(),
+        authClient = new AuthenticationHttpClient(new http.Client());
 
   final FlutterSecureStorage storage;
   final AuthenticationHttpClient authClient;
@@ -30,7 +33,7 @@ class AuthenticationRepository {
     _controller.add(AuthenticationStatus.unauthenticated);
   }
 
-  Future<void> logIn({@required User user }) async {
+  Future<void> logIn({required UserCredentials user }) async {
 
     await authClient.logIn(user)
         .then((String token) {
@@ -39,8 +42,8 @@ class AuthenticationRepository {
         });
   }
 
-  Future<void> signIn({@required User user}) async {
-      await authClient.signIn(user).then((value) => null);
+  Future<void> signIn({required UserCredentials user}) async {
+    await authClient.signIn(user).then((value) => null);
   }
 
   Future<void> _deleteToken() async {
@@ -57,8 +60,7 @@ class AuthenticationRepository {
 
   Future<bool> hasToken() async {
     /// read from keystore/keychain
-    String value = await storage.read(key: TOKEN);
-    return !(value == null);
+    return !((await storage.read(key: TOKEN)) == null);
   }
 
   void dispose() => _controller.close();

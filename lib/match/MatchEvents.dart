@@ -1,4 +1,4 @@
-import 'package:congrega/lifecounter/model/Player.dart';
+import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:equatable/equatable.dart';
 
 class MatchEvent extends Equatable {

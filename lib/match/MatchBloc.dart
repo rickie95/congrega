@@ -3,7 +3,7 @@ import 'package:congrega/match/MatchState.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MatchBloc extends Bloc<MatchEvent, MatchState>{
-  MatchBloc({initialState}) : super(initialState ?? const MatchState());
+  MatchBloc({initialState}) : super(initialState);
 
   @override
   Stream<MatchState> mapEventToState(MatchEvent event) async* {

@@ -1,6 +1,7 @@
-import 'package:congrega/httpClients/AuthenticationHttpClient.dart';
+import 'package:congrega/features/loginSignup/data/AuthenticationHttpClient.dart';
+import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
 import 'package:congrega/httpClients/exceptions/HttpExceptions.dart';
-import 'package:congrega/model/User.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,9 +13,7 @@ const String name = "Jon Doe";
 class MockClient extends Mock implements http.Client {}
 
 void main(){
-  final User user = new User(username: username, password: password, name: name);
-
-
+  final UserCredentials user = new UserCredentials(username: username, password: password, name: name);
 
   group('SignIn', (){
 
@@ -25,11 +24,11 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final String body = AuthenticationHttpClient.createSignInBodyFrom(user);
-      when(client.post(AuthenticationHttpClient.USER_ENDPOINT_URL, body: body))
+      when(client.post(Uri(path: AuthenticationHttpClient.USER_ENDPOINT_URL), body: body))
           .thenAnswer((_) async => http.Response('{"title": "Test"}', 200));
 
       authClient.signIn(user);
-      verify(client.post(AuthenticationHttpClient.USER_ENDPOINT_URL, body: body));
+      verify(client.post(Uri(path: AuthenticationHttpClient.USER_ENDPOINT_URL), body: body));
 
     });
 
@@ -40,7 +39,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final String body = AuthenticationHttpClient.createSignInBodyFrom(user);
-      when(client.post(AuthenticationHttpClient.USER_ENDPOINT_URL, body: body))
+      when(client.post(Uri(path: AuthenticationHttpClient.USER_ENDPOINT_URL), body: body))
           .thenAnswer((_) async => http.Response('', 404));
 
       expect(authClient.signIn(user), throwsA(isInstanceOf<NotFoundException>()));
@@ -54,7 +53,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final String body = AuthenticationHttpClient.createSignInBodyFrom(user);
-      when(client.post(AuthenticationHttpClient.USER_ENDPOINT_URL, body: body))
+      when(client.post(Uri(path: AuthenticationHttpClient.USER_ENDPOINT_URL), body: body))
           .thenAnswer((_) async => http.Response('', 409));
 
       expect(authClient.signIn(user), throwsA(isInstanceOf<ConflictException>()));
@@ -68,7 +67,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final String body = AuthenticationHttpClient.createSignInBodyFrom(user);
-      when(client.post(AuthenticationHttpClient.USER_ENDPOINT_URL, body: body))
+      when(client.post(Uri(path: AuthenticationHttpClient.USER_ENDPOINT_URL), body: body))
           .thenAnswer((_) async => http.Response('', 500));
 
       expect(authClient.signIn(user), throwsA(isInstanceOf<ServerErrorException>()));
@@ -82,7 +81,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final String body = AuthenticationHttpClient.createSignInBodyFrom(user);
-      when(client.post(AuthenticationHttpClient.USER_ENDPOINT_URL, body: body))
+      when(client.post(Uri(path: AuthenticationHttpClient.USER_ENDPOINT_URL), body: body))
           .thenAnswer((_) async => http.Response('', 300));
 
       expect(authClient.signIn(user), throwsA(isInstanceOf<OtherErrorException>()));
@@ -101,11 +100,11 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final body = AuthenticationHttpClient.createAuthBodyFrom(user);
-      when(client.post(AuthenticationHttpClient.AUTH_ENDPOINT_URL, body: body))
+      when(client.post(Uri(path: AuthenticationHttpClient.AUTH_ENDPOINT_URL), body: body))
           .thenAnswer((_) async => http.Response(token, 200));
 
       authClient.logIn(user);
-      verify(client.post(AuthenticationHttpClient.AUTH_ENDPOINT_URL, body: body));
+      verify(client.post(Uri(path: AuthenticationHttpClient.AUTH_ENDPOINT_URL), body: body));
     });
 
     test('LogIn should throws a NotFoundException if 404 is returned', () {
@@ -115,7 +114,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final body =  AuthenticationHttpClient.createAuthBodyFrom(user);
-      when(client.post(AuthenticationHttpClient.AUTH_ENDPOINT_URL, body: body))
+      when(client.post(Uri(path: AuthenticationHttpClient.AUTH_ENDPOINT_URL), body: body))
           .thenAnswer((_) async => http.Response('', 404));
 
       expect(authClient.logIn(user), throwsA(isInstanceOf<NotFoundException>()));
@@ -129,7 +128,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final body =  AuthenticationHttpClient.createAuthBodyFrom(user);
-      when(client.post(AuthenticationHttpClient.AUTH_ENDPOINT_URL, body: body))
+      when(client.post(Uri(path: AuthenticationHttpClient.AUTH_ENDPOINT_URL), body: body))
           .thenAnswer((_) async => http.Response('', 403));
 
       expect(authClient.logIn(user), throwsA(isInstanceOf<UnauthorizedException>()));
@@ -142,7 +141,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final body =  AuthenticationHttpClient.createAuthBodyFrom(user);
-      when(client.post(AuthenticationHttpClient.AUTH_ENDPOINT_URL, body: body))
+      when(client.post(Uri(path: AuthenticationHttpClient.AUTH_ENDPOINT_URL), body: body))
           .thenAnswer((_) async => http.Response('', 500));
 
       expect(authClient.logIn(user), throwsA(isInstanceOf<ServerErrorException>()));
@@ -155,7 +154,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final body =  AuthenticationHttpClient.createAuthBodyFrom(user);
-      when(client.post(AuthenticationHttpClient.AUTH_ENDPOINT_URL, body: body))
+      when(client.post(Uri(path: AuthenticationHttpClient.AUTH_ENDPOINT_URL), body: body))
           .thenAnswer((_) async => http.Response('', 300));
 
       expect(authClient.logIn(user), throwsA(isInstanceOf<OtherErrorException>()));

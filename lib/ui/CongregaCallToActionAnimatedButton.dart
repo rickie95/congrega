@@ -6,12 +6,18 @@ class CongregaCallToActionAnimatedButton extends StatelessWidget {
   final double scale;
   final AnimationController controller;
   final String buttonText;
-  final Function callback;
+  final Function()? callback;
   final bool enabled;
 
 
-  CongregaCallToActionAnimatedButton({Key key, this.scale,
-    this.controller, this.buttonText, this.callback, this.enabled = true}) : super(key: key);
+  CongregaCallToActionAnimatedButton({
+    Key? key,
+    required this.scale,
+    required this.controller,
+    required this.buttonText,
+    this.callback,
+    this.enabled = true
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context){

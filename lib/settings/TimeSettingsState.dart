@@ -1,4 +1,4 @@
-import 'package:congrega/lifecounter/view/timeWidget/TimeWidget.dart';
+import 'package:congrega/features/lifecounter/presentation/widgets/timeWidget/TimeWidget.dart';
 import 'package:equatable/equatable.dart';
 
 enum TimeWidgetStatus { running, paused, stopped }
@@ -15,8 +15,11 @@ class TimeSettingsState extends Equatable {
   final TimeWidgetType timeWidgetType;
   final Duration duration;
 
-  TimeSettingsState copyWith({TimeWidgetStatus status,
-    TimeWidgetType timeWidgetType, Duration duration}){
+  TimeSettingsState copyWith({
+    TimeWidgetStatus? status,
+    TimeWidgetType? timeWidgetType,
+    Duration? duration
+  }){
     return TimeSettingsState(
       status: status ?? this.status,
       timeWidgetType: timeWidgetType ?? this.timeWidgetType,

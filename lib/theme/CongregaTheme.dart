@@ -11,7 +11,7 @@ class CongregaTheme {
   // Call to action button
   static final Color callToActionButtonBackground = Colors.white;
   static final Color callToActionButtonText = Colors.indigo;
-  static final Color callToActionButtonShadow = Colors.indigo[900];
+  static final Color callToActionButtonShadow = Colors.indigo[900]!;
 
   static final callToActionButtonBackgroundDisabled = Colors.white54;
 

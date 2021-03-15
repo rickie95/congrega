@@ -1,5 +1,5 @@
 import 'package:avatar_glow/avatar_glow.dart';
-import 'package:congrega/pages/LoginPage.dart';
+import 'package:congrega/features/loginSignup/presentation/LoginPage.dart';
 import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +7,7 @@ import '../ui/CongregaCallToActionAnimatedButton.dart';
 import '../ui/animations/DelayedAnimation.dart';
 import 'package:congrega/ui/CongregaCircleLogo.dart';
 
-import 'SignUpPage.dart';
+import '../features/loginSignup/presentation/SignUpPage.dart';
 
 void main() {
   SystemChrome.setEnabledSystemUIOverlays([]);
@@ -26,8 +26,8 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStateMixin {
   final int delayedAmount = 500;
-  double _scale;
-  AnimationController _controller;
+  late double _scale;
+  late AnimationController _controller;
 
   final String greetingLineOne = "Hello there,";
   final String greetingLineTwo = "I'm Congrega";

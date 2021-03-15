@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:congrega/model/User.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,10 +8,8 @@ import 'package:flutter/material.dart';
 
 class UserController {
 
-  static const String USER_ENDPOINT_URL = Arcano.USERS_URL;
-
   static Future<void> getUserList() async {
-    final response = await http.get(USER_ENDPOINT_URL);
+    final response = await http.get(Uri(path:Arcano.USERS_URL));
     debugPrint(response.body);
   }
   
@@ -31,7 +29,7 @@ class UserController {
       'role': 'PLAYER'
     };
 
-    final response = await http.post(USER_ENDPOINT_URL,
+    final response = await http.post(Uri(path:Arcano.USERS_URL),
         headers: headers, body: jsonEncode(body));
 
     if (response.statusCode == 201) {

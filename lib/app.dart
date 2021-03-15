@@ -5,7 +5,7 @@ import 'authentication/AuthenticationRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as BLOC;
 
-import 'package:congrega/dashboard/HomePage.dart';
+import 'package:congrega/features/dashboard/presentation/HomePage.dart';
 import 'package:congrega/pages/SplashPage.dart';
 
 import 'package:congrega/user/UserRepository.dart';
@@ -19,12 +19,9 @@ class Congrega extends StatelessWidget {
   final UserRepository userRepository;
   final AuthenticationRepository authenticationRepository;
 
-  const Congrega({Key key,
-    @required this.authenticationRepository,
-    @required this.userRepository}) :
-        assert(authenticationRepository!= null),
-        assert(userRepository != null),
-        super(key: key);
+  const Congrega({
+    required this.authenticationRepository,
+    required this.userRepository});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +46,7 @@ class CongregaView extends StatefulWidget {
 class _CongregaViewState extends State<CongregaView>{
   final _navigatorKey = GlobalKey<NavigatorState>();
 
-  NavigatorState get _navigator => _navigatorKey.currentState;
+  NavigatorState? get _navigator => _navigatorKey.currentState;
 
   @override
   Widget build(BuildContext context) {
@@ -72,10 +69,10 @@ class _CongregaViewState extends State<CongregaView>{
           listener: (context, state) {
             switch (state.status) {
               case AuthenticationStatus.unauthenticated:
-                _navigator.pushAndRemoveUntil<void>(HomePage.route(), (route) => false);
+                _navigator!.pushAndRemoveUntil<void>(HomePage.route(), (route) => false);
                 break;
               case AuthenticationStatus.authenticated:
-                _navigator.pushAndRemoveUntil<void>(WelcomePage.route(), (route) => false);
+                _navigator!.pushAndRemoveUntil<void>(WelcomePage.route(), (route) => false);
                 break;
               default:
                 break;

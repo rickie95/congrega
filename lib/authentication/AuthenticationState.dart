@@ -1,4 +1,4 @@
-import 'package:congrega/model/User.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:equatable/equatable.dart';
 
 import 'AuthenticationRepository.dart';
@@ -9,6 +9,9 @@ class AuthenticationState extends Equatable {
     this.user,
   });
 
+  final AuthenticationStatus status;
+  final User? user;
+
   const AuthenticationState.unknown() : this._();
 
   const AuthenticationState.authenticated(User user)
@@ -17,9 +20,8 @@ class AuthenticationState extends Equatable {
   const AuthenticationState.unauthenticated()
       : this._(status: AuthenticationStatus.unauthenticated);
 
-  final AuthenticationStatus status;
-  final User user;
+
 
   @override
-  List<Object> get props => [status, user];
+  List<Object> get props => [status, user!];
 }
