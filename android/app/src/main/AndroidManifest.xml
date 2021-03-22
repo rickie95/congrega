@@ -7,7 +7,9 @@
          FlutterApplication and put your custom class here. -->
     <uses-sdk android:minSdkVersion="18"/>
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:usesCleartextTraffic="true"
         android:name="io.flutter.app.FlutterApplication"
         android:label="Congrega"
         android:icon="@mipmap/ic_launcher">
