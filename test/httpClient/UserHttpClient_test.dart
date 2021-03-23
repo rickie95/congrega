@@ -7,6 +7,7 @@ import 'package:congrega/utils/Arcano.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:uuid/uuid.dart';
 
 class MockClient extends Mock implements http.Client {}
 
@@ -32,7 +33,7 @@ void main() {
       expect(userList, contains(
           User(
               username: "johnDoe",
-              id: BigInt.from(1)
+              id: '1',
           ),
       ));
     });
@@ -83,7 +84,7 @@ void main() {
 
     test('should return the correct user', () async {
       User user = User(name: "Mike Mayers", username: "mikey42",
-          password: "secret", id: BigInt.from(1));
+          password: "secret", id: '1');
 
       final client = MockClient();
       UserHttpClient userClient = new UserHttpClient(client);
@@ -92,42 +93,45 @@ void main() {
       when(client.get(UserHttpClient.getUserEndpointById(user.id)))
           .thenAnswer((_) async => http.Response(responseBody, 200));
 
-      User returnedUser = await  userClient.getUserById(BigInt.one);
+      User returnedUser = await  userClient.getUserById(user.id);
 
       expect(returnedUser, equals(user));
 
     });
 
     test('should throw NotFoundException if 404 is returned', () async {
+      final User user = User.empty;
       final client = MockClient();
       UserHttpClient userClient = new UserHttpClient(client);
 
-      when(client.get(UserHttpClient.getUserEndpointById(BigInt.one)))
+      when(client.get(UserHttpClient.getUserEndpointById(user.id)))
           .thenAnswer((_) async => http.Response('', 404));
       
-      expect(userClient.getUserById(BigInt.one),
+      expect(userClient.getUserById(user.id),
           throwsA(isInstanceOf<NotFoundException>()));
     });
 
     test('should throw ServerErrorException if 500 is returned', () async {
+      final User user = User.empty;
       final client = MockClient();
       UserHttpClient userClient = new UserHttpClient(client);
 
-      when(client.get(UserHttpClient.getUserEndpointById(BigInt.one)))
+      when(client.get(UserHttpClient.getUserEndpointById(user.id)))
           .thenAnswer((_) async => http.Response('', 500));
 
-      expect(userClient.getUserById(BigInt.one),
+      expect(userClient.getUserById(user.id),
           throwsA(isInstanceOf<ServerErrorException>()));
     });
 
     test('should throw OtherErrorException if different code is returned', () async {
+      final User user = User.empty;
       final client = MockClient();
       UserHttpClient userClient = new UserHttpClient(client);
 
-      when(client.get(UserHttpClient.getUserEndpointById(BigInt.one)))
+      when(client.get(UserHttpClient.getUserEndpointById(user.id)))
           .thenAnswer((_) async => http.Response('', 501));
 
-      expect(userClient.getUserById(BigInt.one),
+      expect(userClient.getUserById(user.id),
           throwsA(isInstanceOf<OtherErrorException>()));
     });
 

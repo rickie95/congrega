@@ -1,10 +1,15 @@
+import 'package:congrega/authentication/AuthenticationBloc.dart';
 import 'package:congrega/authentication/AuthenticationRepository.dart';
+import 'package:congrega/authentication/AuthenticationState.dart';
+import 'package:congrega/features/dashboard/presentation/HomePage.dart';
+import 'package:congrega/injector.dart';
 import 'package:congrega/ui/CongregaCircleLogo.dart';
 import 'package:flutter/material.dart';
 import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:congrega/ui/animations/DelayedAnimation.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kiwi/kiwi.dart';
 
 import 'bloc/LoginBloc.dart';
 import 'forms/CongregaLoginForm.dart';
@@ -37,6 +42,7 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
 
   @override
   void initState() {
+    DepInj.setup();
     _controller = AnimationController(
       vsync: this,
       duration: Duration(
@@ -52,15 +58,25 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
 
   @override
   void dispose() {
+    KiwiContainer().clear();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context){
+   return BlocListener<AuthenticationBloc, AuthenticationState>(
+        listenWhen: (previous, current) => previous.status != current.status,
+        listener: (context, state) {
+          if(state.status == AuthenticationStatus.authenticated)
+            Navigator.pushAndRemoveUntil<void>(context, HomePage.route(), (route) => false);
+        },
+        child: buildPage(context),
+    );
+  }
+
+  Widget buildPage(BuildContext context){
     final color = Colors.white;
     _scale = 1 - _controller.value;
-
-
     final Widget loginForm = CongregaLoginForm(_scale, delayedAmount, _controller);
 
     return MaterialApp(
@@ -122,8 +138,8 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
 
                     BlocProvider(
                       create: (context) {
-                        return LoginBloc( authenticationService:
-                        RepositoryProvider.of<AuthenticationRepository>(context),
+                        return LoginBloc(
+                            authenticationRepository: KiwiContainer().resolve<AuthenticationRepository>()
                         );
                       },
                       child: loginForm,

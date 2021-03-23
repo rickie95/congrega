@@ -1,11 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:uuid/uuid.dart';
 
 void main(){
   group('User::',(){
 
-    final BigInt id = BigInt.one;
+    final String id = Uuid().toString();
     final String name = "John Doe";
     final String username = "jd42";
     final String password = "secret@%23éà";
@@ -15,7 +16,7 @@ void main(){
         name: name,
         username: username,
         password: password,
-        id: BigInt.one
+        id: id
       );
 
       expect(user.toString(), equals("[ID: $id | Name: $name | Username: $username | Password: $password]"));
@@ -27,7 +28,7 @@ void main(){
           name: name,
           username: username,
           password: password,
-          id: BigInt.one
+          id: Uuid().toString()
       );
 
       expect(user.copyWith(), equals(user));
@@ -38,7 +39,7 @@ void main(){
           name: name,
           username: username,
           password: password,
-          id: BigInt.one
+          id: Uuid().toString()
       );
 
       expect(user.copyWith(name: "James Doe", password: "lessSecret?"), equals(user));
@@ -49,7 +50,7 @@ void main(){
           name: name,
           username: username,
           password: password,
-          id: BigInt.one
+          id: Uuid().toString()
       );
 
       expect(user.copyWith(username: "jamieDoe", password: "lessSecret?"), isNot(equals(user)));

@@ -23,7 +23,7 @@ class ConfirmLeavingEventDialog extends StatelessWidget {
           onPressed: () {
           context.read<TournamentBloc>().add(
               AbandoningTournament(
-                  BlocProvider.of<AuthenticationBloc>(context).state.user!
+                  BlocProvider.of<AuthenticationBloc>(context).state.user
               )
           );
           Navigator.of(context).pop();

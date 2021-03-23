@@ -1,5 +1,6 @@
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
+import 'package:uuid/uuid.dart';
 
 class TournamentRepository {
 
@@ -15,25 +16,25 @@ class TournamentRepository {
       type: "Limited",
       playerList: {
         User(
-            id: BigInt.from(1),
+            id: Uuid().toString(),
             username: "mikeMoz"
         ),
         User(
-            id: BigInt.from(2),
+            id: Uuid().toString(),
             username: "DragonSlayer"
         ),
         User(
-            id: BigInt.from(3),
+            id: Uuid().toString(),
             username: "BroccoliBob"
         ),
       },
       adminList: {
         User(
-            id: BigInt.from(4),
+            id: Uuid().toString(),
             username: "BrokenImpala"
         ),
         User(
-            id: BigInt.from(5),
+            id: Uuid().toString(),
             username: "JohnDoe"
         ),
       },

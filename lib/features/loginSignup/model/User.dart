@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
+import 'package:uuid/uuid.dart';
 
 class User extends Equatable {
 
-  final BigInt id;
-
+  final String id;
   final String name;
   final String username;
   final String password;
@@ -23,7 +23,7 @@ class User extends Equatable {
     return "[ID: $id | Name: $name | Username: $username | Password: $password]";
   }
 
-  User copyWith({ BigInt? id, String? name, String? username, String? password}){
+  User copyWith({ String? id, String? name, String? username, String? password}){
     return User(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -34,7 +34,7 @@ class User extends Equatable {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: BigInt.from(json['id']),
+      id: json['id'].toString(),
       username: json['username'],
       password: json['password'],
       name: json['name'],
@@ -42,11 +42,14 @@ class User extends Equatable {
   }
 
   Map<String, dynamic> toJson() => {
-    "id": this.id.toInt(),
+    "id": this.id,
     "name": this.name,
     "username": this.username,
     "password": this.password,
   };
+
+
+  static const empty = User(id: '-', username: '-');
 
 
 }

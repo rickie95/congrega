@@ -21,7 +21,7 @@ class ConfirmJoiningEventDialog extends StatelessWidget {
         RaisedButton(onPressed: () {
           context.read<TournamentBloc>().add(
               EnrollingInTournament(
-                  BlocProvider.of<AuthenticationBloc>(context).state.user!
+                  BlocProvider.of<AuthenticationBloc>(context).state.user
               )
           );
           Navigator.of(context).pop();

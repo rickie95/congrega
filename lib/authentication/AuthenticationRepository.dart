@@ -1,12 +1,8 @@
 import 'dart:async';
 
 import 'package:congrega/features/loginSignup/data/AuthenticationHttpClient.dart';
-import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
@@ -14,16 +10,16 @@ class AuthenticationRepository {
 
   static const TOKEN  = "congrega_auth_token";
 
-  AuthenticationRepository() :
-        storage = new FlutterSecureStorage(),
-        authClient = new AuthenticationHttpClient(new http.Client());
+  AuthenticationRepository({
+    required this.storage,
+    required this.authClient
+  });
 
   final FlutterSecureStorage storage;
   final AuthenticationHttpClient authClient;
   final StreamController<AuthenticationStatus> _controller = StreamController<AuthenticationStatus>();
 
   Stream<AuthenticationStatus> get status async* {
-    await Future<void>.delayed(const Duration(seconds: 1));
     yield AuthenticationStatus.unauthenticated;
     yield* _controller.stream;
   }
@@ -37,9 +33,9 @@ class AuthenticationRepository {
 
     await authClient.logIn(user)
         .then((String token) {
-          persistToken(token);
-          _controller.add(AuthenticationStatus.authenticated);
-        });
+      persistToken(token);
+      _controller.add(AuthenticationStatus.authenticated);
+    });
   }
 
   Future<void> signIn({required UserCredentials user}) async {

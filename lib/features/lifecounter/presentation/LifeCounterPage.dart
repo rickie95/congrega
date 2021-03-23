@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:uuid/uuid.dart';
 
 import 'bloc/GameBloc.dart';
 import 'bloc/GameEvents.dart';
@@ -26,15 +27,15 @@ class LifeCounterPage extends StatelessWidget {
   late final User opponent;
 
   GameState createInitialGameState(){
-    final playerOneId = new BigInt.from(1);
+    final playerOneId = '1';
     final Set<PlayerPoints> playerOnePoints = { new LifePoints(20)};
-    final playerTwoId = new BigInt.from(2);
+    final playerTwoId = '2';
 
     final Player playerOne = Player(id: playerOneId, points: playerOnePoints, username: "MagicMike");
     final Player playerTwo = Player(
         id: opponent != null ? opponent.id : playerTwoId,
         points: playerOnePoints,
-        username: opponent != null ? opponent.username : "Opponent"
+        username: opponent.username.isNotEmpty ? opponent.username : "Opponent"
     );
 
     final GameState initialGameState = new GameState(
@@ -47,16 +48,16 @@ class LifeCounterPage extends StatelessWidget {
   }
 
   MatchState createInitialMatchState() {
-    final playerOneId = new BigInt.from(1);
+    final playerOneId = '1';
     final Set<PlayerPoints> playerOnePoints = { new LifePoints(20)};
-    final playerTwoId = new BigInt.from(2);
+    final playerTwoId = '2';
 
 
     final Player playerOne = Player(id: playerOneId, points: playerOnePoints, username: "MagicMike");
     final Player playerTwo = Player(
         id: opponent != null ? opponent.id : playerTwoId,
         points: playerOnePoints,
-        username: opponent != null ? opponent.username : "Opponent"
+        username: opponent.username.isNotEmpty ? opponent.username : "Opponent"
     );
 
     return new MatchState(

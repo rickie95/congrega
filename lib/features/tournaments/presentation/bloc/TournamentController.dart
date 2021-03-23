@@ -2,7 +2,6 @@ import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:congrega/features/tournaments/data/repositories/TournamentRepository.dart';
 
-import 'TournamentState.dart';
 
 class TournamentController {
 

@@ -1,6 +1,7 @@
 import 'package:congrega/httpClients/UserHttpClient.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 class UserRepository {
 
@@ -14,11 +15,11 @@ class UserRepository {
         .then((value) => value);
   }
 
-  User getUser() {
+  Future<User?> getUser() {
     User user = new User(
-        id: BigInt.two,
+        id: '1',
       username: "Me"
     );
-    return user;
+    return Future.delayed(new Duration(seconds: 1), () => user);
   }
 }

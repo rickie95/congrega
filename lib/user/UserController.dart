@@ -7,8 +7,6 @@ class UserController {
   
   final UserRepository repo;
   
-  User getLoggedUser(){
-    return repo.getUser();
-  }
+
   
 }

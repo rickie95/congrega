@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 import 'exceptions/HttpExceptions.dart';
 
@@ -12,7 +13,7 @@ class UserHttpClient {
 
   final http.Client httpClient;
 
-  static Uri getUserEndpointById(BigInt userId) => Uri(path: '${Arcano.USERS_URL}/$userId');
+  static Uri getUserEndpointById(String userId) => Uri(path: '${Arcano.USERS_URL}/${userId}');
 
   Future<List<User>> getUserList() async {
     final response = await httpClient.get(Uri(path: Arcano.USERS_URL));
@@ -30,7 +31,7 @@ class UserHttpClient {
     throw OtherErrorException();
   }
 
-  Future<User> getUserById(BigInt id) async {
+  Future<User> getUserById(String id) async {
     final response = await httpClient.get(getUserEndpointById(id));
 
     switch(response.statusCode){

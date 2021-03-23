@@ -14,8 +14,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   AuthenticationBloc({
     required this.authenticationRepository,
     required this.userRepository,
-    })  :
-        super(const AuthenticationState.unknown()) {
+    })  : super(const AuthenticationState.unknown()) {
     _authenticationStatusSubscription = authenticationRepository.status.listen(
           (status) => add(AuthenticationStatusChanged(status)),
     );
@@ -41,9 +40,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     return super.close();
   }
 
-  Future<AuthenticationState> _mapAuthenticationStatusChangedToState(
-      AuthenticationStatusChanged event,
-      ) async {
+  Future<AuthenticationState> _mapAuthenticationStatusChangedToState(AuthenticationStatusChanged event) async {
     switch (event.status) {
       case AuthenticationStatus.unauthenticated:
         return const AuthenticationState.unauthenticated();
@@ -57,8 +54,11 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     }
   }
 
-  Future<User> _tryGetUser() async {
-    final user = await userRepository.getUser();
-    return user;
+  Future<User?> _tryGetUser() async {
+    try {
+      return await userRepository.getUser();
+    } on Exception {
+      return null;
+    }
   }
 }

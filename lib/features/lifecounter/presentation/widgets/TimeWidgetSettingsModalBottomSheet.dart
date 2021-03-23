@@ -1,9 +1,9 @@
 import 'package:congrega/settings/TimeSettingsBloc.dart';
 import 'package:congrega/settings/TimeSettingsEvent.dart';
 import 'package:congrega/settings/TimeSettingsState.dart';
+import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_duration_picker/flutter_duration_picker.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -52,11 +52,12 @@ class TimeWidgetSettingsModalBottomSheet extends StatelessWidget {
                         enabled: (state.timeWidgetType == TimeWidgetType.TimerWidget),
                         leading: Icon(Icons.hourglass_top),
                         onPressed: (context) async {
-                          Duration duration = await showDurationPicker(
+                          Duration? duration = await showDurationPicker(
                             context: context,
                             initialTime: state.duration,
                           );
-                          context.read<TimeSettingsBloc>().add(TimeDurationChanged(duration));
+                          if(duration != null)
+                            context.read<TimeSettingsBloc>().add(TimeDurationChanged(duration));
                         },
                       ),
 

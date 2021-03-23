@@ -1,6 +1,7 @@
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 abstract class PlayerPoints extends Equatable {
 
@@ -112,10 +113,10 @@ class Player extends Equatable {
   }
 
   final Set<PlayerPoints> points;
-  final BigInt id;
+  final String id;
   final String username;
 
-  Player copyWith({BigInt? id, Set<PlayerPoints>? list, String? username}){
+  Player copyWith({String? id, Set<PlayerPoints>? list, String? username}){
     return Player(
       id: id ?? this.id,
       points: list ?? this.points,

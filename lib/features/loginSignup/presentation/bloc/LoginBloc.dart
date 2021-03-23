@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:congrega/authentication/AuthenticationRepository.dart';
-import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
+import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
@@ -12,9 +13,9 @@ import '../forms/inputs/PasswordFormInput.dart';
 import '../forms/inputs/UsernameFormInput.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc({ required this.authenticationService }) : super(const LoginState());
+  LoginBloc({ required this.authenticationRepository }) : super(const LoginState());
 
-  final AuthenticationRepository authenticationService;
+  final AuthenticationRepository authenticationRepository;
 
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
@@ -55,14 +56,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield state.copyWith(status: FormzStatus.submissionInProgress);
       try {
 
-        await authenticationService.logIn(user:
+        await authenticationRepository.logIn(user:
           UserCredentials(
               username: state.username.value,
               password: state.password.value
           )
         );
+
         yield state.copyWith(status: FormzStatus.submissionSuccess);
-      } on Exception catch (_) {
+      } on Exception catch (e) {
+        debugPrint(e.toString());
         yield state.copyWith(status: FormzStatus.submissionFailure);
       }
     }

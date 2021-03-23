@@ -12,6 +12,7 @@ import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiwi/kiwi.dart';
+import 'package:uuid/uuid.dart';
 
 import 'ConfirmLeavingTournamentDialog.dart';
 import 'TournamentChartTab.dart';
@@ -89,7 +90,7 @@ class TournamentStatusPage extends StatelessWidget {
 
   Widget _roundInProgressPage(BuildContext context){
     User opponent = User(
-      id: BigInt.one,
+      id: Uuid().toString(),
         username: "WizeWizard"
     );
 
@@ -183,7 +184,7 @@ class TournamentStatusPage extends StatelessWidget {
         builder: (context, state) {
           // If ENDED or the user is not enrolled show the details page
           if(state.status == TournamentStatus.ended || state.status == TournamentStatus.scheduled ||
-              !state.tournament.isUserEnrolled(BlocProvider.of<AuthenticationBloc>(context).state.user!))
+              !state.tournament.isUserEnrolled(BlocProvider.of<AuthenticationBloc>(context).state.user))
             return TournamentEventDetailsView(tournament: state.tournament);
 
           // If WAITING then standby until admin's action

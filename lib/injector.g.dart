@@ -15,9 +15,13 @@ class _$Injector extends Injector {
   }
 
   @override
-  void _configureAuthenticationModuleFactories() {
+  void _configureAuthenticationBlocModuleFactories() {
     final KiwiContainer container = KiwiContainer();
-    container.registerFactory((c) => AuthenticationRepository());
+    container.registerFactory((c) => FlutterSecureStorage());
+    container.registerFactory((c) => AuthenticationHttpClient(c<Client>()));
+    container.registerSingleton((c) => AuthenticationRepository(
+        storage: c<FlutterSecureStorage>(),
+        authClient: c<AuthenticationHttpClient>()));
     container.registerFactory((c) => UserRepository());
     container.registerFactory((c) => AuthenticationBloc(
         authenticationRepository: c<AuthenticationRepository>(),
