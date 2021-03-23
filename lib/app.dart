@@ -65,11 +65,9 @@ class _CongregaViewState extends State<CongregaView>{
               switch (state.status) {
                 case AuthenticationStatus.authenticated:
                   _navigator!.pushAndRemoveUntil<void>(HomePage.route(), (route) => false);
-                  KiwiContainer().clear();
                   break;
                 case AuthenticationStatus.unauthenticated:
                   _navigator!.pushAndRemoveUntil<void>(WelcomePage.route(), (route) => false);
-                  KiwiContainer().clear();
                   break;
                 default:
                   break;
