@@ -20,7 +20,7 @@ class AuthenticationRepository {
   final StreamController<AuthenticationStatus> _controller = StreamController<AuthenticationStatus>();
 
   Stream<AuthenticationStatus> get status async* {
-    yield AuthenticationStatus.unauthenticated;
+    yield await hasToken().then((isAuthenticated) => isAuthenticated ? AuthenticationStatus.authenticated : AuthenticationStatus.unauthenticated);
     yield* _controller.stream;
   }
 
