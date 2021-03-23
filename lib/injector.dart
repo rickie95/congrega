@@ -34,7 +34,6 @@ abstract class Injector {
   void _configureAuthenticationBlocModuleFactories();
 
 
-  @Register.factory(SignUpService)
   @Register.factory(SignUpBloc)
   void _configureSignUpModuleFactories();
 

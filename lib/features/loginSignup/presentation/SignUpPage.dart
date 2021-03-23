@@ -3,6 +3,7 @@ import 'package:congrega/features/loginSignup/presentation/bloc/signup/SignUpBlo
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as BLOC;
+import 'package:kiwi/kiwi.dart';
 import '../../../ui/CongregaCircleLogo.dart';
 import '../../../ui/animations/DelayedAnimation.dart';
 import '../../../theme/CongregaTheme.dart';
@@ -10,17 +11,10 @@ import 'forms/CongregaSignUpForm.dart';
 
 class SignUpPage extends StatelessWidget {
 
-  final SignUpService signUpService = SignUpService();
 
   @override
   Widget build(BuildContext context) {
-    return  BLOC.RepositoryProvider.value(
-      value: signUpService,
-      child: BLOC.BlocProvider(
-        create: (_) => SignUpBloc(signUpService: signUpService),
-        child: SignUpView(),
-      ),
-    );
+    return SignUpView();
   }
 
   static Route route (){
@@ -114,9 +108,7 @@ class _SignUpPageState extends State<SignUpView> with SingleTickerProviderStateM
 
                     BlocProvider(
                       create: (context) {
-                        return SignUpBloc(
-                            signUpService:
-                            RepositoryProvider.of<SignUpService>(context));
+                        return KiwiContainer().resolve<SignUpBloc>();
                       },
                       child: signUpForm,
                     ),

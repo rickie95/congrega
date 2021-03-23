@@ -46,11 +46,13 @@ class AuthenticationHttpClient {
   }
 
   Future<void> signIn(UserCredentials user) async {
-    final body = createSignInBodyFrom(user);
-    final response = await httpClient.post(Arcano.getUsersUri(), body: body);
+    final response = await httpClient.post(
+        Arcano.getUsersUri(),
+        body: createSignInBodyFrom(user),
+        headers: requestHeaders());
 
     switch(response.statusCode){
-      case(200):
+      case(201):
         return null;
       case(404):
         throw NotFoundException();

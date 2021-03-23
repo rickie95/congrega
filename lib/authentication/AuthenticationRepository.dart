@@ -39,7 +39,10 @@ class AuthenticationRepository {
   }
 
   Future<void> signIn({required UserCredentials user}) async {
-    await authClient.signIn(user).then((value) => null);
+    await authClient.signIn(user).then((_) {
+      // If sign in ends well, perform login and get token
+      logIn(user: user);
+    });
   }
 
   Future<void> _deleteToken() async {

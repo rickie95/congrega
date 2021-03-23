@@ -1,4 +1,6 @@
 
+import 'package:congrega/authentication/AuthenticationRepository.dart';
+import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
 import 'package:congrega/features/loginSignup/presentation/forms/inputs/NameFormInput.dart';
 import 'package:congrega/features/loginSignup/presentation/forms/inputs/PasswordFormInput.dart';
 import 'package:congrega/features/loginSignup/presentation/forms/inputs/UsernameFormInput.dart';
@@ -9,10 +11,10 @@ import 'SignUpEvent.dart';
 import 'SignUpState.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
-  SignUpBloc({ required this.signUpService}) :
+  SignUpBloc({required this.authenticationRepository}) :
       super(const SignUpState());
 
-  final SignUpService signUpService;
+  final AuthenticationRepository authenticationRepository;
   
   @override
   Stream<SignUpState> mapEventToState(SignUpEvent event) async* {
@@ -62,10 +64,11 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     if(state.status.isValidated) {
       yield state.copyWith(status: FormzStatus.submissionInProgress);
       try {
-        await signUpService.signUp(
+        await authenticationRepository.signIn(user: UserCredentials(
           name: state.name.value,
           username: state.username.value,
-          password: state.password.value,
+          password: state.password.value
+        ),
         );
         yield state.copyWith(status: FormzStatus.submissionSuccess);
       } on Exception catch (_) {
