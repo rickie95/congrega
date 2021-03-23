@@ -2,9 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:congrega/authentication/AuthenticationRepository.dart';
 import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
-import 'package:flutter/material.dart';
+import 'package:congrega/httpClients/exceptions/HttpExceptions.dart';
 import 'package:formz/formz.dart';
-import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 
 import 'LoginState.dart';
@@ -65,10 +64,32 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         yield state.copyWith(status: FormzStatus.submissionSuccess);
       } on Exception catch (e) {
-        debugPrint(e.toString());
-        yield state.copyWith(status: FormzStatus.submissionFailure);
+        yield state.copyWith(
+            status: FormzStatus.submissionFailure,
+          errorMessage: exceptionToErrorMessage(e)
+        );
       }
     }
+  }
+
+  String exceptionToErrorMessage(Exception exception) {
+    if(exception is SocketException)
+      return "Server unreachable, check your connection";
+
+    if(exception is NotFoundException)
+      return "Endpoint not found";
+
+    if(exception is ServerErrorException)
+      return "Server encountered a problem, try again later";
+
+    if(exception is UnauthorizedException)
+      return "Your username/password is wrong";
+
+    if(exception is OtherErrorException)
+      return exception.toString();
+
+
+    return exception.toString();
   }
 }
 

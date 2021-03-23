@@ -42,7 +42,6 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
 
   @override
   void initState() {
-    DepInj.setup();
     _controller = AnimationController(
       vsync: this,
       duration: Duration(
@@ -58,7 +57,6 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
 
   @override
   void dispose() {
-    KiwiContainer().clear();
     super.dispose();
   }
 
@@ -138,9 +136,7 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
 
                     BlocProvider(
                       create: (context) {
-                        return LoginBloc(
-                            authenticationRepository: KiwiContainer().resolve<AuthenticationRepository>()
-                        );
+                        return KiwiContainer().resolve<LoginBloc>();
                       },
                       child: loginForm,
                     )

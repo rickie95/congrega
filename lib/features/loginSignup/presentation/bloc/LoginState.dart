@@ -10,20 +10,23 @@ class LoginState extends Equatable {
     this.username = const UsernameFormInput.pure(),
     this.password = const PasswordFormInput.pure(),
     this.passwordVisibility = false,
+    this.errorMessage = ''
   });
 
   final FormzStatus status;
   final UsernameFormInput username;
   final PasswordFormInput password;
   final bool passwordVisibility;
+  final String errorMessage;
 
   LoginState copyWith({ FormzStatus? status, UsernameFormInput? username,
-    PasswordFormInput? password, bool? passwordVisibility}) {
+    PasswordFormInput? password, bool? passwordVisibility, String? errorMessage}) {
     return LoginState(
       status: status ?? this.status,
       username: username ?? this.username,
       password: password ?? this.password,
       passwordVisibility: passwordVisibility ?? this.passwordVisibility,
+      errorMessage: errorMessage ?? this.errorMessage
     );
   }
 

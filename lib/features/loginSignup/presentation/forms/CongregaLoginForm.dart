@@ -23,7 +23,7 @@ class CongregaLoginForm extends StatelessWidget {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state.status == FormzStatus.submissionFailure) {
-          Scaffold.of(context)
+          ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(content: Text(errorMessage(state))),
             );
@@ -46,18 +46,17 @@ class CongregaLoginForm extends StatelessWidget {
   }
 
   String errorMessage(LoginState state){
-    String error = "";
+    if(state.username.error == UsernameValidationError.empty &&
+        state.password.error == PasswordValidationError.empty)
+      return "Please, enter your username and your password";
 
     if(state.username.error == UsernameValidationError.empty)
-      error += "your username";
-
-    if(error.isNotEmpty) error += " and ";
+      return "Please, enter your username";
 
     if(state.password.error == PasswordValidationError.empty)
-      error += "your password";
+      return "Please, enter your password";
 
-
-    return "Please, enter " + error + ".";
+    return state.errorMessage;
   }
 
 }

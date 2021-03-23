@@ -1,4 +1,5 @@
 import 'package:congrega/authentication/AuthenticationBloc.dart';
+import 'package:congrega/features/loginSignup/presentation/bloc/LoginBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/signup/SignUpBloc.dart';
 import 'package:congrega/features/tournaments/data/datasources/TournamentHttpClient.dart';
 import 'package:congrega/user/UserRepository.dart';
@@ -25,10 +26,11 @@ abstract class Injector {
   void _configureTournamentsModuleFactories();
 
   @Register.factory(FlutterSecureStorage)
-  @Register.factory(AuthenticationHttpClient)
+  @Register.singleton(AuthenticationHttpClient)
   @Register.singleton(AuthenticationRepository)
   @Register.factory(UserRepository)
-  @Register.factory(AuthenticationBloc)
+  @Register.singleton(AuthenticationBloc)
+  @Register.factory(LoginBloc)
   void _configureAuthenticationBlocModuleFactories();
 
 
