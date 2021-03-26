@@ -5,8 +5,7 @@ import 'package:uuid/uuid.dart';
 
 class UserRepository {
 
-  UserRepository() :
-      userHttpClient = new UserHttpClient(new http.Client());
+  UserRepository({required this.userHttpClient});
 
   final UserHttpClient userHttpClient;
 
