@@ -2,6 +2,7 @@ import 'package:congrega/authentication/AuthenticationBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/LoginBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/signup/SignUpBloc.dart';
 import 'package:congrega/features/tournaments/data/datasources/TournamentHttpClient.dart';
+import 'package:congrega/httpClients/UserHttpClient.dart';
 import 'package:congrega/user/UserRepository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
@@ -16,26 +17,35 @@ part 'injector.g.dart';
 abstract class Injector {
 
   void configure(){
+    _configureCommonUtilitiesFactories();
+    _configureSignInModuleFactories();
+    _configureLoginModuleFactories();
     _configureTournamentsModuleFactories();
     _configureAuthenticationBlocModuleFactories();
-    _configureSignUpModuleFactories();
+    _configureUserModuleFactories();
   }
 
+  @Register.factory(FlutterSecureStorage)
   @Register.factory(http.Client)
+  void _configureCommonUtilitiesFactories();
+
+  @Register.factory(UserHttpClient)
+  @Register.factory(UserRepository)
+  void _configureUserModuleFactories();
+
   @Register.factory(TournamentHttpClient)
   void _configureTournamentsModuleFactories();
 
-  @Register.factory(FlutterSecureStorage)
   @Register.singleton(AuthenticationHttpClient)
   @Register.singleton(AuthenticationRepository)
-  @Register.factory(UserRepository)
   @Register.singleton(AuthenticationBloc)
-  @Register.factory(LoginBloc)
   void _configureAuthenticationBlocModuleFactories();
 
-
   @Register.factory(SignUpBloc)
-  void _configureSignUpModuleFactories();
+  void _configureSignInModuleFactories();
+
+  @Register.factory(LoginBloc)
+  void _configureLoginModuleFactories();
 
 }
 
