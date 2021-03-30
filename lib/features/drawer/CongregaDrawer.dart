@@ -1,8 +1,10 @@
+import 'package:congrega/features/authentication/AuthenticationRepository.dart';
 import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart';
 import 'package:congrega/features/tournaments/presentation/tournamentPage/TournamentPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:kiwi/kiwi.dart';
 
 import '../dashboard/presentation/HomePage.dart';
 
@@ -55,9 +57,36 @@ class CongregaDrawer extends StatelessWidget {
               // ...
             },
           ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.logout),
+            title: Text("Logout"),
+            onTap: () => showLogoutAlertDialog(context),
+          )
         ],
       ),
     );
+  }
+
+  void showLogoutAlertDialog(BuildContext context){
+    showDialog(context: context, builder: (BuildContext context){
+      return AlertDialog(
+        title: Text("Logout"),
+        content: Text("Are you sure to log off your account?"),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cancel")),
+          ElevatedButton(
+              onPressed: () {
+                KiwiContainer().resolve<AuthenticationRepository>().logOut();
+                Navigator.pop(context);
+              },
+              child: Text("Logout"))
+        ],
+        elevation: 5,
+      );
+    });
   }
 
 }
