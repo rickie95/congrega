@@ -41,6 +41,9 @@
 version
 analysis_benchmark.json
 
+# KiwiGenerator generated files
+lib/*.g.dart
+
 # packages file containing multi-root paths
 .packages.generated
 

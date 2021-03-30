@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 
 class CongregaTheme {
 
-  static final Color textColor = Colors.white;
+  static final Color textColor = Colors.black;
   static final Color primaryColor = Colors.indigo;
   static final Color accentColor = Colors.indigoAccent;
-  static final Brightness brightness = Brightness.dark;
-  static final Color backgroundColor = Colors.white;
+  static final Brightness brightness = Brightness.light;
+  static final Color backgroundColor = Colors.black;
 
   // Call to action button
   static final Color callToActionButtonBackground = Colors.white;
   static final Color callToActionButtonText = Colors.indigo;
-  static final Color callToActionButtonShadow = Colors.indigo[900];
+  static final Color callToActionButtonShadow = Colors.indigo[900]!;
 
   static final callToActionButtonBackgroundDisabled = Colors.white54;
 
@@ -21,9 +21,9 @@ class CongregaTheme {
       brightness: brightness,
       primaryColor: primaryColor,
       accentColor: accentColor,
-      // backgroundColor: backgroundColor,
-      // scaffoldBackgroundColor: backgroundColor,
-      // canvasColor: backgroundColor,
+      backgroundColor: backgroundColor,
+      scaffoldBackgroundColor: backgroundColor,
+       canvasColor: backgroundColor,
 
 
       fontFamily: 'Roboto',
@@ -36,10 +36,4 @@ class CongregaTheme {
       visualDensity: VisualDensity.adaptivePlatformDensity,
     );
   }
-}
-
-class _CongregaLightTheme extends Theme {
-
-
-
 }

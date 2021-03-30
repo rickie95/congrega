@@ -1,4 +1,4 @@
-import 'package:congrega/lifecounter/model/Player.dart';
+import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:equatable/equatable.dart';
 
 class MatchEvent extends Equatable {
@@ -19,6 +19,15 @@ class MatchPlayerQuitsGame extends MatchEvent {
 
 class MatchPlayerLeaveMatch extends MatchEvent {
   const MatchPlayerLeaveMatch(this.player);
+
+  final Player player;
+
+  @override
+  List<Object> get props => [player];
+}
+
+class MatchPlayerWinsGame extends MatchEvent {
+  const MatchPlayerWinsGame(this.player);
 
   final Player player;
 

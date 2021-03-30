@@ -18,34 +18,46 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  avatar_glow:
-  http:
-  equatable: ^1.2.5
+  avatar_glow: 2.0.1
+  http: ^0.13.0
+  uuid: ^3.0.2
+  equatable: ^2.0.0
   formz: ^0.3.1
-  flutter_bloc: ^6.1.0
+  provider: ^5.0.0
+  flutter_bloc: ^7.0.0
   meta: ^1.1.6
   settings_ui: ^0.5.0
-  shared_preferences: ^0.5.12+4
-  flutter_duration_picker: ^1.0.0
-
+  shared_preferences: ^2.0.5
+  state_persistence: ^0.1.0
+  duration_picker: ^1.0.1
+  flutter_secure_storage: ^4.1.0
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.17.0
+  kiwi: ^3.0.0-nullsafety.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
 
 dev_dependencies:
+  mockito: ^4.1.4
+  mocktail: ^0.1.0
+  bloc_test: ^8.0.0
+  build_runner: ^1.10.0
+  kiwi_generator: ^3.0.0-nullsafety.4
   flutter_test:
     sdk: flutter
 
 
 # The following section is specific to Flutter.
 flutter:
-
+  generate: true
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

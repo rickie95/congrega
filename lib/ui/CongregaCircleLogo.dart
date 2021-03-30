@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CongregaCircleLogo extends StatelessWidget {
-  const CongregaCircleLogo({
-    Key key,
-  }) : super(key: key);
+  const CongregaCircleLogo() : super();
 
   @override
   Widget build(BuildContext context) {

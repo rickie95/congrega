@@ -1,13 +1,17 @@
+import 'dart:io';
 
-import 'package:congrega/repositories/UserRepository.dart';
 import 'package:flutter/material.dart';
-
 import 'app.dart';
-import 'authentication/AuthenticationService.dart';
+
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
+}
 
 void main() {
-  runApp(Congrega(
-    authenticationRepository: AuthenticationService(),
-    userRepository: UserRepository(),
-  ));
+  HttpOverrides.global = new MyHttpOverrides();
+  runApp(Congrega());
 }
