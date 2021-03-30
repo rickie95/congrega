@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:congrega/features/loginSignup/model/User.dart';
@@ -54,6 +56,17 @@ void main(){
       );
 
       expect(user.copyWith(username: "jamieDoe", password: "lessSecret?"), isNot(equals(user)));
+    });
+
+    test('toJson and FromJson', (){
+      User user = User(id: '1', name: 'Mike', username: 'mike', password: 'secret');
+
+      String jsonVersion = jsonEncode(user);
+
+      User decodedUser = User.fromJson(jsonDecode(jsonVersion));
+
+      expect(decodedUser, equals(user));
+
     });
 
   });

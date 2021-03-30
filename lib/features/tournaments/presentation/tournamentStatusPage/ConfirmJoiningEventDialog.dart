@@ -1,4 +1,4 @@
-import 'package:congrega/authentication/AuthenticationBloc.dart';
+import 'package:congrega/features/authentication/AuthenticationBloc.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentBloc.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentEvent.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +18,7 @@ class ConfirmJoiningEventDialog extends StatelessWidget {
         ),
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("CANCEL")),
-        RaisedButton(onPressed: () {
+        ElevatedButton(onPressed: () {
           context.read<TournamentBloc>().add(
               EnrollingInTournament(
                   BlocProvider.of<AuthenticationBloc>(context).state.user

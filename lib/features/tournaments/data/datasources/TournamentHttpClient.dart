@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:congrega/features/tournaments/model/Tournament.dart';
-import 'package:congrega/httpClients/exceptions/HttpExceptions.dart';
+import 'package:congrega/features/exceptions/HttpExceptions.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:http/http.dart' as http;
 

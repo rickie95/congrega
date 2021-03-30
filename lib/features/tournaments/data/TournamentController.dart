@@ -5,9 +5,7 @@ import 'package:congrega/features/tournaments/data/repositories/TournamentReposi
 
 class TournamentController {
 
-   const TournamentController({
-    required this.repository
-  });
+   const TournamentController({required this.repository});
 
   final TournamentRepository repository;
 

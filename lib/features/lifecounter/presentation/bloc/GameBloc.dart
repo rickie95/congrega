@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:congrega/features/lifecounter/data/Game.dart';
+import 'package:congrega/features/lifecounter/data/GameRepository.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameState.dart';
 import 'package:congrega/match/MatchBloc.dart';
@@ -8,15 +12,21 @@ import '../../model/Player.dart';
 
 class GameBloc extends Bloc<GameEvent, GameState> {
   GameBloc({
-    required this.matchBloc,
-    required GameState state
-  }) : super(state);
+    //required this.matchBloc,
+    required this.gameRepository,
+  }) : super(const GameState.unknown()) {
+    _gameStatusObserver = gameRepository.status.listen((status) => add(GameStatusChanged(status)));
+  }
 
-  final MatchBloc matchBloc;
+  late StreamSubscription<GameStatus> _gameStatusObserver;
+  final GameRepository gameRepository;
+  //final MatchBloc matchBloc;
 
   @override
   Stream<GameState> mapEventToState(GameEvent event) async* {
-    if (event is GamePlayerPointsChanged) {
+    if(event is GameStatusChanged){
+      yield await _mapGameStatusChangedToState(event.status, state);
+    } else if (event is GamePlayerPointsChanged) {
       yield _mapPlayerPointsChangedToState(event, state);
     } else if (event is GamePlayerQuits) {
       yield _mapPlayerQuitsToState(event, state);
@@ -27,39 +37,50 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     }
   }
 
-  GameState _mapPlayerPointsChangedToState(GamePlayerPointsChanged event,
-      GameState state) {
+  Future<GameState> _mapGameStatusChangedToState(GameStatus status, GameState state) async {
+    switch(status){
+      case(GameStatus.ended):
+        Game game = await gameRepository.newGame();
+        return state.copyWith(
+          user: game.team[0],
+          opponent: game.opponents[0],
+          status: GameStatus.inProgress,
+        );
+      case(GameStatus.inProgress):
+        Game game = await gameRepository.recoverGame();
+        return state.copyWith(
+          user: game.team[0],
+          opponent: game.opponents[0],
+          status: GameStatus.inProgress,
+        );
+      default:
+        return state.copyWith(status: GameStatus.unknown);
+    }
+  }
+
+  GameState _mapPlayerPointsChangedToState(GamePlayerPointsChanged event, GameState state) {
     final PlayerPoints pointsToBeUpdated = event.points;
     Set<PlayerPoints> updatedList = {};
     for (PlayerPoints pp in event.player.points)
-      pointsToBeUpdated.isTheSameTypeOf(pp.runtimeType)
-          ? updatedList.add(pointsToBeUpdated)
-          : updatedList.add(pp);
+      pointsToBeUpdated.isTheSameTypeOf(pp.runtimeType) ? updatedList.add(pointsToBeUpdated) : updatedList.add(pp);
 
     final Player playerToBeUpdated = event.player.copyWith(list: updatedList);
 
     return state.copyWith(
-      user: playerToBeUpdated.id == state.user.id ? playerToBeUpdated : state
-          .user,
-      opponent: playerToBeUpdated.id == state.opponent.id
-          ? playerToBeUpdated
-          : state.opponent,
+      user: playerToBeUpdated.id == state.user.id ? playerToBeUpdated : state.user,
+      opponent: playerToBeUpdated.id == state.opponent.id ? playerToBeUpdated : state.opponent,
     );
   }
 
-  GameState _mapPlayerPointsAddedToState(GamePlayerPointsAdded event,
-      GameState state) {
+  GameState _mapPlayerPointsAddedToState(GamePlayerPointsAdded event, GameState state) {
     Set<PlayerPoints> grownList = event.player.points.toSet();
     grownList.add(event.points);
 
     final Player playerToBeUpdated = event.player.copyWith(list: grownList);
 
     return state.copyWith(
-        user: playerToBeUpdated.id == state.user.id ? playerToBeUpdated : state
-            .user,
-        opponent: playerToBeUpdated.id == state.opponent.id
-            ? playerToBeUpdated
-            : state.opponent
+        user: playerToBeUpdated.id == state.user.id ? playerToBeUpdated : state.user,
+        opponent: playerToBeUpdated.id == state.opponent.id ? playerToBeUpdated : state.opponent
     );
   }
 
@@ -80,9 +101,18 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   GameState _mapPlayerQuitsToState(GamePlayerQuits event, GameState state) {
-    matchBloc.add(MatchPlayerQuitsGame(event.player));
+    //matchBloc.add(MatchPlayerQuitsGame(event.player));
     return state.copyWith(
         status: GameStatus.ended
     );
   }
+
+  @override
+  Future<void> close(){
+    _gameStatusObserver.cancel();
+    return super.close();
+  }
+
+
+
 }

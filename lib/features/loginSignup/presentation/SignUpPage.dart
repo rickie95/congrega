@@ -2,7 +2,6 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/signup/SignUpBloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' as BLOC;
 import 'package:kiwi/kiwi.dart';
 import '../../../ui/CongregaCircleLogo.dart';
 import '../../../ui/animations/DelayedAnimation.dart';

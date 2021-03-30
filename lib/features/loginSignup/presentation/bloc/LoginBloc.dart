@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:congrega/authentication/AuthenticationRepository.dart';
+import 'package:congrega/features/authentication/AuthenticationRepository.dart';
 import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
-import 'package:congrega/httpClients/exceptions/HttpExceptions.dart';
+import 'package:congrega/features/exceptions/HttpExceptions.dart';
 import 'package:formz/formz.dart';
 import 'package:bloc/bloc.dart';
 

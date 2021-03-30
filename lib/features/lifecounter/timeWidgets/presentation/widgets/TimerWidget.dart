@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:congrega/features/lifecounter/presentation/widgets/timeWidget/BaseTimeWidget.dart';
-import 'package:congrega/settings/TimeSettingsBloc.dart';
-import 'package:congrega/settings/TimeSettingsEvent.dart';
-import 'package:congrega/settings/TimeSettingsState.dart';
+import 'package:congrega/features/lifecounter/timeWidgets/presentation/widgets/BaseTimeWidget.dart';
+import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsBloc.dart';
+import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsEvent.dart';
+import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,7 +48,7 @@ class _TimerWidgetState extends BaseTimeWidgetState{
 
   void showAlertDialog(){
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = TextButton(
       child: Text("OK"),
       onPressed: () { },
     );  // set up the AlertDialog

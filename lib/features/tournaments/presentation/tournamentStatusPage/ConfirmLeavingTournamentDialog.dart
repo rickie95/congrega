@@ -1,4 +1,4 @@
-import 'package:congrega/authentication/AuthenticationBloc.dart';
+import 'package:congrega/features/authentication/AuthenticationBloc.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentBloc.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentEvent.dart';
 import 'package:flutter/material.dart';

@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'LifeCounterModalBottomSheet.dart';
 import 'matchScoreWidget/MatchScoreModalBottomSheet.dart';
 import 'matchScoreWidget/MatchScoreWidget.dart';
-import 'timeWidget/TimeWidget.dart';
+import '../../timeWidgets/presentation/widgets/TimeWidget.dart';
 import '../bloc/GameBloc.dart';
 import '../bloc/GameState.dart';
 
@@ -25,8 +25,10 @@ class StatusBar extends StatelessWidget {
             child: TimeWidget(),
           ),
 
+
           // Score
           Expanded(flex: 33,
+            // child: Text("Status BAr"),
             child: GestureDetector(
                 onTap: () => showModalBottomSheet<void>(
                     context: context,

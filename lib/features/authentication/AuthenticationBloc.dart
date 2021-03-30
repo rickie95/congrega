@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 
-import 'package:congrega/user/UserRepository.dart';
+import 'package:congrega/features/users/UserRepository.dart';
 
 import 'AuthenticationState.dart';
 import 'AuthenticationEvent.dart';

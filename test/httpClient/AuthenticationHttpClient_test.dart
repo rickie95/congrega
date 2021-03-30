@@ -1,6 +1,6 @@
 import 'package:congrega/features/loginSignup/data/AuthenticationHttpClient.dart';
 import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
-import 'package:congrega/httpClients/exceptions/HttpExceptions.dart';
+import 'package:congrega/features/exceptions/HttpExceptions.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
@@ -24,11 +24,11 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final String body = AuthenticationHttpClient.createSignInBodyFrom(user);
-      when(client.post(Arcano.getUsersUri(), body: body))
-          .thenAnswer((_) async => http.Response('{"title": "Test"}', 200));
+      when(client.post(Arcano.getUsersUri(), body: body, headers: AuthenticationHttpClient.requestHeaders()))
+          .thenAnswer((_) async => http.Response('{"title": "Test"}', 201));
 
       authClient.signIn(user);
-      verify(client.post(Arcano.getUsersUri(), body: body));
+      verify(client.post(Arcano.getUsersUri(), body: body, headers: AuthenticationHttpClient.requestHeaders()));
 
     });
 
@@ -39,7 +39,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final String body = AuthenticationHttpClient.createSignInBodyFrom(user);
-      when(client.post(Arcano.getUsersUri(), body: body))
+      when(client.post(Arcano.getUsersUri(), body: body, headers: AuthenticationHttpClient.requestHeaders()))
           .thenAnswer((_) async => http.Response('', 404));
 
       expect(authClient.signIn(user), throwsA(isInstanceOf<NotFoundException>()));
@@ -53,7 +53,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final String body = AuthenticationHttpClient.createSignInBodyFrom(user);
-      when(client.post(Arcano.getUsersUri(), body: body))
+      when(client.post(Arcano.getUsersUri(), body: body, headers: AuthenticationHttpClient.requestHeaders()))
           .thenAnswer((_) async => http.Response('', 409));
 
       expect(authClient.signIn(user), throwsA(isInstanceOf<ConflictException>()));
@@ -67,7 +67,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final String body = AuthenticationHttpClient.createSignInBodyFrom(user);
-      when(client.post(Arcano.getUsersUri(), body: body))
+      when(client.post(Arcano.getUsersUri(), body: body, headers: AuthenticationHttpClient.requestHeaders()))
           .thenAnswer((_) async => http.Response('', 500));
 
       expect(authClient.signIn(user), throwsA(isInstanceOf<ServerErrorException>()));
@@ -81,7 +81,7 @@ void main(){
       // Use Mockito to return a successful response when it calls the
       // provided http.Client.
       final String body = AuthenticationHttpClient.createSignInBodyFrom(user);
-      when(client.post(Arcano.getUsersUri(), body: body))
+      when(client.post(Arcano.getUsersUri(), body: body, headers: AuthenticationHttpClient.requestHeaders()))
           .thenAnswer((_) async => http.Response('', 300));
 
       expect(authClient.signIn(user), throwsA(isInstanceOf<OtherErrorException>()));

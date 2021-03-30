@@ -2,12 +2,22 @@
 import 'package:equatable/equatable.dart';
 
 import '../../model/Player.dart';
+import 'GameState.dart';
 
 abstract class GameEvent extends Equatable {
   const GameEvent();
 
   @override
   List<Object> get props => [];
+}
+
+class GameStatusChanged extends GameEvent {
+  const GameStatusChanged(this.status);
+
+  final GameStatus status;
+
+  @override
+  List<Object> get props => [status];
 }
 
 class GamePlayerQuits extends GameEvent {

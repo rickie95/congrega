@@ -1,13 +1,13 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:congrega/features/loginSignup/presentation/LoginPage.dart';
+import 'package:congrega/features/loginSignup/presentation/SignUpPage.dart';
 import 'package:congrega/theme/CongregaTheme.dart';
+import 'package:congrega/ui/CongregaCallToActionAnimatedButton.dart';
+import 'package:congrega/ui/animations/DelayedAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../ui/CongregaCallToActionAnimatedButton.dart';
-import '../ui/animations/DelayedAnimation.dart';
 import 'package:congrega/ui/CongregaCircleLogo.dart';
 
-import '../features/loginSignup/presentation/SignUpPage.dart';
 
 void main() {
   SystemChrome.setEnabledSystemUIOverlays([]);

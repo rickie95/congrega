@@ -1,13 +1,12 @@
 import 'dart:convert';
 
-import 'package:congrega/httpClients/UserHttpClient.dart';
-import 'package:congrega/httpClients/exceptions/HttpExceptions.dart';
+import 'package:congrega/features/users/UserHttpClient.dart';
+import 'package:congrega/features/exceptions/HttpExceptions.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:uuid/uuid.dart';
 
 class MockClient extends Mock implements http.Client {}
 

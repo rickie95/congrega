@@ -1,8 +1,7 @@
-import 'package:congrega/authentication/AuthenticationBloc.dart';
-import 'package:congrega/authentication/AuthenticationRepository.dart';
-import 'package:congrega/authentication/AuthenticationState.dart';
+import 'package:congrega/features/authentication/AuthenticationBloc.dart';
+import 'package:congrega/features/authentication/AuthenticationRepository.dart';
+import 'package:congrega/features/authentication/AuthenticationState.dart';
 import 'package:congrega/features/dashboard/presentation/HomePage.dart';
-import 'package:congrega/injector.dart';
 import 'package:congrega/ui/CongregaCircleLogo.dart';
 import 'package:flutter/material.dart';
 import 'package:congrega/theme/CongregaTheme.dart';

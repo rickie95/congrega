@@ -1,3 +1,4 @@
+import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../model/Player.dart';
@@ -15,6 +16,11 @@ class GameState extends Equatable {
   final Player user;
   final Player opponent;
   final GameStatus status;
+  
+  const GameState.unknown() : 
+        this.status = GameStatus.unknown, 
+        this.user = Player.empty,
+        this.opponent = Player.empty;
 
   GameState copyWith({GameStatus? status, Player? user, Player? opponent,
     int? userScore, int? opponentScore}){

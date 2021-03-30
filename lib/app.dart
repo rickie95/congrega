@@ -1,18 +1,19 @@
 import 'package:congrega/injector.dart';
-import 'package:congrega/pages/WelcomePage.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kiwi/kiwi.dart';
 
-import 'authentication/AuthenticationRepository.dart';
+import 'features/authentication/AuthenticationRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as BLOC;
 
 import 'package:congrega/features/dashboard/presentation/HomePage.dart';
-import 'package:congrega/pages/SplashPage.dart';
 
-import 'package:congrega/authentication/AuthenticationBloc.dart';
-import 'package:congrega/authentication/AuthenticationState.dart';
+import 'package:congrega/features/authentication/AuthenticationBloc.dart';
+import 'package:congrega/features/authentication/AuthenticationState.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'features/lifecounter/timeWidgets/presentation/bloc/pages/SplashPage.dart';
+import 'features/lifecounter/timeWidgets/presentation/bloc/pages/WelcomePage.dart';
 
 
 class Congrega extends StatelessWidget {

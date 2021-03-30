@@ -1,4 +1,4 @@
-import 'package:congrega/features/tournaments/presentation/bloc/TournamentController.dart';
+import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -1,4 +1,4 @@
-import 'package:congrega/features/tournaments/presentation/bloc/TournamentController.dart';
+import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +20,7 @@ class EventsWidget extends StatelessWidget {
   List<Widget> _getEventListButtons(BuildContext context){
     TournamentController tournamentController = KiwiContainer().resolve<TournamentController>();
     List<Tournament> tournamentList = tournamentController.getEventList().sublist(0, 3);
-    return new List.generate(tournamentList.length, (index) => RaisedButton(
+    return new List.generate(tournamentList.length, (index) => ElevatedButton(
       onPressed: () {},
       child: Text(tournamentList[index].name),
     )

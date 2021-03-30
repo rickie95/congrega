@@ -1,5 +1,5 @@
 
-import 'package:congrega/authentication/AuthenticationRepository.dart';
+import 'package:congrega/features/authentication/AuthenticationRepository.dart';
 import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
 import 'package:congrega/features/loginSignup/presentation/forms/inputs/NameFormInput.dart';
 import 'package:congrega/features/loginSignup/presentation/forms/inputs/PasswordFormInput.dart';

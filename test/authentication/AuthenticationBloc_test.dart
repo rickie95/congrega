@@ -1,9 +1,9 @@
-import 'package:congrega/authentication/AuthenticationBloc.dart';
-import 'package:congrega/authentication/AuthenticationEvent.dart';
-import 'package:congrega/authentication/AuthenticationRepository.dart';
-import 'package:congrega/authentication/AuthenticationState.dart';
+import 'package:congrega/features/authentication/AuthenticationBloc.dart';
+import 'package:congrega/features/authentication/AuthenticationEvent.dart';
+import 'package:congrega/features/authentication/AuthenticationRepository.dart';
+import 'package:congrega/features/authentication/AuthenticationState.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
-import 'package:congrega/user/UserRepository.dart';
+import 'package:congrega/features/users/UserRepository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -130,7 +130,7 @@ void main() {
       'emits [unauthenticated] when status is authenticated '
           'but getUser returns null',
       build: () {
-        when(() => userRepository.getUser()).thenAnswer((_) async => null);
+        when(() => userRepository.getUser()).thenAnswer((_) async => User(id: '-', name: '', username: '-', password: ''));
         return AuthenticationBloc(
           authenticationRepository: authenticationRepository,
           userRepository: userRepository,

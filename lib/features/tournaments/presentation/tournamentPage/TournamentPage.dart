@@ -1,7 +1,7 @@
 import 'package:congrega/features/tournaments/presentation/tournamentStatusPage/TournamentStatusPage.dart';
-import 'package:congrega/pages/CongregaDrawer.dart';
+import 'package:congrega/features/drawer/CongregaDrawer.dart';
 import 'package:congrega/theme/CongregaTheme.dart';
-import 'package:congrega/features/tournaments/presentation/bloc/TournamentController.dart';
+import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:congrega/features/tournaments/data/repositories/TournamentRepository.dart';
 import 'package:flutter/material.dart';
@@ -138,8 +138,8 @@ class TournamentPage extends StatelessWidget{
               ),
             ),
 
-            RaisedButton(child: Text("CREATE NEW EVENT"), onPressed: () {}),
-            RaisedButton(child: Text("SEARCH FOR EVENTS"), onPressed: () {})
+            ElevatedButton(child: Text("CREATE NEW EVENT"), onPressed: () {}),
+            ElevatedButton(child: Text("SEARCH FOR EVENTS"), onPressed: () {})
           ],
         ),
       ),

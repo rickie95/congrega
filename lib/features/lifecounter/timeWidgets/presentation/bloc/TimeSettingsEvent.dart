@@ -1,4 +1,4 @@
-import 'package:congrega/features/lifecounter/presentation/widgets/timeWidget/TimeWidget.dart';
+import 'package:congrega/features/lifecounter/timeWidgets/presentation/widgets/TimeWidget.dart';
 import 'package:equatable/equatable.dart';
 
 class TimeSettingsEvent extends Equatable {

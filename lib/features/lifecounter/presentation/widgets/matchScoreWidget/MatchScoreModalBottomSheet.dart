@@ -65,8 +65,8 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                   children: [
                     Container(
                       padding: EdgeInsets.all(4),
-                      child: RaisedButton(
-                        color: Colors.redAccent,
+                      child: ElevatedButton(
+                        //color: Colors.redAccent,
                         child: const Text("LEAVE MATCH"),
                         onPressed: () {
                           showDialog( context: context,
@@ -83,8 +83,8 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                     Container(
 
                       padding: EdgeInsets.all(4),
-                      child: RaisedButton(
-                        color: Colors.redAccent,
+                      child: ElevatedButton(
+                        //color: Colors.redAccent,
                         child: const Text("SURRENDER GAME"),
                         onPressed: () { showDialog(
                             context: context,
@@ -105,8 +105,8 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                     Container(
 
                       padding: EdgeInsets.all(4),
-                      child: RaisedButton(
-                        color: Colors.redAccent,
+                      child: ElevatedButton(
+                        //color: Colors.redAccent,
                         child: const Text("CALL JUDGE"),
                         onPressed: () { showDialog(
                             context: context,
@@ -176,13 +176,13 @@ class LeaveMatchDialog extends StatelessWidget {
       title: Text("Leave match?"),
       content: Text("Leaving the match will result as a total resign."),
       actions: [
-        FlatButton(
+        TextButton(
             onPressed: (){ },
             child: Text("CANCEL")
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text("LEAVE"),
-          color: Colors.redAccent,
+          //color: Colors.redAccent,
           onPressed: () {
             context.read<MatchBloc>().add(
                 MatchPlayerLeaveMatch(
@@ -204,7 +204,7 @@ class SurrenderGameDialog extends StatelessWidget {
       title: Text("Surrender game"),
       content: Text("Are you sure?"),
       actions: [
-        FlatButton(
+        TextButton(
             onPressed: (){ },
             child: Text("CANCEL")
         ),

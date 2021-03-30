@@ -1,15 +1,15 @@
+import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/match/MatchBloc.dart';
 import 'package:congrega/match/MatchState.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
-import 'package:congrega/settings/TimeSettingsBloc.dart';
+import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsBloc.dart';
 import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:kiwi/kiwi.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:uuid/uuid.dart';
 
 import 'bloc/GameBloc.dart';
 import 'bloc/GameEvents.dart';
@@ -19,73 +19,43 @@ import 'widgets/LifeCounterStatusBar.dart';
 class LifeCounterPage extends StatelessWidget {
 
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => LifeCounterPage());
+    return MaterialPageRoute<void>(builder: (_) => LifeCounterPage(
+        playerRepository: KiwiContainer().resolve<PlayerRepository>()),
+    );
   }
 
-  LifeCounterPage() : super();
+  LifeCounterPage({required this.playerRepository}) : super();
 
-  late final User opponent;
+  final PlayerRepository playerRepository;
 
-  GameState createInitialGameState(){
-    final playerOneId = '1';
-    final Set<PlayerPoints> playerOnePoints = { new LifePoints(20)};
-    final playerTwoId = '2';
-
-    final Player playerOne = Player(id: playerOneId, points: playerOnePoints, username: "MagicMike");
-    final Player playerTwo = Player(
-        id: opponent != null ? opponent.id : playerTwoId,
-        points: playerOnePoints,
-        username: opponent.username.isNotEmpty ? opponent.username : "Opponent"
-    );
-
-    final GameState initialGameState = new GameState(
-      status: GameStatus.unknown,
-      user: playerOne,
-      opponent: playerTwo,
-    );
-
-    return initialGameState;
-  }
-
-  MatchState createInitialMatchState() {
-    final playerOneId = '1';
-    final Set<PlayerPoints> playerOnePoints = { new LifePoints(20)};
-    final playerTwoId = '2';
-
-
-    final Player playerOne = Player(id: playerOneId, points: playerOnePoints, username: "MagicMike");
-    final Player playerTwo = Player(
-        id: opponent != null ? opponent.id : playerTwoId,
-        points: playerOnePoints,
-        username: opponent.username.isNotEmpty ? opponent.username : "Opponent"
-    );
-
+  Future<MatchState> createInitialMatchState() async {
     return new MatchState(
       status: MatchStatus.inProgress,
-      user: playerOne,
-      opponent: playerTwo,
+      user: await playerRepository.getAuthenticatedPlayer(),
+      opponent: playerRepository.genericOpponent(),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-            child: Builder(
-                builder: (context) {
+            child: FutureBuilder(
+              future: createInitialMatchState(),
+                builder: (BuildContext context, AsyncSnapshot<MatchState> snapshot) {
+                if(snapshot.connectionState == ConnectionState.waiting)
+                  return Text("Just a sec bro");
+
+                if(snapshot.hasData && snapshot.data != null)
                   return MultiBlocProvider(
                     providers: [
                       BlocProvider<MatchBloc>(
                         create: (BuildContext context) => MatchBloc(
-                            initialState: createInitialMatchState()
+                            initialState: snapshot.data
                         ),
                       ),
                       BlocProvider<GameBloc>(
-                        create: (BuildContext context) => GameBloc(
-                            matchBloc: RepositoryProvider.of(context),
-                            state: createInitialGameState()
-                        ),
+                        create: (BuildContext context) => KiwiContainer().resolve<GameBloc>(),
                       ),
                       BlocProvider<TimeSettingsBloc>(
                         create: (BuildContext context) => TimeSettingsBloc(),
@@ -103,7 +73,7 @@ class LifeCounterPage extends StatelessWidget {
                                     flex: 20,
                                     child: Container(
                                       child: Center(
-                                          child: Text(opponent != null ? opponent.username : AppLocalizations.of(context)!.opponent,
+                                          child: Text(snapshot.data!.opponent.username.isNotEmpty ? snapshot.data!.opponent.username : AppLocalizations.of(context)!.opponent,
                                             style: TextStyle(fontSize: 20, color: Colors.white),)
                                       ),
                                       color: CongregaTheme.accentColor,
@@ -134,6 +104,8 @@ class LifeCounterPage extends StatelessWidget {
                       ],
                     ),
                   );
+
+                return Text("Error");
                 }
             )));
   }
@@ -186,7 +158,6 @@ class OpponentPointsWidget extends StatelessWidget {
       case 4: return 23;
       case 5: return 20;
     }
-
     throw Exception("Too many counters");
   }
 

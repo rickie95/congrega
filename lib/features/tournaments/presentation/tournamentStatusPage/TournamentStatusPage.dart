@@ -1,13 +1,13 @@
 import 'dart:ui';
 
-import 'package:congrega/authentication/AuthenticationBloc.dart';
+import 'package:congrega/features/authentication/AuthenticationBloc.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentBloc.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentEvent.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentState.dart';
-import 'package:congrega/pages/CongregaDrawer.dart';
+import 'package:congrega/features/drawer/CongregaDrawer.dart';
 import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart';
-import 'package:congrega/features/tournaments/presentation/bloc/TournamentController.dart';
+import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -163,7 +163,7 @@ class TournamentStatusPage extends StatelessWidget {
           Expanded(
               flex: 10,
               child: Container(
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () => Navigator.of(context)
                       .push(LifeCounterPage.route()),
                   child: Text("LIFE COUNTER"),

@@ -1,15 +1,21 @@
-import 'package:congrega/authentication/AuthenticationBloc.dart';
+import 'package:congrega/features/authentication/AuthenticationBloc.dart';
+import 'package:congrega/features/lifecounter/data/GameRepository.dart';
+import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/GameBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/LoginBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/signup/SignUpBloc.dart';
+import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/data/datasources/TournamentHttpClient.dart';
-import 'package:congrega/httpClients/UserHttpClient.dart';
-import 'package:congrega/user/UserRepository.dart';
+import 'package:congrega/features/tournaments/data/repositories/TournamentRepository.dart';
+import 'package:congrega/features/users/UserHttpClient.dart';
+import 'package:congrega/features/users/UserRepository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:kiwi/kiwi.dart';
+import 'package:state_persistence/state_persistence.dart';
 
-import 'authentication/AuthenticationRepository.dart';
+import 'features/authentication/AuthenticationRepository.dart';
 import 'features/loginSignup/data/AuthenticationHttpClient.dart';
 
 part 'injector.g.dart';
@@ -23,7 +29,13 @@ abstract class Injector {
     _configureTournamentsModuleFactories();
     _configureAuthenticationBlocModuleFactories();
     _configureUserModuleFactories();
+    _configureGameBlocModuleFactories();
   }
+
+  @Register.singleton(PlayerRepository)
+  @Register.singleton(GameRepository)
+  @Register.factory(GameBloc)
+  void _configureGameBlocModuleFactories();
 
   @Register.factory(FlutterSecureStorage)
   @Register.factory(http.Client)
@@ -34,6 +46,8 @@ abstract class Injector {
   void _configureUserModuleFactories();
 
   @Register.factory(TournamentHttpClient)
+  @Register.singleton(TournamentRepository)
+  @Register.factory(TournamentController)
   void _configureTournamentsModuleFactories();
 
   @Register.singleton(AuthenticationHttpClient)

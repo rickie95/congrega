@@ -2,7 +2,7 @@ import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../httpClients/exceptions/HttpExceptions.dart';
+import '../../exceptions/HttpExceptions.dart';
 
 class AuthenticationHttpClient {
 

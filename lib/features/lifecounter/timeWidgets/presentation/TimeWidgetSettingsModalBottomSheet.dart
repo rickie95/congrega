@@ -1,6 +1,6 @@
-import 'package:congrega/settings/TimeSettingsBloc.dart';
-import 'package:congrega/settings/TimeSettingsEvent.dart';
-import 'package:congrega/settings/TimeSettingsState.dart';
+import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsBloc.dart';
+import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsEvent.dart';
+import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsState.dart';
 import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +8,7 @@ import 'package:settings_ui/settings_ui.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'timeWidget/TimeWidget.dart';
+import 'widgets/TimeWidget.dart';
 
 class TimeWidgetSettingsModalBottomSheet extends StatelessWidget {
 
