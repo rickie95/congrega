@@ -1,6 +1,6 @@
+import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameEvents.dart';
-import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

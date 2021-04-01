@@ -1,8 +1,7 @@
 import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
-import 'package:congrega/features/lifecounter/model/Player.dart';
+import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:congrega/match/MatchBloc.dart';
 import 'package:congrega/match/MatchState.dart';
-import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsBloc.dart';
 import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:flutter/material.dart';

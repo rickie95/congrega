@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameState.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:state_persistence/state_persistence.dart';
 
 import 'Game.dart';
@@ -17,7 +18,7 @@ class GameRepository {
 
   final JsonFileStorage storageData = JsonFileStorage(clearDataOnLoadError: false, filename: 'data.json', initialData: {});
   final PlayerRepository playerRepository;
-  final StreamController<GameStatus> _controller = StreamController<GameStatus>();
+  final StreamController<GameStatus> _controller = new BehaviorSubject();
 
   Stream<GameStatus> get status async*{
     yield await _gameInProgress().then((wasInProgress) => wasInProgress ?
@@ -29,12 +30,13 @@ class GameRepository {
     return !((await storageData.load().then((value) => value![GAME_KEY])) == null);
   }
 
-  Future<Game> newGame() async {
+  Future<void> newGame() async {
     Game game = new Game(
       team: [await playerRepository.getAuthenticatedPlayer()],
       opponents: [playerRepository.genericOpponent()],
     );
-    return game;
+    updateGame(game);
+    _controller.add(GameStatus.inProgress);
   }
   
   Future<Game> updateGame(Game game) async {
@@ -42,11 +44,11 @@ class GameRepository {
     return game;
   }
 
-  Future<Game> recoverGame() {
-    return storageData.load().then((value) => value![GAME_KEY]);
+  Future<Game> recoverGame() async {
+    return Game.fromJson(await storageData.load().then((value) => value![GAME_KEY]));
   }
   
-  Future<void> endGame(Game game) async {
+  Future<void> endGame() async {
     storageData.save({GAME_KEY : null});
     _controller.add(GameStatus.ended);
   }

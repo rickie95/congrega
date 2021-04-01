@@ -1,8 +1,11 @@
+import 'package:congrega/features/lifecounter/presentation/bloc/GameBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/GameEvents.dart';
 import 'package:congrega/match/MatchBloc.dart';
 import 'package:congrega/match/MatchEvents.dart';
 import 'package:congrega/match/MatchState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kiwi/kiwi.dart';
 
 class MatchScoreModalBottomSheet extends StatelessWidget {
   @override
@@ -212,6 +215,9 @@ class SurrenderGameDialog extends StatelessWidget {
           child: Text("SURRENDER"),
           color: Colors.redAccent,
           onPressed: () {
+            KiwiContainer().resolve<GameBloc>().add(
+              GamePlayerQuits(KiwiContainer().resolve<GameBloc>().state.user)
+            );
             context.read<MatchBloc>().add(
                 MatchPlayerQuitsGame(
                     context.read<MatchBloc>().state.user));

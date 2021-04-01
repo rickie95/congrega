@@ -1,4 +1,5 @@
 
+import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../model/Player.dart';

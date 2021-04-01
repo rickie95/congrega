@@ -13,7 +13,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:kiwi/kiwi.dart';
-import 'package:state_persistence/state_persistence.dart';
 
 import 'features/authentication/AuthenticationRepository.dart';
 import 'features/loginSignup/data/AuthenticationHttpClient.dart';

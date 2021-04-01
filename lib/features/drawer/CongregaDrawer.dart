@@ -1,7 +1,6 @@
 import 'package:congrega/features/authentication/AuthenticationRepository.dart';
 import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart';
 import 'package:congrega/features/tournaments/presentation/tournamentPage/TournamentPage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:kiwi/kiwi.dart';

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:equatable/equatable.dart';
 

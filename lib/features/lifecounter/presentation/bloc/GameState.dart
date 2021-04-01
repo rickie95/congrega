@@ -1,4 +1,3 @@
-import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../model/Player.dart';
