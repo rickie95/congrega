@@ -5,13 +5,15 @@ import 'package:congrega/features/lifecounter/data/GameRepository.dart';
 import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameState.dart';
+import 'package:congrega/match/MatchBloc.dart';
+import 'package:congrega/match/MatchEvents.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../model/Player.dart';
 
 class GameBloc extends Bloc<GameEvent, GameState> {
   GameBloc({
-    //required this.matchBloc,
+    required this.matchBloc,
     required this.gameRepository,
   }) : super(const GameState.unknown()) {
     _gameStatusObserver = gameRepository.status.listen((status) => add(GameStatusChanged(status)));
@@ -19,7 +21,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   late StreamSubscription<GameStatus> _gameStatusObserver;
   final GameRepository gameRepository;
-  //final MatchBloc matchBloc;
+  final MatchBloc matchBloc;
 
   @override
   Stream<GameState> mapEventToState(GameEvent event) async* {
@@ -82,7 +84,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   GameState _mapPlayerQuitsToState(GamePlayerQuits event, GameState state) {
-    //matchBloc.add(MatchPlayerQuitsGame(event.player));
+    matchBloc.add(MatchPlayerQuitsGame(event.player));
     gameRepository.endGame();
     return state.copyWith(status: GameStatus.unknown);
   }

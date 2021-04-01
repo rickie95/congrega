@@ -49,9 +49,7 @@ class LifeCounterPage extends StatelessWidget {
                   return MultiBlocProvider(
                     providers: [
                       BlocProvider<MatchBloc>(
-                        create: (BuildContext context) => MatchBloc(
-                            initialState: snapshot.data
-                        ),
+                        create: (BuildContext context) => KiwiContainer().resolve<MatchBloc>(),
                       ),
                       BlocProvider<GameBloc>(
                         create: (BuildContext context) => KiwiContainer().resolve<GameBloc>(),

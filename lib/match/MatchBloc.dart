@@ -2,8 +2,14 @@ import 'package:congrega/match/MatchEvents.dart';
 import 'package:congrega/match/MatchState.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'MatchRepository.dart';
+
 class MatchBloc extends Bloc<MatchEvent, MatchState>{
-  MatchBloc({initialState}) : super(initialState);
+  MatchBloc({
+    required this.matchRepository
+}) : super(const MatchState.unknown());
+
+  final MatchRepository matchRepository;
 
   @override
   Stream<MatchState> mapEventToState(MatchEvent event) async* {

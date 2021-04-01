@@ -9,6 +9,8 @@ import 'package:congrega/features/tournaments/data/datasources/TournamentHttpCli
 import 'package:congrega/features/tournaments/data/repositories/TournamentRepository.dart';
 import 'package:congrega/features/users/UserHttpClient.dart';
 import 'package:congrega/features/users/UserRepository.dart';
+import 'package:congrega/match/MatchBloc.dart';
+import 'package:congrega/match/MatchRepository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +31,12 @@ abstract class Injector {
     _configureAuthenticationBlocModuleFactories();
     _configureUserModuleFactories();
     _configureGameBlocModuleFactories();
+    _configureMatchBlocModuleFactories();
   }
+
+  @Register.singleton(MatchRepository)
+  @Register.factory(MatchBloc)
+  void _configureMatchBlocModuleFactories();
 
   @Register.singleton(PlayerRepository)
   @Register.singleton(GameRepository)

@@ -13,7 +13,15 @@ class MatchState extends Equatable {
     required this.opponent,
     this.userScore = 0,
     this.opponentScore = 0,
-});
+  });
+
+  const MatchState.unknown() :
+        this.user = Player.empty,
+        this.opponent = Player.empty,
+        this.type = MatchType.offline,
+        this.opponentScore = 0,
+        this.userScore = 0,
+        this.status = MatchStatus.unknown;
 
   final MatchStatus status;
   final MatchType type;
