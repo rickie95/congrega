@@ -1,8 +1,8 @@
 import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
 import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
-import 'package:congrega/match/MatchBloc.dart';
-import 'package:congrega/match/MatchState.dart';
 import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsBloc.dart';
+import 'package:congrega/features/match/presentation/bloc/MatchBloc.dart';
+import 'package:congrega/features/match/presentation/bloc/MatchState.dart';
 import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,11 +28,7 @@ class LifeCounterPage extends StatelessWidget {
   final PlayerRepository playerRepository;
 
   Future<MatchState> createInitialMatchState() async {
-    return new MatchState(
-      status: MatchStatus.inProgress,
-      user: await playerRepository.getAuthenticatedPlayer(),
-      opponent: playerRepository.genericOpponent(),
-    );
+    return new MatchState.unknown();
   }
 
   @override
@@ -70,7 +66,7 @@ class LifeCounterPage extends StatelessWidget {
                                     flex: 20,
                                     child: Container(
                                       child: Center(
-                                          child: Text(snapshot.data!.opponent.username.isNotEmpty ? snapshot.data!.opponent.username : AppLocalizations.of(context)!.opponent,
+                                          child: Text(snapshot.data!.opponentUsername.isNotEmpty ? snapshot.data!.opponentUsername : AppLocalizations.of(context)!.opponent,
                                             style: TextStyle(fontSize: 20, color: Colors.white),)
                                       ),
                                       color: CongregaTheme.accentColor,

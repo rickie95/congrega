@@ -1,5 +1,5 @@
-import 'package:congrega/match/MatchBloc.dart';
-import 'package:congrega/match/MatchState.dart';
+import 'package:congrega/features/match/presentation/bloc/MatchBloc.dart';
+import 'package:congrega/features/match/presentation/bloc/MatchState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

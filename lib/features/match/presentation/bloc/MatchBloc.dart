@@ -1,15 +1,21 @@
-import 'package:congrega/match/MatchEvents.dart';
-import 'package:congrega/match/MatchState.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
 
-import 'MatchRepository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:congrega/features/match/model/Match.dart';
+
+import '../../data/MatchController.dart';
+import 'MatchEvents.dart';
+import 'MatchState.dart';
 
 class MatchBloc extends Bloc<MatchEvent, MatchState>{
   MatchBloc({
-    required this.matchRepository
-}) : super(const MatchState.unknown());
+    required this.matchController
+  }) : super(const MatchState.unknown()) {
+    _matchStatusObserver = matchController.status.listen((status) => add(MatchStatusChanged(status)));
+  }
 
-  final MatchRepository matchRepository;
+  late StreamSubscription<MatchStatus> _matchStatusObserver;
+  final MatchController matchController;
 
   @override
   Stream<MatchState> mapEventToState(MatchEvent event) async* {
@@ -23,30 +29,27 @@ class MatchBloc extends Bloc<MatchEvent, MatchState>{
   }
 
   MatchState _mapPlayerQuitsGameToState(MatchPlayerQuitsGame event, MatchState state){
+    Match updatedMatch = matchController.playerQuitsGame(state.match, event.player);
     return state.copyWith(
         status: (state.opponentScore > 1 || state.userScore > 1) ? MatchStatus.ended : MatchStatus.inProgress,
-        opponentScore: event.player.id == state.user.id ? state.opponentScore + 1 : state.opponentScore,
-        userScore: event.player.id == state.opponent.id ? state.userScore + 1: state.userScore
+        match: updatedMatch
     );
   }
 
   MatchState _mapPlayerLeaveMatch(MatchPlayerLeaveMatch event, MatchState state) {
+    Match updatedMatch = matchController.playerResign(state.match, event.player);
     return state.copyWith(
         status:  MatchStatus.ended,
-        opponentScore: event.player.id == state.user.id ? 2 : 0,
-        userScore: event.player.id == state.opponent.id ? 2: 0
+        match: updatedMatch,
     );
   }
 
   MatchState _mapPlayerWinsGameToState(MatchPlayerWinsGame event, MatchState state) {
+    Match updatedMatch = matchController.playerWinsGame(state.match, event.player);
     return state.copyWith(
         status: MatchStatus.inProgress,
-        opponentScore: event.player.id == state.opponent.id ? state.opponentScore + 1 : state.opponentScore,
-        userScore: event.player.id == state.user.id ? state.userScore + 1: state.userScore
+        match: updatedMatch
     );
   }
-
-
-
 
 }

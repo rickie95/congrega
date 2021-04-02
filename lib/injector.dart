@@ -4,13 +4,12 @@ import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/LoginBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/signup/SignUpBloc.dart';
+import 'package:congrega/features/match/data/MatchRepository.dart';
 import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/data/datasources/TournamentHttpClient.dart';
 import 'package:congrega/features/tournaments/data/repositories/TournamentRepository.dart';
 import 'package:congrega/features/users/UserHttpClient.dart';
 import 'package:congrega/features/users/UserRepository.dart';
-import 'package:congrega/match/MatchBloc.dart';
-import 'package:congrega/match/MatchRepository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
@@ -18,6 +17,8 @@ import 'package:kiwi/kiwi.dart';
 
 import 'features/authentication/AuthenticationRepository.dart';
 import 'features/loginSignup/data/AuthenticationHttpClient.dart';
+import 'features/match/presentation/bloc/MatchBloc.dart';
+import 'features/match/data/MatchController.dart';
 
 part 'injector.g.dart';
 
@@ -35,6 +36,7 @@ abstract class Injector {
   }
 
   @Register.singleton(MatchRepository)
+  @Register.factory(MatchController)
   @Register.factory(MatchBloc)
   void _configureMatchBlocModuleFactories();
 

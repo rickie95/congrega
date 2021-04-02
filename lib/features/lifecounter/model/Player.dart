@@ -12,8 +12,8 @@ class Player extends Equatable {
 
   static const empty = Player(user: User.empty, points: {});
 
-  get id => this.user.id;
-  get username => this.user.username;
+  String get id => this.user.id;
+  String get username => this.user.username;
 
   static Player playerFromUser(User user) {
     return Player(

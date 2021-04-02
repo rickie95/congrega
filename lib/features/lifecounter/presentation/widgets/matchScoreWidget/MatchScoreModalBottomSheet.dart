@@ -1,8 +1,8 @@
 import 'package:congrega/features/lifecounter/presentation/bloc/GameBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameEvents.dart';
-import 'package:congrega/match/MatchBloc.dart';
-import 'package:congrega/match/MatchEvents.dart';
-import 'package:congrega/match/MatchState.dart';
+import 'package:congrega/features/match/presentation/bloc/MatchBloc.dart';
+import 'package:congrega/features/match/presentation/bloc/MatchEvents.dart';
+import 'package:congrega/features/match/presentation/bloc/MatchState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiwi/kiwi.dart';
@@ -43,7 +43,7 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                               callback: () => context.read<MatchBloc>().add(MatchPlayerWinsGame(state.user)),
                             ),
                             PlayerScoreWidget(
-                                playerUsername: state.opponent.username,
+                                playerUsername: state.opponentUsername,
                                 playerScore:state.opponentScore,
                                 callback: () => context.read<MatchBloc>().add(MatchPlayerWinsGame(state.opponent))
                             ),
@@ -176,8 +176,8 @@ class LeaveMatchDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Leave match?"),
-      content: Text("Leaving the match will result as a total resign."),
+      title: Text("Leave features.match?"),
+      content: Text("Leaving the features.match will result as a total resign."),
       actions: [
         TextButton(
             onPressed: (){ },
