@@ -21,7 +21,19 @@ class MatchController {
     yield* _controller.stream;
   }
 
-  void dispose() => _controller.close();
+  Future<void> newMatch() async {
+    matchRepository.newMatch()
+        .then((_) => _controller.add(MatchStatus.inProgress));
+  }
+
+  Future<void> recoverMatch() async {
+    matchRepository.recoverMatch()
+        .then((_) => _controller.add(MatchStatus.inProgress));
+  }
+
+  Future<Match> getCurrentMatch() async {
+    return await matchRepository.getCurrentMatch();
+  }
 
   Match playerQuitsGame(Match match, Player player) {
     Match updatedMatch = match.copyWith(
@@ -37,7 +49,7 @@ class MatchController {
         opponentScore: player.id == match.user.id ? 2 : 0,
         userScore: player.id == match.opponent.id ? 2: 0
     );
-    // call repo and notify match ending
+    matchRepository.endMatch();
     return updatedMatch;
   }
 
@@ -49,5 +61,7 @@ class MatchController {
     // call repo and update game
     return updatedMatch;
   }
-  
+
+  void dispose() => _controller.close();
+
 }
