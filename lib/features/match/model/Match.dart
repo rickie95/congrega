@@ -41,6 +41,36 @@ class Match extends Equatable {
     );
   }
 
+  Map<String, dynamic> toJson() => {
+      "id" : this.id,
+      "type" : this.type.toString(),
+      "user" : this.user.toJson(),
+      "opponent" : this.opponent.toJson(),
+      "userScore" : this.userScore,
+      "opponentScore" : this.opponentScore,
+  };
+
+  factory Match.fromJson(Map<String, dynamic> jsonObj){
+    return Match(
+      id: jsonObj['id'],
+      type: getMatchTypeFromJson(jsonObj['type']),
+      user: Player.fromJson(jsonObj['user']),
+      opponent: Player.fromJson(jsonObj['opponent']),
+      userScore: jsonObj['userScore'],
+      opponentScore: jsonObj['opponentScore']
+    );
+  }
+
+  static MatchType getMatchTypeFromJson(String encoded){
+    if(encoded == MatchType.offline.toString())
+      return MatchType.offline;
+
+    if(encoded == MatchType.tournament.toString())
+      return MatchType.tournament;
+
+    throw UnimplementedError();
+  }
+
   @override
   List<Object?> get props => [id];
 
