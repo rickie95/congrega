@@ -1,3 +1,4 @@
+import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
 import 'package:congrega/features/users/UserHttpClient.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -26,8 +27,7 @@ class UserRepository {
     return userHttpClient.getUserById(id);
   }
 
-  Future<User>
-  getUser() async {
+  Future<User> getUser() async {
     return User(
         id: await getValueFromKey(ID_KEY),
         name: await getValueFromKey(NAME_KEY),
@@ -49,11 +49,18 @@ class UserRepository {
       secureStorage.write(key: ID_KEY, value: user.id);
     }catch (ex) {
       // 'Error occurred while saving account info on device.'
+      print('Error occurred while saving account info on device.' + ex.toString());
       throw Error();
     }
   }
 
   static User getEmptyUser(){
     return User.empty;
+  }
+
+  Future<void> saveUserInfo(UserCredentials user) async {
+    User userInfo = await userHttpClient.getUserByUsername(user.username);
+    print(userInfo);
+    saveUserAccountInfo(userInfo.copyWith(password: user.password));
   }
 }
