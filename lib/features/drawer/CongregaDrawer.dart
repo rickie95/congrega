@@ -1,7 +1,10 @@
+import 'package:congrega/features/authentication/AuthenticationBloc.dart';
 import 'package:congrega/features/authentication/AuthenticationRepository.dart';
+import 'package:congrega/features/authentication/AuthenticationState.dart';
 import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart';
 import 'package:congrega/features/tournaments/presentation/tournamentPage/TournamentPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:kiwi/kiwi.dart';
 
@@ -17,9 +20,10 @@ class CongregaDrawer extends StatelessWidget {
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children: <Widget>[
+
           _CongregaDrawerHeader(),
           ListTile(
-            leading: Icon(Icons.home),
+              leading: Icon(Icons.home),
               title: Text(AppLocalizations.of(context)!.homepage_title),
               onTap: () {
                 Navigator.push(context, HomePage.route());
@@ -94,22 +98,25 @@ class _CongregaDrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-      Container(
-        height: 120,
-          child: DrawerHeader(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Congrega', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
-                const Padding(padding: EdgeInsets.all(6)),
-                Text('John Doe / DragonSlayer27')
-              ],
+    return DrawerHeader(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Congrega', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+          Divider(),
+          BlocProvider(create: (BuildContext context) => KiwiContainer().resolve<AuthenticationBloc>(),
+            child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              builder: (context, state) {
+                String headerUsername = state.user.username;
+                if(state.user.name.isNotEmpty)
+                  headerUsername += ' (${state.user.name})';
+                return Text(headerUsername);
+              },
             ),
-
-
           )
-      );
+        ],
+      ),
+    );
   }
 
 }
