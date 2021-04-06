@@ -12,6 +12,7 @@ class Arcano {
   static const String MATCHES_URL = "$ARCANO/matches";
   static const String EVENTS_URL = "$ARCANO/events";
   static const String AUTH_URL = "$ARCANO/auth";
+  static const String USERS_URL_BY_USERNAME = USERS_URL + '/byUsername';
 
   static Uri getAuthUri(){
     return Uri(
@@ -27,6 +28,15 @@ class Arcano {
         scheme: SCHEME,
         host: Arcano.IP_ADDRESS,
         path: Arcano.USERS_URL,
+        port: Arcano.PORT
+    );
+  }
+
+  static Uri getUserByUsernameUri(String username){
+    return Uri(
+        scheme: SCHEME,
+        host: Arcano.IP_ADDRESS,
+        path: Arcano.USERS_URL_BY_USERNAME + '/$username',
         port: Arcano.PORT
     );
   }
