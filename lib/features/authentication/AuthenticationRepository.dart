@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:congrega/features/loginSignup/data/AuthenticationHttpClient.dart';
 import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
+import 'package:congrega/features/users/UserRepository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
@@ -12,9 +13,11 @@ class AuthenticationRepository {
 
   AuthenticationRepository({
     required this.storage,
-    required this.authClient
+    required this.authClient,
+    required this.userRepository,
   });
 
+  final UserRepository userRepository;
   final FlutterSecureStorage storage;
   final AuthenticationHttpClient authClient;
   final StreamController<AuthenticationStatus> _controller = StreamController<AuthenticationStatus>();
@@ -35,8 +38,10 @@ class AuthenticationRepository {
     await authClient.logIn(user)
         .then((String token) {
       persistToken(token);
+      userRepository.saveUserInfo(user);
       _controller.add(AuthenticationStatus.authenticated);
     });
+
   }
 
   Future<void> signIn({required UserCredentials user}) async {
