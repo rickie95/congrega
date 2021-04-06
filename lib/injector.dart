@@ -4,6 +4,7 @@ import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/GameBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/LoginBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/signup/SignUpBloc.dart';
+import 'package:congrega/features/match/data/MatchPersistance.dart';
 import 'package:congrega/features/match/data/MatchRepository.dart';
 import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/data/datasources/TournamentHttpClient.dart';
@@ -35,7 +36,8 @@ abstract class Injector {
     _configureMatchBlocModuleFactories();
   }
 
-  @Register.singleton(MatchRepository)
+  @Register.factory(MatchPersistence)
+  @Register.factory(MatchRepository)
   @Register.factory(MatchController)
   @Register.factory(MatchBloc)
   void _configureMatchBlocModuleFactories();
@@ -45,7 +47,7 @@ abstract class Injector {
   @Register.factory(GameBloc)
   void _configureGameBlocModuleFactories();
 
-  @Register.factory(FlutterSecureStorage)
+  @Register.singleton(FlutterSecureStorage)
   @Register.factory(http.Client)
   void _configureCommonUtilitiesFactories();
 
