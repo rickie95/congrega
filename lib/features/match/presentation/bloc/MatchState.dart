@@ -2,8 +2,7 @@ import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/match/model/Match.dart';
 import 'package:equatable/equatable.dart';
 
-enum MatchStatus {unknown, inProgress, ended}
-enum MatchType { tournament, offline  }
+enum MatchStatus {unknown, inProgress, ended, updated}
 
 class MatchState extends Equatable {
 
