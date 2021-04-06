@@ -13,6 +13,7 @@ class UserHttpClient {
   final http.Client httpClient;
 
   static Uri getUserEndpointById(String userId) => Uri(path: '${Arcano.USERS_URL}/$userId');
+  static Uri getUserEndpointByUsername(String username) => Uri(path: '${Arcano.USERS_URL_BY_USERNAME}/$username');
 
   Future<List<User>> getUserList() async {
     final response = await httpClient.get(Uri(path: Arcano.USERS_URL));
@@ -32,6 +33,23 @@ class UserHttpClient {
 
   Future<User> getUserById(String id) async {
     final response = await httpClient.get(getUserEndpointById(id));
+
+    switch(response.statusCode){
+      case(200):
+      // Create an object from response's body
+        final jsonBody = jsonDecode(response.body);
+        return User.fromJson(jsonBody);
+      case(404):
+        throw NotFoundException();
+      case(500):
+        throw ServerErrorException();
+    }
+    throw OtherErrorException();
+  }
+
+  Future<User> getUserByUsername(String username) async {
+    Uri uri = Arcano.getUserByUsernameUri(username);
+    final response = await httpClient.get(uri);
 
     switch(response.statusCode){
       case(200):
