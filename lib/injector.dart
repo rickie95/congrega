@@ -1,11 +1,12 @@
 import 'package:congrega/features/authentication/AuthenticationBloc.dart';
-import 'package:congrega/features/lifecounter/data/GameRepository.dart';
+import 'package:congrega/features/lifecounter/data/game/GamePersistance.dart';
+import 'package:congrega/features/lifecounter/data/game/GameRepository.dart';
 import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
-import 'package:congrega/features/lifecounter/presentation/bloc/GameBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/LoginBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/signup/SignUpBloc.dart';
-import 'package:congrega/features/match/data/MatchPersistance.dart';
-import 'package:congrega/features/match/data/MatchRepository.dart';
+import 'package:congrega/features/lifecounter/data/match/MatchPersistance.dart';
+import 'package:congrega/features/lifecounter/data/match/MatchRepository.dart';
 import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/data/datasources/TournamentHttpClient.dart';
 import 'package:congrega/features/tournaments/data/repositories/TournamentRepository.dart';
@@ -18,8 +19,8 @@ import 'package:kiwi/kiwi.dart';
 
 import 'features/authentication/AuthenticationRepository.dart';
 import 'features/loginSignup/data/AuthenticationHttpClient.dart';
-import 'features/match/presentation/bloc/MatchBloc.dart';
-import 'features/match/data/MatchController.dart';
+import 'features/lifecounter/presentation/bloc/match/MatchBloc.dart';
+import 'features/lifecounter/data/match/MatchController.dart';
 
 part 'injector.g.dart';
 
@@ -42,9 +43,10 @@ abstract class Injector {
   @Register.factory(MatchBloc)
   void _configureMatchBlocModuleFactories();
 
+  @Register.factory(GamePersistence)
   @Register.singleton(PlayerRepository)
   @Register.singleton(GameRepository)
-  @Register.factory(GameBloc)
+  @Register.factory(LifeCounterBloc)
   void _configureGameBlocModuleFactories();
 
   @Register.singleton(FlutterSecureStorage)
