@@ -1,5 +1,5 @@
 import 'package:congrega/features/lifecounter/model/Player.dart';
-import 'package:congrega/features/match/presentation/bloc/MatchState.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
 import 'package:equatable/equatable.dart';
 
 class MatchEvent extends Equatable {
@@ -9,8 +9,8 @@ class MatchEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class MatchPlayerQuitsGame extends MatchEvent {
-  const MatchPlayerQuitsGame(this.player);
+class PlayerQuitsGame extends MatchEvent {
+  const PlayerQuitsGame(this.player);
   
   final Player player;
 
@@ -18,8 +18,8 @@ class MatchPlayerQuitsGame extends MatchEvent {
   List<Object> get props => [player];
 }
 
-class MatchPlayerLeaveMatch extends MatchEvent {
-  const MatchPlayerLeaveMatch(this.player);
+class PlayerLeavesMatch extends MatchEvent {
+  const PlayerLeavesMatch(this.player);
 
   final Player player;
 
@@ -35,6 +35,20 @@ class MatchPlayerWinsGame extends MatchEvent {
   @override
   List<Object> get props => [player];
 }
+
+class MatchAvailable extends MatchEvent {
+  const MatchAvailable();
+
+  @override
+  List<Object> get props => [];
+}
+class GameUpdated extends MatchEvent {
+  const GameUpdated();
+
+  @override
+  List<Object> get props => [];
+}
+
 
 class MatchStatusChanged extends MatchEvent {
   const MatchStatusChanged(this.status);

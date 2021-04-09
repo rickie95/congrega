@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:congrega/features/match/model/Match.dart';
+import 'package:congrega/features/lifecounter/model/Match.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MatchPersistence {
