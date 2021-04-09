@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:congrega/features/lifecounter/data/Game.dart';
+import 'package:congrega/features/lifecounter/model/Game.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
