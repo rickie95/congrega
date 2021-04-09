@@ -1,7 +1,7 @@
 import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
-import 'package:congrega/features/lifecounter/presentation/bloc/GameBloc.dart';
-import 'package:congrega/features/lifecounter/presentation/bloc/GameEvents.dart';
-import 'package:congrega/features/lifecounter/presentation/bloc/GameState.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterEvents.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -20,7 +20,7 @@ class LifeCounterModalBottomSheet extends StatelessWidget {
   }
 
   Widget _body(BuildContext context){
-    return BlocBuilder<GameBloc, GameState>(
+    return BlocBuilder<LifeCounterBloc, LifeCounterState>(
         buildWhen: (previous, current) => (previous.user.points != current.user.points),
         builder: (context, state) {
           return SettingsList(
@@ -36,9 +36,9 @@ class LifeCounterModalBottomSheet extends StatelessWidget {
                       switchValue: state.user.hasPointsOfType(PlayerPoints.playerCountersTypes[index]),
                       onToggle: (bool toggle) {
                         toggle ?
-                        context.read<GameBloc>().add(GamePlayerPointsAdded(state.user,
+                        context.read<LifeCounterBloc>().add(GamePlayerPointsAdded(state.user,
                             PlayerPoints.getInstanceOf(PlayerPoints.playerCountersTypes[index]))) :
-                        context.read<GameBloc>().add(GamePlayerPointsRemoved(state.user,
+                        context.read<LifeCounterBloc>().add(GamePlayerPointsRemoved(state.user,
                             PlayerPoints.getInstanceOf(PlayerPoints.playerCountersTypes[index])));
                       },
                     )

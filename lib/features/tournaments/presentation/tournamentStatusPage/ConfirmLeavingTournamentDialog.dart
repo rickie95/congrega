@@ -22,7 +22,7 @@ class ConfirmLeavingEventDialog extends StatelessWidget {
           color: Colors.redAccent,
           onPressed: () {
           context.read<TournamentBloc>().add(
-              AbandoningTournament(
+              RetirePlayer(
                   BlocProvider.of<AuthenticationBloc>(context).state.user
               )
           );

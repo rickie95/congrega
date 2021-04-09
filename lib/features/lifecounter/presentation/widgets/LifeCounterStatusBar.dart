@@ -1,4 +1,4 @@
-import 'package:congrega/features/match/presentation/bloc/MatchBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -6,8 +6,8 @@ import 'LifeCounterModalBottomSheet.dart';
 import 'matchScoreWidget/MatchScoreModalBottomSheet.dart';
 import 'matchScoreWidget/MatchScoreWidget.dart';
 import '../../timeWidgets/presentation/widgets/TimeWidget.dart';
-import '../bloc/GameBloc.dart';
-import '../bloc/GameState.dart';
+import '../bloc/LifeCounterBloc.dart';
+import '../bloc/LifeCounterState.dart';
 
 class StatusBar extends StatelessWidget {
   const StatusBar();
@@ -28,7 +28,7 @@ class StatusBar extends StatelessWidget {
 
           // Score
           Expanded(flex: 33,
-            // child: Text("Status BAr"),
+            // child: Text("Status Bar"),
             child: GestureDetector(
                 onTap: () => showModalBottomSheet<void>(
                     context: context,
@@ -61,14 +61,14 @@ class StatusBar extends StatelessWidget {
 class OptionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameBloc, GameState>(
-        builder: (context, GameState state){
+    return BlocBuilder<LifeCounterBloc, LifeCounterState>(
+        builder: (context, LifeCounterState state){
           return GestureDetector(
               onTap: () {
                 showModalBottomSheet<void>(context: context,
                     builder: (_) {
                       return BlocProvider.value(
-                          value: BlocProvider.of<GameBloc>(context),
+                          value: BlocProvider.of<LifeCounterBloc>(context),
                           child: LifeCounterModalBottomSheet());
                     });
               },

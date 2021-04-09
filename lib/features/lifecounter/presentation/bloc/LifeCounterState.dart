@@ -4,9 +4,9 @@ import '../../model/Player.dart';
 
 enum GameStatus {unknown, inProgress, ended}
 
-class GameState extends Equatable {
+class LifeCounterState extends Equatable {
 
-  const GameState({
+  const LifeCounterState({
     this.status = GameStatus.unknown,
     required this.user,
     required this.opponent
@@ -16,14 +16,14 @@ class GameState extends Equatable {
   final Player opponent;
   final GameStatus status;
   
-  const GameState.unknown() : 
+  const LifeCounterState.unknown() : 
         this.status = GameStatus.unknown, 
         this.user = Player.empty,
         this.opponent = Player.empty;
 
-  GameState copyWith({GameStatus? status, Player? user, Player? opponent,
+  LifeCounterState copyWith({GameStatus? status, Player? user, Player? opponent,
     int? userScore, int? opponentScore}){
-    return GameState(
+    return LifeCounterState(
       status: status ?? this.status,
       user: user ?? this.user,
       opponent: opponent ?? this.opponent

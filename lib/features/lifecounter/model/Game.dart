@@ -2,7 +2,9 @@ import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:equatable/equatable.dart';
 
 class Game extends Equatable {
-  
+
+  static const empty = const Game(team: [], opponents: []);
+
   const Game({required this.team, required this.opponents});
   
   final List<Player> team;

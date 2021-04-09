@@ -288,13 +288,13 @@ class TournamentStatusPage extends StatelessWidget {
 
   TournamentEvent getNextState(TournamentStatus status) {
     if(status == TournamentStatus.scheduled)
-      return TournamentIsWaiting();
+      return WaitForRound();
 
     if(status == TournamentStatus.waiting)
-      return TournamentIsInProgress();
+      return RoundIsAvailable();
 
     if(status == TournamentStatus.inProgress)
-      return TournamentEnds();
+      return EndTournament();
 
     if(status == TournamentStatus.ended)
       return TournamentIsScheduled();

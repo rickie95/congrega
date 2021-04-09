@@ -3,17 +3,17 @@ import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../model/Player.dart';
-import 'GameState.dart';
+import 'LifeCounterState.dart';
 
-abstract class GameEvent extends Equatable {
-  const GameEvent();
+abstract class LifeCounterEvent extends Equatable {
+  const LifeCounterEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class GameStatusChanged extends GameEvent {
-  const GameStatusChanged(this.status);
+class GameUpdated extends LifeCounterEvent {
+  const GameUpdated(this.status);
 
   final GameStatus status;
 
@@ -21,16 +21,7 @@ class GameStatusChanged extends GameEvent {
   List<Object> get props => [status];
 }
 
-class GamePlayerQuits extends GameEvent {
-  const GamePlayerQuits(this.player);
-  
-  final Player player;
-  
-  @override
-  List<Object> get props => [player];
-}
-
-class GamePlayerPointsChanged extends GameEvent {
+class GamePlayerPointsChanged extends LifeCounterEvent {
   const GamePlayerPointsChanged(this.player, this.points);
 
   final Player player;
@@ -40,7 +31,7 @@ class GamePlayerPointsChanged extends GameEvent {
   List<Object> get props => [player, points];
 }
 
-class GamePlayerPointsAdded extends GameEvent {
+class GamePlayerPointsAdded extends LifeCounterEvent {
   const GamePlayerPointsAdded(this.player, this.points);
 
   final Player player;
@@ -49,7 +40,7 @@ class GamePlayerPointsAdded extends GameEvent {
   @override
   List<Object> get props => [player, points];
 }
-class GamePlayerPointsRemoved extends GameEvent {
+class GamePlayerPointsRemoved extends LifeCounterEvent {
   const GamePlayerPointsRemoved(this.player, this.points);
 
   final Player player;

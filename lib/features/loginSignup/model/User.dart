@@ -35,8 +35,8 @@ class User extends Equatable {
     return User(
       id: json['id'].toString(),
       username: json['username'],
-      password: json['password'],
-      name: json['name'],
+      password: json['password'] ?? '',
+      name: json['name'] ?? '',
     );
   }
 

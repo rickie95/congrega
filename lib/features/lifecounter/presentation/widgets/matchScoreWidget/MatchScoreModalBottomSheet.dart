@@ -1,8 +1,11 @@
-import 'package:congrega/features/lifecounter/presentation/bloc/GameBloc.dart';
-import 'package:congrega/features/lifecounter/presentation/bloc/GameEvents.dart';
-import 'package:congrega/features/match/presentation/bloc/MatchBloc.dart';
-import 'package:congrega/features/match/presentation/bloc/MatchEvents.dart';
-import 'package:congrega/features/match/presentation/bloc/MatchState.dart';
+import 'package:congrega/features/dashboard/presentation/HomePage.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterEvents.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
+import 'package:congrega/features/tournaments/model/Tournament.dart';
+import 'package:congrega/features/tournaments/presentation/tournamentStatusPage/TournamentStatusPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiwi/kiwi.dart';
@@ -188,9 +191,13 @@ class LeaveMatchDialog extends StatelessWidget {
           //color: Colors.redAccent,
           onPressed: () {
             context.read<MatchBloc>().add(
-                MatchPlayerLeaveMatch(
-                    context.read<MatchBloc>().state.user));
-            Navigator.of(context).pop();
+                PlayerLeavesMatch(context.read<MatchBloc>().state.user));
+            if(KiwiContainer().resolve<MatchBloc>().isAnOfflineMatch()) {
+              Navigator.of(context).pushAndRemoveUntil<void>(
+                  HomePage.route(), (route) => false);
+            } else {
+              throw Exception("Online match?");
+            }
           },
         ),
       ],
@@ -215,11 +222,11 @@ class SurrenderGameDialog extends StatelessWidget {
           child: Text("SURRENDER"),
           color: Colors.redAccent,
           onPressed: () {
-            KiwiContainer().resolve<GameBloc>().add(
-              GamePlayerQuits(KiwiContainer().resolve<GameBloc>().state.user)
+            KiwiContainer().resolve<MatchBloc>().add(
+              PlayerQuitsGame(KiwiContainer().resolve<LifeCounterBloc>().state.user)
             );
             context.read<MatchBloc>().add(
-                MatchPlayerQuitsGame(
+                PlayerQuitsGame(
                     context.read<MatchBloc>().state.user));
             Navigator.of(context).pop();
           },

@@ -1,8 +1,8 @@
 import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
 import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsBloc.dart';
-import 'package:congrega/features/match/presentation/bloc/MatchBloc.dart';
-import 'package:congrega/features/match/presentation/bloc/MatchState.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
 import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,9 +10,9 @@ import 'package:kiwi/kiwi.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'bloc/GameBloc.dart';
-import 'bloc/GameEvents.dart';
-import 'bloc/GameState.dart';
+import 'bloc/LifeCounterBloc.dart';
+import 'bloc/LifeCounterEvents.dart';
+import 'bloc/LifeCounterState.dart';
 import 'widgets/LifeCounterStatusBar.dart';
 
 class LifeCounterPage extends StatelessWidget {
@@ -47,8 +47,8 @@ class LifeCounterPage extends StatelessWidget {
                       BlocProvider<MatchBloc>(
                         create: (BuildContext context) => KiwiContainer().resolve<MatchBloc>(),
                       ),
-                      BlocProvider<GameBloc>(
-                        create: (BuildContext context) => KiwiContainer().resolve<GameBloc>(),
+                      BlocProvider<LifeCounterBloc>(
+                        create: (BuildContext context) => KiwiContainer().resolve<LifeCounterBloc>(),
                       ),
                       BlocProvider<TimeSettingsBloc>(
                         create: (BuildContext context) => TimeSettingsBloc(),
@@ -111,16 +111,30 @@ class OpponentPointsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Column is rebuilt whenever the points list change its size
-    return Container(
-        child: BlocBuilder<GameBloc, GameState>(
-            buildWhen: (previous, current) =>
-            previous.opponent.points != current.opponent.points,
-            builder: (context, state) {
-              return Column(
-                children: getPointRows(context, state.opponent.points),
-              );
-            }
-        )
+    return Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        Container(
+          child: BlocBuilder<LifeCounterBloc, LifeCounterState>(
+              buildWhen: (previous, current) =>
+              previous.opponent.points != current.opponent.points,
+              builder: (context, state) {
+                return Column(
+                  children: getPointRows(context, state.opponent.points),
+                );
+              }
+          )
+      ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FloatingActionButton(
+            elevation: 14,
+              child: Icon(Icons.settings),
+              onPressed: () {}
+              ),
+        ),
+
+      ],
     );
   }
 
@@ -163,14 +177,14 @@ class OpponentPointRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameBloc, GameState>(
+    return BlocBuilder<LifeCounterBloc, LifeCounterState>(
         builder: (context, state) {
           return Row(
             children: [
               Expanded(
                   flex: 40,
                   child: GestureDetector(
-                      onTap: () => context.read<GameBloc>().add(
+                      onTap: () => context.read<LifeCounterBloc>().add(
                           GamePlayerPointsChanged(state.opponent,
                               pointsData.copyWith(pointsData.value - 1))),
                       child: Container(
@@ -198,7 +212,7 @@ class OpponentPointRow extends StatelessWidget {
               Expanded(
                 flex: 40,
                 child: GestureDetector(
-                    onTap: () => context.read<GameBloc>().add(
+                    onTap: () => context.read<LifeCounterBloc>().add(
                         GamePlayerPointsChanged(state.opponent,
                             pointsData.copyWith(pointsData.value + 1))),
                     child: Container(
@@ -236,7 +250,7 @@ class PlayerPointsWidget extends StatelessWidget {
 
     // Column is rebuilt whenever the points list change its size
     return Container(
-        child: BlocBuilder<GameBloc, GameState>(
+        child: BlocBuilder<LifeCounterBloc, LifeCounterState>(
             buildWhen: (previous, current) =>
             previous.user.points != current.user.points,
             builder: (context, state) {
@@ -286,14 +300,14 @@ class PointRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameBloc, GameState>(
+    return BlocBuilder<LifeCounterBloc, LifeCounterState>(
         builder: (context, state) {
           return Row(
             children: [
               Expanded(
                   flex: 40,
                   child: GestureDetector(
-                      onTap: () => context.read<GameBloc>().add(
+                      onTap: () => context.read<LifeCounterBloc>().add(
                           GamePlayerPointsChanged(state.user,
                               pointsData.copyWith(pointsData.value - 1))),
                       child: Container(
@@ -321,7 +335,7 @@ class PointRow extends StatelessWidget {
               Expanded(
                 flex: 40,
                 child: GestureDetector(
-                    onTap: () => context.read<GameBloc>().add(
+                    onTap: () => context.read<LifeCounterBloc>().add(
                         GamePlayerPointsChanged(state.user,
                             pointsData.copyWith(pointsData.value + 1))),
                     child: Container(

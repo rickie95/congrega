@@ -8,8 +8,8 @@ class TournamentEvent extends Equatable{
   List<Object> get props => [];
 }
 
-class EnrollingInTournament extends TournamentEvent {
-  const EnrollingInTournament(this.user);
+class EnrollPlayer extends TournamentEvent {
+  const EnrollPlayer(this.user);
 
   final User user;
 
@@ -17,8 +17,8 @@ class EnrollingInTournament extends TournamentEvent {
   List<Object> get props => [user];
 }
 
-class AbandoningTournament extends TournamentEvent {
-  const AbandoningTournament(this.user);
+class RetirePlayer extends TournamentEvent {
+  const RetirePlayer(this.user);
 
   final User user;
 
@@ -26,17 +26,17 @@ class AbandoningTournament extends TournamentEvent {
   List<Object> get props => [user];
 }
 
-class TournamentIsWaiting extends TournamentEvent {
+class WaitForRound extends TournamentEvent {
   @override
   List<Object> get props => [];
 }
 
-class TournamentIsInProgress extends TournamentEvent {
+class RoundIsAvailable extends TournamentEvent {
   @override
   List<Object> get props => [];
 }
 
-class TournamentEnds extends TournamentEvent {
+class EndTournament extends TournamentEvent {
   @override
   List<Object> get props => [];
 }
