@@ -64,14 +64,7 @@ class OptionButton extends StatelessWidget {
     return BlocBuilder<LifeCounterBloc, LifeCounterState>(
         builder: (context, LifeCounterState state){
           return GestureDetector(
-              onTap: () {
-                showModalBottomSheet<void>(context: context,
-                    builder: (_) {
-                      return BlocProvider.value(
-                          value: BlocProvider.of<LifeCounterBloc>(context),
-                          child: LifeCounterModalBottomSheet());
-                    });
-              },
+              onTap: () {},
               child: Container(
                 child:  Center(child: Icon(Icons.settings, size: 30,),),
               )

@@ -1,31 +1,24 @@
-import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
-import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
+import 'package:congrega/features/lifecounter/presentation/widgets/LifeCounterModalBottomSheet.dart';
+import 'package:congrega/features/lifecounter/presentation/widgets/PlayerPointsWidget.dart';
 import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
-import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiwi/kiwi.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'bloc/LifeCounterBloc.dart';
-import 'bloc/LifeCounterEvents.dart';
 import 'bloc/LifeCounterState.dart';
 import 'widgets/LifeCounterStatusBar.dart';
 
 class LifeCounterPage extends StatelessWidget {
 
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => LifeCounterPage(
-        playerRepository: KiwiContainer().resolve<PlayerRepository>()),
-    );
+    return MaterialPageRoute<void>(builder: (_) => LifeCounterPage());
   }
 
-  LifeCounterPage({required this.playerRepository}) : super();
-
-  final PlayerRepository playerRepository;
+  LifeCounterPage() : super();
 
   Future<MatchState> createInitialMatchState() async {
     return new MatchState.unknown();
@@ -36,331 +29,102 @@ class LifeCounterPage extends StatelessWidget {
     return Scaffold(
         body: SafeArea(
             child: FutureBuilder(
-              future: createInitialMatchState(),
+                future: createInitialMatchState(),
                 builder: (BuildContext context, AsyncSnapshot<MatchState> snapshot) {
-                if(snapshot.connectionState == ConnectionState.waiting)
-                  return Text("Just a sec bro");
+                  if(snapshot.connectionState == ConnectionState.waiting)
+                    return Text("Just a sec bro");
 
-                if(snapshot.hasData && snapshot.data != null)
-                  return MultiBlocProvider(
-                    providers: [
-                      BlocProvider<MatchBloc>(
-                        create: (BuildContext context) => KiwiContainer().resolve<MatchBloc>(),
-                      ),
-                      BlocProvider<LifeCounterBloc>(
-                        create: (BuildContext context) => KiwiContainer().resolve<LifeCounterBloc>(),
-                      ),
-                      BlocProvider<TimeSettingsBloc>(
-                        create: (BuildContext context) => TimeSettingsBloc(),
-                      )
-                    ],
-                    child: Column(
-                      children: [
-
-                        // OPPONENT BAR
-                        Expanded( flex: 45,
-                            child:  Container( // opponent
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    flex: 20,
-                                    child: Container(
-                                      child: Center(
-                                          child: Text(snapshot.data!.opponentUsername.isNotEmpty ? snapshot.data!.opponentUsername : AppLocalizations.of(context)!.opponent,
-                                            style: TextStyle(fontSize: 20, color: Colors.white),)
-                                      ),
-                                      color: CongregaTheme.accentColor,
-                                    ),
-                                  ),
-
-
-                                  // SEZIONE PUNTEGGIO AVVERSARIO
-                                  Expanded(
-                                    flex: 80,
-                                    child: Transform.rotate(
-                                        angle: 3.14,
-                                        child: OpponentPointsWidget()
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
-
-                        // STATUS BAR
-                        Expanded( flex: 10,
-                            child:  StatusBar()),
-
-                        // PLAYER BAR
-                        Expanded( flex: 45,
-                          child: PlayerPointsWidget(),
+                  if(snapshot.hasData && snapshot.data != null)
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider<MatchBloc>(
+                          create: (BuildContext context) => KiwiContainer().resolve<MatchBloc>(),
                         ),
+                        BlocProvider<LifeCounterBloc>(
+                          create: (BuildContext context) => KiwiContainer().resolve<LifeCounterBloc>(),
+                        ),
+                        BlocProvider<TimeSettingsBloc>(
+                          create: (BuildContext context) => TimeSettingsBloc(),
+                        )
                       ],
-                    ),
-                  );
+                      child: Column(
+                        children: [
 
-                return Text("Error");
+                          // OPPONENT BAR
+                          Expanded( flex: 46,
+                              child:  Container( // opponent
+                                child: Column(
+                                  children: [
+                                    // Expanded(
+                                    //   flex: 20,
+                                    //   child: Container(
+                                    //     child: Center(
+                                    //         child: Text(snapshot.data!.opponentUsername.isNotEmpty ? snapshot.data!.opponentUsername : AppLocalizations.of(context)!.opponent,
+                                    //           style: TextStyle(fontSize: 20, color: Colors.white),)
+                                    //     ),
+                                    //     color: CongregaTheme.accentColor,
+                                    //   ),
+                                    // ),
+
+
+                                    // SEZIONE PUNTEGGIO AVVERSARIO
+                                    Expanded(
+                                      flex: 100,
+                                      child: Transform.rotate(
+                                          angle: 0,
+                                          child: PlayerPointsWidget(
+                                            pointSectionBlocBuilder: BlocBuilder<LifeCounterBloc, LifeCounterState>(
+                                                buildWhen: (previous, current) =>
+                                                previous.opponent.points != current.opponent.points,
+                                                builder: (context, state) {
+                                                  return Column(
+                                                    children: getPointRows(context, state.opponent),
+                                                  );
+                                                }
+                                            ),
+                                            settingsBlocBuilder: BlocBuilder<LifeCounterBloc, LifeCounterState>(
+                                                buildWhen: (previous, current) => (previous.opponent.points != current.opponent.points),
+                                                builder: (context, state) => PlayerSettingsModalBottomSheet(player: state.opponent)
+                                            ),
+                                            backgroundColor: Colors.deepPurple,
+                                            playerName: 'Opponent',
+                                          )
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+
+                          // STATUS BAR
+                          Expanded( flex: 8,
+                              child:  StatusBar()),
+
+                          // PLAYER BAR
+                          Expanded( flex: 46,
+                            child: PlayerPointsWidget(
+                              pointSectionBlocBuilder: BlocBuilder<LifeCounterBloc, LifeCounterState>(
+                                  buildWhen: (previous, current) =>
+                                  previous.user.points != current.user.points,
+                                  builder: (context, state) {
+                                    return Column(
+                                      children: getPointRows(context, state.user),
+                                    );
+                                  }
+                              ),
+                              settingsBlocBuilder: BlocBuilder<LifeCounterBloc, LifeCounterState>(
+                                  buildWhen: (previous, current) => (previous.user.points != current.user.points),
+                                  builder: (context, state) => PlayerSettingsModalBottomSheet(player: state.user)
+                              ),
+                              backgroundColor: Colors.orange,
+                              playerName: 'Player',
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+
+                  return Text("Error");
                 }
             )));
-  }
-
-}
-
-class OpponentPointsWidget extends StatelessWidget {
-  const OpponentPointsWidget() : super();
-
-  @override
-  Widget build(BuildContext context) {
-    // Column is rebuilt whenever the points list change its size
-    return Stack(
-      alignment: Alignment.bottomRight,
-      children: [
-        Container(
-          child: BlocBuilder<LifeCounterBloc, LifeCounterState>(
-              buildWhen: (previous, current) =>
-              previous.opponent.points != current.opponent.points,
-              builder: (context, state) {
-                return Column(
-                  children: getPointRows(context, state.opponent.points),
-                );
-              }
-          )
-      ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: FloatingActionButton(
-            elevation: 14,
-              child: Icon(Icons.settings),
-              onPressed: () {}
-              ),
-        ),
-
-      ],
-    );
-  }
-
-  List<Widget> getPointRows(BuildContext context, Set<PlayerPoints> pointList){
-    return new List.generate(pointList.length, (int index){
-      return new Expanded(
-          flex: index==0 ? mainFlex(pointList.length) : secondaryFlex(pointList.length),
-          child: OpponentPointRow(pointsData: pointList.elementAt(index))
-      );
-    });
-  }
-
-  int mainFlex(int count){
-    switch(count) {
-      case 1: return 100;
-      case 2: return 60;
-      case 3: return 40;
-      case 4: return 30;
-      case 5: return 20;
-    }
-    throw Exception("Too many counters");
-  }
-
-  int secondaryFlex(int count){
-    switch(count) {
-      case 2: return 40;
-      case 3: return 30;
-      case 4: return 23;
-      case 5: return 20;
-    }
-    throw Exception("Too many counters");
-  }
-
-}
-
-class OpponentPointRow extends StatelessWidget {
-  const OpponentPointRow({required this.pointsData}) : super();
-
-  final PlayerPoints pointsData;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LifeCounterBloc, LifeCounterState>(
-        builder: (context, state) {
-          return Row(
-            children: [
-              Expanded(
-                  flex: 40,
-                  child: GestureDetector(
-                      onTap: () => context.read<LifeCounterBloc>().add(
-                          GamePlayerPointsChanged(state.opponent,
-                              pointsData.copyWith(pointsData.value - 1))),
-                      child: Container(
-                        color: Colors.grey,
-                        child: Center(
-                          child: Icon(Icons.remove, size: 20,),
-                        ),
-                      )
-                  )
-              ),
-
-              Expanded(
-                flex: 20,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(child: Text(pointsData.value.toString(), style: TextStyle(fontSize: 30))),
-                    const Padding(padding: EdgeInsets.all(2)),
-                    Center(child: Icon(getIconForPoints(pointsData), size: 20,),)
-                  ],
-                ),
-              ),
-
-              Expanded(
-                flex: 40,
-                child: GestureDetector(
-                    onTap: () => context.read<LifeCounterBloc>().add(
-                        GamePlayerPointsChanged(state.opponent,
-                            pointsData.copyWith(pointsData.value + 1))),
-                    child: Container(
-                      color: Colors.grey,
-                      child: Center(
-                        child: Icon(Icons.add, size: 20,),
-                      ),
-                    )
-                ),
-              ),
-            ],
-          );
-        }
-    );
-  }
-
-  IconData getIconForPoints(PlayerPoints points) {
-    if (points is LifePoints) {
-      return Icons.favorite;
-    } else if (points is VenomPoints) {
-      return Icons.visibility;
-    } else if (points is EnergyPoints) {
-      return Icons.flash_on;
-    }
-
-    return Icons.whatshot;
-  }
-}
-
-class PlayerPointsWidget extends StatelessWidget {
-  const PlayerPointsWidget() : super();
-
-  @override
-  Widget build(BuildContext context) {
-
-    // Column is rebuilt whenever the points list change its size
-    return Container(
-        child: BlocBuilder<LifeCounterBloc, LifeCounterState>(
-            buildWhen: (previous, current) =>
-            previous.user.points != current.user.points,
-            builder: (context, state) {
-              return Column(
-                children: getPointRows(context, state.user.points),
-              );
-            }
-        )
-    );
-  }
-
-  List<Widget> getPointRows(BuildContext context, Set<PlayerPoints> pointList){
-    return new List.generate(pointList.length, (int index){
-      return new Expanded(
-          flex: index==0 ? mainFlex(pointList.length) : secondaryFlex(pointList.length),
-          child: PointRow(pointsData: pointList.elementAt(index))
-      );
-    });
-  }
-
-  int mainFlex(int count){
-    switch(count) {
-      case 1: return 100;
-      case 2: return 60;
-      case 3: return 40;
-      case 4: return 30;
-      case 5: return 20;
-    }
-    throw Exception("Too many counters");
-  }
-
-  int secondaryFlex(int count){
-    switch(count) {
-      case 2: return 40;
-      case 3: return 30;
-      case 4: return 23;
-      case 5: return 20;
-    }
-    throw Exception("Too many counters");
-  }
-}
-
-class PointRow extends StatelessWidget {
-  const PointRow({required this.pointsData}) : super();
-
-  final PlayerPoints pointsData;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LifeCounterBloc, LifeCounterState>(
-        builder: (context, state) {
-          return Row(
-            children: [
-              Expanded(
-                  flex: 40,
-                  child: GestureDetector(
-                      onTap: () => context.read<LifeCounterBloc>().add(
-                          GamePlayerPointsChanged(state.user,
-                              pointsData.copyWith(pointsData.value - 1))),
-                      child: Container(
-                        color: Colors.grey,
-                        child: Center(
-                          child: Icon(Icons.remove, size: 20,),
-                        ),
-                      )
-                  )
-              ),
-
-              Expanded(
-                flex: 20,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(child: Text(pointsData.value.toString(), style: TextStyle(fontSize: 30))),
-                    const Padding(padding: EdgeInsets.all(2)),
-                    Center(child: Icon(getIconForPoints(pointsData), size: 20,),)
-                  ],
-                ),
-              ),
-
-              Expanded(
-                flex: 40,
-                child: GestureDetector(
-                    onTap: () => context.read<LifeCounterBloc>().add(
-                        GamePlayerPointsChanged(state.user,
-                            pointsData.copyWith(pointsData.value + 1))),
-                    child: Container(
-                      color: Colors.grey,
-                      child: Center(
-                        child: Icon(Icons.add, size: 20,),
-                      ),
-                    )
-                ),
-              ),
-            ],
-          );
-        }
-    );
-  }
-
-  IconData getIconForPoints(PlayerPoints points) {
-    if (points is LifePoints) {
-      return Icons.favorite;
-    } else if (points is VenomPoints) {
-      return Icons.visibility;
-    } else if (points is EnergyPoints) {
-      return Icons.flash_on;
-    }
-
-    return Icons.whatshot;
   }
 }
