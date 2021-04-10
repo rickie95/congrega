@@ -7,7 +7,7 @@ import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/Time
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class TimerWidget extends StatefulWidget {
+class TimerWidget extends BaseTimeWidget {
   
   @override
   BaseTimeWidgetState createState() => _TimerWidgetState();
@@ -22,10 +22,10 @@ class _TimerWidgetState extends BaseTimeWidgetState{
 
   @override
   void initState() {
-    super.initState();
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _updateState());
     _duration = BlocProvider.of<TimeSettingsBloc>(context).state.duration;
     secondsRemaining = _duration.inSeconds;
-    _timer = _timer ?? Timer.periodic(Duration(seconds: 1), (Timer t) => _updateState());
+    super.initState();
   }
   
   @override
