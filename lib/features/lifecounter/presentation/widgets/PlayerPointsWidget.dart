@@ -63,46 +63,64 @@ class PlayerPointRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-            flex: 40,
-            child: GestureDetector(
-                onTap: () => context.read<LifeCounterBloc>().add(
-                    GamePlayerPointsChanged(player, points.copyWith(points.value - 1))),
-                child: Container(
-                  child: Center(
-                    child: Icon(Icons.remove, size: 20,),
-                  ),
-                )
-            )
-        ),
 
-        Expanded(
-          flex: 20,
-          child: Row(
+    var leftAnimatedColorContainer = ColorAnimatedContainer();
+    var rightColorAnimatedContainer = ColorAnimatedContainer();
+
+    return Stack(
+        children: [
+
+          Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Center(child: Text(points.value.toString(), style: TextStyle(fontSize: 45))),
+              Center(
+                  child: Text(points.value.toString(), style: TextStyle(fontSize: 45))
+              ),
               const Padding(padding: EdgeInsets.all(2)),
-              Center(child: Icon(getIconForPoints(points), size: 20,),)
-            ],
-          ),
-        ),
-
-        Expanded(
-          flex: 40,
-          child: GestureDetector(
-              onTap: () => context.read<LifeCounterBloc>().add(GamePlayerPointsChanged(player, points.copyWith(points.value + 1))),
-              child: Container(
-                child: Center(
-                  child: Icon(Icons.add, size: 20,),
+              Center(
+                child: Icon(
+                  getIconForPoints(points),
+                  size: 20,
                 ),
               )
+            ],
           ),
-        ),
-      ],
+
+          Row(
+            children: [
+              Expanded(
+                  flex: 50,
+                  child: Stack(
+                    children: [
+                      ColorAnimatedContainer(),
+                      GestureDetector(
+                        onTap: () => context.read<LifeCounterBloc>().add(
+                            GamePlayerPointsChanged(
+                                player, points.copyWith(points.value - 1))
+                        ),
+                      ),
+                    ],
+                  ),
+              ),
+
+              Expanded(
+                flex: 50,
+                child: Stack(
+                  children: [
+                    ColorAnimatedContainer(),
+                    GestureDetector(
+                      onTap: () => context.read<LifeCounterBloc>().add(
+                          GamePlayerPointsChanged(
+                              player, points.copyWith(points.value + 1))
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )
+        ]
     );
   }
 
@@ -116,6 +134,103 @@ class PlayerPointRow extends StatelessWidget {
     }
 
     return Icons.whatshot;
+  }
+}
+
+class ColorAnimatedContainer extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _ColorAnimatedContainer();
+}
+
+class _ColorAnimatedContainer extends State<ColorAnimatedContainer> with SingleTickerProviderStateMixin {
+
+  late Animation<Color?> _animation;
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(duration: Duration(milliseconds: 150), vsync: this);
+    _animation = ColorTween(begin: Colors.transparent, end: Color.fromRGBO(0, 0, 0, 0.3)).animate(_controller)
+      ..addListener(() {setState(() {});});
+  }
+
+  void animateColor() => _controller.forward().then((value) => _controller.reverse());
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      behavior: HitTestBehavior.opaque,
+      onPointerDown: (_) => animateColor(),
+      child: AnimatedContainer(
+        color: _animation.value,
+        duration: Duration(milliseconds: 350),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+}
+
+class ChangePointsValueButton extends StatefulWidget {
+  ChangePointsValueButton({required this.callback});
+
+  Function() callback;
+
+  @override
+  _ChangePointsValueButtonState createState() => _ChangePointsValueButtonState(callback: callback);
+}
+
+class _ChangePointsValueButtonState extends State<ChangePointsValueButton> with SingleTickerProviderStateMixin {
+  _ChangePointsValueButtonState({required this.callback});
+
+  late Animation<Color?> _animation;
+  late AnimationController _controller;
+  Function() callback;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTapDown: (_) => animateColor(),
+        onTap: () => callback(),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color : _animation.value,
+          ),
+          child: Center(
+            child: Icon(
+              Icons.remove,
+              size: 20,
+            ),
+          ),
+        )
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(duration: Duration(milliseconds: 150), vsync: this);
+    _animation = ColorTween(begin: Colors.transparent, end: Color.fromRGBO(0, 0, 0, 0.3)).animate(_controller)
+      ..addListener(() {setState(() {
+
+      });});
+  }
+
+  void animateColor() {
+    _controller.forward().then((value) => _controller.reverse());
   }
 }
 
