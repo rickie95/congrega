@@ -63,10 +63,6 @@ class PlayerPointRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    var leftAnimatedColorContainer = ColorAnimatedContainer();
-    var rightColorAnimatedContainer = ColorAnimatedContainer();
-
     return Stack(
         children: [
 
@@ -176,64 +172,6 @@ class _ColorAnimatedContainer extends State<ColorAnimatedContainer> with SingleT
   }
 
 }
-
-class ChangePointsValueButton extends StatefulWidget {
-  ChangePointsValueButton({required this.callback});
-
-  Function() callback;
-
-  @override
-  _ChangePointsValueButtonState createState() => _ChangePointsValueButtonState(callback: callback);
-}
-
-class _ChangePointsValueButtonState extends State<ChangePointsValueButton> with SingleTickerProviderStateMixin {
-  _ChangePointsValueButtonState({required this.callback});
-
-  late Animation<Color?> _animation;
-  late AnimationController _controller;
-  Function() callback;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-        onTapDown: (_) => animateColor(),
-        onTap: () => callback(),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color : _animation.value,
-          ),
-          child: Center(
-            child: Icon(
-              Icons.remove,
-              size: 20,
-            ),
-          ),
-        )
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(duration: Duration(milliseconds: 150), vsync: this);
-    _animation = ColorTween(begin: Colors.transparent, end: Color.fromRGBO(0, 0, 0, 0.3)).animate(_controller)
-      ..addListener(() {setState(() {
-
-      });});
-  }
-
-  void animateColor() {
-    _controller.forward().then((value) => _controller.reverse());
-  }
-}
-
 
 List<Widget> getPointRows(BuildContext context, Player player){
   return new List.generate(player.points.length, (int index){

@@ -1,8 +1,8 @@
 import 'package:congrega/features/lifecounter/presentation/widgets/LifeCounterModalBottomSheet.dart';
 import 'package:congrega/features/lifecounter/presentation/widgets/PlayerPointsWidget.dart';
-import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
+import 'package:congrega/features/lifecounter/presentation/widgets/timeWidgets/bloc/TimeSettingsBloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiwi/kiwi.dart';
@@ -71,7 +71,7 @@ class LifeCounterPage extends StatelessWidget {
                                     Expanded(
                                       flex: 100,
                                       child: Transform.rotate(
-                                          angle: 0,
+                                          angle: 3.14,
                                           child: PlayerPointsWidget(
                                             pointSectionBlocBuilder: BlocBuilder<LifeCounterBloc, LifeCounterState>(
                                                 buildWhen: (previous, current) =>
