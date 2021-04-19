@@ -83,7 +83,7 @@ class TournamentStatusPage extends StatelessWidget {
   String adminsListToString(Set<User> admins){
     String string = "";
     for(User ad in admins){
-      string += ad.name == null ? "${ad.username} " : "${ad.username} (${ad.name}) ";
+      string += (ad.name.isEmpty ? "${ad.username} " : "${ad.username} (${ad.name}) ");
     }
     return string;
   }

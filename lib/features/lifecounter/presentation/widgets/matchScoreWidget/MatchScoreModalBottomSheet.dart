@@ -1,11 +1,8 @@
 import 'package:congrega/features/dashboard/presentation/HomePage.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterBloc.dart';
-import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
-import 'package:congrega/features/tournaments/model/Tournament.dart';
-import 'package:congrega/features/tournaments/presentation/tournamentStatusPage/TournamentStatusPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiwi/kiwi.dart';

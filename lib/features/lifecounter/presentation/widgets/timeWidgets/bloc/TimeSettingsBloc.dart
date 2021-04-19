@@ -1,9 +1,10 @@
 
-import 'package:congrega/features/lifecounter/timeWidgets/presentation/widgets/TimeWidget.dart';
-import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsEvent.dart';
-import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsState.dart';
+import 'package:congrega/features/lifecounter/presentation/widgets/timeWidgets/widgets/TimeWidget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'TimeSettingsEvent.dart';
+import 'TimeSettingsState.dart';
 
 class TimeSettingsBloc extends Bloc<TimeSettingsEvent, TimeSettingsState> {
   TimeSettingsBloc({TimeSettingsState? initialState}) :

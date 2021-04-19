@@ -12,8 +12,9 @@ import 'package:congrega/features/authentication/AuthenticationBloc.dart';
 import 'package:congrega/features/authentication/AuthenticationState.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'features/lifecounter/timeWidgets/presentation/bloc/pages/SplashPage.dart';
-import 'features/lifecounter/timeWidgets/presentation/bloc/pages/WelcomePage.dart';
+import 'features/splashscreen/SplashPage.dart';
+import 'features/splashscreen/WelcomePage.dart';
+
 
 
 class Congrega extends StatelessWidget {

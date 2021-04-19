@@ -1,7 +1,7 @@
 
-import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsBloc.dart';
-import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsEvent.dart';
-import 'package:congrega/features/lifecounter/timeWidgets/presentation/bloc/TimeSettingsState.dart';
+import 'package:congrega/features/lifecounter/presentation/widgets/timeWidgets/bloc/TimeSettingsBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/widgets/timeWidgets/bloc/TimeSettingsEvent.dart';
+import 'package:congrega/features/lifecounter/presentation/widgets/timeWidgets/bloc/TimeSettingsState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
