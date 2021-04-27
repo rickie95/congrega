@@ -22,36 +22,107 @@ class PlayerPointsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Column is rebuilt whenever the points list change its size
-    return Stack(
-      alignment: Alignment.bottomRight,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6.0),
-          child: Material(
-            elevation: 14,
-            color: backgroundColor,
-            shadowColor:  Colors.black,
-            borderRadius: BorderRadius.circular(12.0),
-            child: Container(
-                child: pointSectionBlocBuilder
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6.0),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: Colors.black87,
+                borderRadius: BorderRadius.circular(12.0)
             ),
+            child: settingsBlocBuilder,
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: FloatingActionButton(
-            heroTag: '$playerName-SettingFloatingButton',
-            elevation: 14,
-            child: Icon(Icons.settings),
-            onPressed: () => showModalBottomSheet(context: context, builder: (_) => BlocProvider.value(
-              value: BlocProvider.of<LifeCounterBloc>(context),
-              child: settingsBlocBuilder,
+          SlidableWidget(
+            child: Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  Material(
+                    elevation: 14,
+                    color: backgroundColor,
+                    shadowColor:  Colors.black,
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: Container(
+                        child: pointSectionBlocBuilder
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                        color: Colors.black87,
+                      ),
+                      height: 5,
+                      width: 20,
+                    ),
+                  ),
+                ],
             ),
-            ),
-          ),
-        ),
-      ],
+          )],
+      ),
     );
+  }
+}
+
+class SlidableWidget extends StatefulWidget {
+  const SlidableWidget({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
+
+  final Widget child;
+
+  @override
+  State<StatefulWidget> createState() => _SlidableWidgetState();
+}
+
+class _SlidableWidgetState extends State<SlidableWidget> with SingleTickerProviderStateMixin {
+
+  late AnimationController _controller = AnimationController(vsync: this, upperBound: 0.85);
+  double _dragExtent = 0;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder:(context, child) => SlideTransition(
+        position: AlwaysStoppedAnimation(Offset(0, _controller.value)),
+        child: GestureDetector(
+          onVerticalDragStart: _onDragStart,
+          onVerticalDragUpdate: _onDragUpdate,
+          onVerticalDragEnd: _onDragEnd,
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+
+  void _onDragStart(DragStartDetails details) {
+    setState(() {
+      _dragExtent = _controller.value * context.size!.height;
+    });
+  }
+
+  void _onDragUpdate(DragUpdateDetails details){
+    _dragExtent += (details.primaryDelta ?? 0);
+    setState(() {
+      _controller.value = _dragExtent / context.size!.height;
+    });
+  }
+
+  void _onDragEnd(DragEndDetails details){
+    _controller.value > 0.4 ? _controller.fling() : _controller.fling(velocity: -1.0);
+    setState(() {
+      _dragExtent = 0;
+    });
+
   }
 }
 
@@ -65,7 +136,6 @@ class PlayerPointRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
         children: [
-
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -86,18 +156,18 @@ class PlayerPointRow extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  flex: 50,
-                  child: Stack(
-                    children: [
-                      ColorAnimatedContainer(),
-                      GestureDetector(
-                        onTap: () => context.read<LifeCounterBloc>().add(
-                            GamePlayerPointsChanged(
-                                player, points.copyWith(points.value - 1))
-                        ),
+                flex: 50,
+                child: Stack(
+                  children: [
+                    ColorAnimatedContainer(),
+                    GestureDetector(
+                      onTap: () => context.read<LifeCounterBloc>().add(
+                          GamePlayerPointsChanged(
+                              player, points.copyWith(points.value - 1))
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
               ),
 
               Expanded(

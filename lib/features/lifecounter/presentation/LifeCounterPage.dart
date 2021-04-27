@@ -84,7 +84,7 @@ class LifeCounterPage extends StatelessWidget {
                                             ),
                                             settingsBlocBuilder: BlocBuilder<LifeCounterBloc, LifeCounterState>(
                                                 buildWhen: (previous, current) => (previous.opponent.points != current.opponent.points),
-                                                builder: (context, state) => PlayerSettingsModalBottomSheet(player: state.opponent)
+                                                builder: (context, state) => PlayerCountersSettings(player: state.opponent)
                                             ),
                                             backgroundColor: Colors.deepPurple,
                                             playerName: 'Opponent',
@@ -113,7 +113,7 @@ class LifeCounterPage extends StatelessWidget {
                               ),
                               settingsBlocBuilder: BlocBuilder<LifeCounterBloc, LifeCounterState>(
                                   buildWhen: (previous, current) => (previous.user.points != current.user.points),
-                                  builder: (context, state) => PlayerSettingsModalBottomSheet(player: state.user)
+                                  builder: (context, state) => PlayerCountersSettings(player: state.user)
                               ),
                               backgroundColor: Colors.orange,
                               playerName: 'Player',

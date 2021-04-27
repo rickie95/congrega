@@ -32,20 +32,21 @@ abstract class PlayerPoints extends Equatable {
   Map<String, dynamic> toJson();
 
   factory PlayerPoints.fromJson(Map<String, dynamic> obj) {
-    if(obj['type'] == 'LifePoints')
-      return LifePoints.fromJson(obj);
-
-    if(obj['type'] == 'VenomPoints')
-      return VenomPoints.fromJson(obj);
-
-    if(obj['type'] == 'EnergyPoints')
-      return EnergyPoints.fromJson(obj);
-
-    if(obj['type'] == 'ManaColorPoints')
-      return ManaColorPoints.fromJson(obj);
-
-    throw Exception('PlayerPoint type unknown');
+    switch(obj['type']){
+      case('LifePoints'):
+        return LifePoints.fromJson(obj);
+      case('VenomPoints'):
+        return VenomPoints.fromJson(obj);
+      case('EnergyPoints'):
+        return EnergyPoints.fromJson(obj);
+      case('ManaColorPoints'):
+        return ManaColorPoints.fromJson(obj);
+      default:
+      throw Exception('PlayerPoint type unknown');
+    }
   }
+
+  static String readableName() => throw Exception("nope");
 
 }
 
@@ -72,6 +73,8 @@ class LifePoints extends PlayerPoints {
   factory LifePoints.fromJson(Map<String, dynamic> obj) {
     return LifePoints(obj['points']);
   }
+
+  static String readableName() => 'Life Points';
 }
 
 class VenomPoints extends PlayerPoints {
@@ -97,6 +100,9 @@ class VenomPoints extends PlayerPoints {
   factory VenomPoints.fromJson(Map<String, dynamic> obj) {
     return VenomPoints(obj['points']);
   }
+
+  static String readableName() => 'Venom Points';
+
 }
 
 class EnergyPoints extends PlayerPoints {
@@ -122,6 +128,8 @@ class EnergyPoints extends PlayerPoints {
   factory EnergyPoints.fromJson(Map<String, dynamic> obj) {
     return EnergyPoints(obj['points']);
   }
+
+  static String readableName() => 'Energy Points';
 
 }
 
@@ -158,4 +166,7 @@ class ManaColorPoints extends PlayerPoints {
   factory ManaColorPoints.fromJson(Map<String, dynamic> obj) {
     return ManaColorPoints(obj['points'], color: obj['color']);
   }
+
+  static String readableName() => 'Mana Points';
+
 }
