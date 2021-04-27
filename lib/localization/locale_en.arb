@@ -118,6 +118,20 @@
     "clock_type_section_title": "Clock widget type",
     "@clock_type_section_title": {
         "description": "Title for the clock widget type section."
-    }
+    },
 
+    "venom_points_name" : "Venom Points",
+    "@venom_points_name" : {
+        "description" : "Name for VenomPoints"
+    },
+
+    "energy_points_name" : "Energy Points",
+    "@energy_points_name" : {
+        "description" : "Name for EnergyPoints"
+    },
+
+    "mana_color_points_name" : "Mana Colored Points",
+    "@mana_color_points_name" : {
+        "description" : "Name for ManaColorPoints"
+    }
 }

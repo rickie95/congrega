@@ -37,5 +37,9 @@
 
     "timer_reset_label": "Resetta timer",
 
-    "clock_type_section_title": "Widget orologio"
+    "clock_type_section_title": "Widget orologio",
+
+    "venom_points_name" : "Segnalini Veleno",
+    "energy_points_name" : "Segnalini Energia",
+    "mana_color_points_name" : "Segnalini Mana"
 }
