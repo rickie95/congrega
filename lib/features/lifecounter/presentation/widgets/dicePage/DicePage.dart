@@ -61,12 +61,11 @@ class DicePage extends StatelessWidget {
                     children: [
                       Text("TAP TO ROLL", style: headingTextStyle),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 32),
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                         child: Text("Select a dice and enjoy the power of randomness.",
                             textAlign: TextAlign.center,
                             style: descriptionTextStyle),
                       ),
-                      Padding(padding: EdgeInsets.only(top: 32)),
                       DiceRowSection()
                     ],
                   ),
