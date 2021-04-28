@@ -87,7 +87,6 @@ class LifeCounterPage extends StatelessWidget {
                                                 builder: (context, state) => PlayerCountersSettings(player: state.opponent)
                                             ),
                                             backgroundColor: Colors.deepPurple,
-                                            playerName: 'Opponent',
                                           )
                                       ),
                                     ),
@@ -116,7 +115,6 @@ class LifeCounterPage extends StatelessWidget {
                                   builder: (context, state) => PlayerCountersSettings(player: state.user)
                               ),
                               backgroundColor: Colors.orange,
-                              playerName: 'Player',
                             ),
                           ),
                         ],

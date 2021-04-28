@@ -11,13 +11,11 @@ class PlayerPointsWidget extends StatelessWidget {
     required this.pointSectionBlocBuilder,
     required this.settingsBlocBuilder,
     required this.backgroundColor,
-    required this.playerName,
   }) : super();
 
   final BlocBuilder pointSectionBlocBuilder;
   final BlocBuilder settingsBlocBuilder;
   final Color backgroundColor;
-  final String playerName;
 
   @override
   Widget build(BuildContext context) {
