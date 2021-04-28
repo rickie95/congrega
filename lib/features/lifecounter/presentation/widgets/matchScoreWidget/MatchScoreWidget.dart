@@ -9,7 +9,7 @@ class MatchScoreWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MatchBloc, MatchState>(
         buildWhen: (previous, current) =>
-        previous.userScore != current.userScore || previous.opponentScore != current.opponentScore,
+        previous.match.userScore != current.match.userScore || previous.match.opponentScore != current.match.opponentScore,
         builder: (context, state) {
           final String userScore = state.userScore.toString();
           final String opponentScore = state.opponentScore.toString();

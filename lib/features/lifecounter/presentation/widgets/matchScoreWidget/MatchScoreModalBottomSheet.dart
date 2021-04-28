@@ -1,11 +1,10 @@
 import 'package:congrega/features/dashboard/presentation/HomePage.dart';
-import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterBloc.dart';
+import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kiwi/kiwi.dart';
 
 class MatchScoreModalBottomSheet extends StatelessWidget {
   @override
@@ -13,7 +12,6 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
       child: Column(
-
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
@@ -30,6 +28,8 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
               child: Container( // MATCH STATUS
                 padding: EdgeInsets.all(10),
                 child: BlocBuilder<MatchBloc, MatchState>(
+                  buildWhen: (previous, current) => previous.match.userScore != current.match.userScore
+                      || previous.match.opponentScore != current.match.opponentScore,
                   builder: (context, state) {
 
                     return Column(
@@ -39,13 +39,15 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                           children: [
                             PlayerScoreWidget(
                               playerUsername: "You",
-                              playerScore: state.userScore,
-                              callback: () => context.read<MatchBloc>().add(MatchPlayerWinsGame(state.user)),
+                              playerScore: state.match.userScore,
+                              callback: () => context.read<MatchBloc>()
+                                  .add(MatchPlayerWinsGame(state.user)),
                             ),
                             PlayerScoreWidget(
                                 playerUsername: state.opponentUsername,
-                                playerScore:state.opponentScore,
-                                callback: () => context.read<MatchBloc>().add(MatchPlayerWinsGame(state.opponent))
+                                playerScore:state.match.opponentScore,
+                                callback: () => context.read<MatchBloc>()
+                                    .add(MatchPlayerWinsGame(state.opponent))
                             ),
                           ],
                         ),
@@ -69,7 +71,7 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(4),
                       child: ElevatedButton(
-                        //color: Colors.redAccent,
+                        style: elevatedDangerButtonStyle,
                         child: const Text("LEAVE MATCH"),
                         onPressed: () {
                           showDialog( context: context,
@@ -87,7 +89,7 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
 
                       padding: EdgeInsets.all(4),
                       child: ElevatedButton(
-                        //color: Colors.redAccent,
+                        style: elevatedDangerButtonStyle,
                         child: const Text("SURRENDER GAME"),
                         onPressed: () { showDialog(
                             context: context,
@@ -124,12 +126,8 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                     ),
                   ],
                 )
-
               ]
           )
-
-
-
         ],
       ),
     );
@@ -170,26 +168,37 @@ class PlayerScoreWidget extends StatelessWidget {
   }
 }
 
+final ButtonStyle elevatedDangerButtonStyle = ButtonStyle(backgroundColor: elevatedButtonDangerStyle);
+
+final MaterialStateProperty<Color> elevatedButtonDangerStyle = MaterialStateProperty.resolveWith<Color>(
+      (Set<MaterialState> states) {
+    if (states.contains(MaterialState.pressed))
+      return Colors.red.withOpacity(0.5);
+    return Colors.red; // Use the component's default.
+  },
+);
+
 class LeaveMatchDialog extends StatelessWidget {
   const LeaveMatchDialog();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Leave features.match?"),
-      content: Text("Leaving the features.match will result as a total resign."),
+      title: Text("Leave match?"),
+      content: Text("Leaving the match will result as a total resign."),
       actions: [
         TextButton(
-            onPressed: (){ },
+            onPressed: () => Navigator.of(context).pop(),
             child: Text("CANCEL")
         ),
         ElevatedButton(
           child: Text("LEAVE"),
-          //color: Colors.redAccent,
+          style: ButtonStyle(backgroundColor: elevatedButtonDangerStyle),
           onPressed: () {
+            Player user = context.read<MatchBloc>().state.match.user;
             context.read<MatchBloc>().add(
-                PlayerLeavesMatch(context.read<MatchBloc>().state.user));
-            if(KiwiContainer().resolve<MatchBloc>().isAnOfflineMatch()) {
+                PlayerLeavesMatch(user));
+            if(context.read<MatchBloc>().isAnOfflineMatch()) {
               Navigator.of(context).pushAndRemoveUntil<void>(
                   HomePage.route(), (route) => false);
             } else {
@@ -212,19 +221,14 @@ class SurrenderGameDialog extends StatelessWidget {
       content: Text("Are you sure?"),
       actions: [
         TextButton(
-            onPressed: (){ },
+            onPressed: () => Navigator.of(context).pop(),
             child: Text("CANCEL")
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text("SURRENDER"),
-          color: Colors.redAccent,
+          style: ButtonStyle(backgroundColor: elevatedButtonDangerStyle),
           onPressed: () {
-            KiwiContainer().resolve<MatchBloc>().add(
-              PlayerQuitsGame(KiwiContainer().resolve<LifeCounterBloc>().state.user)
-            );
-            context.read<MatchBloc>().add(
-                PlayerQuitsGame(
-                    context.read<MatchBloc>().state.user));
+            context.read<MatchBloc>().add(PlayerQuitsGame(context.read<MatchBloc>().state.user));
             Navigator.of(context).pop();
           },
         ),

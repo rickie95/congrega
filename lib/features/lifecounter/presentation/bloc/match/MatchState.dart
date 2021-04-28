@@ -42,6 +42,6 @@ class MatchState extends Equatable {
   int get userScore => this.match.userScore;
 
   @override
-  List<Object> get props => [status, match];
+  List<Object> get props => [status, match, match.opponentScore, match.userScore];
 
 }

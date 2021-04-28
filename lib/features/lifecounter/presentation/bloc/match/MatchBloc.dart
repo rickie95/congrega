@@ -80,5 +80,4 @@ class MatchBloc extends Bloc<MatchEvent, MatchState>{
     return super.close();
   }
 
-
 }
