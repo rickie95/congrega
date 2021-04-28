@@ -74,4 +74,8 @@ class Match extends Equatable {
   @override
   List<Object?> get props => [id];
 
+  String toString(){
+    return "Match($id - ($userScore) - ($opponentScore))";
+  }
+
 }
