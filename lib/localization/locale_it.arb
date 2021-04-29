@@ -41,5 +41,19 @@
 
     "venom_points_name" : "Segnalini Veleno",
     "energy_points_name" : "Segnalini Energia",
-    "mana_color_points_name" : "Segnalini Mana"
+    "mana_color_points_name" : "Segnalini Mana",
+
+    "dialog_cancel_button_text" : "Annulla",
+
+    "leave_match_button_text" : "Concedi incontro",
+    "leave_match_dialog_title" : "Concedere l'incontro?",
+    "leave_match_dialog_message" : "Concedere l'incontro risulterà come una sconfitta 0-2",
+    "leave_match_dialog_confirm_text" : "Concedi",
+
+    "leave_game_button_text" : "Concedi partita",
+    "leave_game_dialog_title" : "Concedere la partita?",
+    "leave_game_dialog_message" : "Verrà conteggiata come una vittoria per l'avversario",
+    "leave_game_dialog_confirm_text" : "Concedi",
+
+    "call_judge_button_text" : "Chiama un giudice"
 }

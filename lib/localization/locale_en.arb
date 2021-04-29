@@ -89,7 +89,6 @@
         "description": "msg when usr is not enrolled in an event"
     },
 
-
     "opponent": "Opponent",
     "@opponent": {
         "description": "Generic name when opponent's name is not available"
@@ -133,5 +132,20 @@
     "mana_color_points_name" : "Mana Colored Points",
     "@mana_color_points_name" : {
         "description" : "Name for ManaColorPoints"
-    }
+    },
+
+    "dialog_cancel_button_text" : "Cancel",
+
+    "leave_match_button_text" : "Leave Match",
+    "leave_match_dialog_title" : "Leave match?",
+    "leave_match_dialog_message" : "Leaving the match will result as a total resign.",
+    "leave_match_dialog_confirm_text" : "Leave",
+
+    "leave_game_button_text" : "Concede game",
+    "leave_game_dialog_title" : "Surrender the game?",
+    "leave_game_dialog_message" : "Are you sure?",
+    "leave_game_dialog_confirm_text" : "Surrender",
+
+    "call_judge_button_text" : "Call Judge"
+
 }
