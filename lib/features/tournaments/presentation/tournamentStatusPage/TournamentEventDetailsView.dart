@@ -1,6 +1,7 @@
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentBloc.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentState.dart';
+import 'package:congrega/ui/congrega_elevated_button_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -178,8 +179,8 @@ class TournamentEventDetailsView extends StatelessWidget {
                   Expanded(
                     flex: 50,
                     child: Center(
-                      child: RaisedButton(
-                        color: Colors.redAccent,
+                      child: ElevatedButton(
+                        style: elevatedDangerButtonStyle,
                         onPressed: () {},
                         child: Text("ADD TO CALENDAR"),
                       ),
@@ -188,8 +189,8 @@ class TournamentEventDetailsView extends StatelessWidget {
                   Expanded(
                     flex: 50,
                     child: Center(
-                      child: RaisedButton(
-                        color: Colors.lightBlue,
+                      child: ElevatedButton(
+                        style: elevatedActionButtonStyle,
                         onPressed: () => showDialog<void>(
                             context: context,
                             builder: (_) =>

@@ -3,8 +3,10 @@ import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
+import 'package:congrega/ui/congrega_elevated_button_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MatchScoreModalBottomSheet extends StatelessWidget {
   @override
@@ -72,7 +74,7 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                       padding: EdgeInsets.all(4),
                       child: ElevatedButton(
                         style: elevatedDangerButtonStyle,
-                        child: const Text("LEAVE MATCH"),
+                        child: Text(AppLocalizations.of(context)!.leave_match_button_text.toString().toUpperCase()),
                         onPressed: () {
                           showDialog( context: context,
                               builder: (_) =>
@@ -90,7 +92,7 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                       padding: EdgeInsets.all(4),
                       child: ElevatedButton(
                         style: elevatedDangerButtonStyle,
-                        child: const Text("SURRENDER GAME"),
+                        child: Text(AppLocalizations.of(context)!.leave_game_button_text.toString().toUpperCase()),
                         onPressed: () { showDialog(
                             context: context,
                             builder: (_) =>
@@ -112,7 +114,7 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                       padding: EdgeInsets.all(4),
                       child: ElevatedButton(
                         //color: Colors.redAccent,
-                        child: const Text("CALL JUDGE"),
+                        child: Text(AppLocalizations.of(context)!.call_judge_button_text.toString().toUpperCase()),
                         onPressed: () { showDialog(
                             context: context,
                             builder: (_) =>
@@ -168,32 +170,22 @@ class PlayerScoreWidget extends StatelessWidget {
   }
 }
 
-final ButtonStyle elevatedDangerButtonStyle = ButtonStyle(backgroundColor: elevatedButtonDangerStyle);
-
-final MaterialStateProperty<Color> elevatedButtonDangerStyle = MaterialStateProperty.resolveWith<Color>(
-      (Set<MaterialState> states) {
-    if (states.contains(MaterialState.pressed))
-      return Colors.red.withOpacity(0.5);
-    return Colors.red; // Use the component's default.
-  },
-);
-
 class LeaveMatchDialog extends StatelessWidget {
   const LeaveMatchDialog();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Leave match?"),
-      content: Text("Leaving the match will result as a total resign."),
+      title: Text(AppLocalizations.of(context)!.leave_match_dialog_title),
+      content: Text(AppLocalizations.of(context)!.leave_match_dialog_message),
       actions: [
         TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text("CANCEL")
+            child: Text(AppLocalizations.of(context)!.dialog_cancel_button_text.toString().toUpperCase())
         ),
         ElevatedButton(
-          child: Text("LEAVE"),
-          style: ButtonStyle(backgroundColor: elevatedButtonDangerStyle),
+          child: Text(AppLocalizations.of(context)!.leave_match_dialog_confirm_text.toString().toUpperCase()),
+          style: elevatedDangerButtonStyle,
           onPressed: () {
             Player user = context.read<MatchBloc>().state.match.user;
             context.read<MatchBloc>().add(
@@ -217,16 +209,16 @@ class SurrenderGameDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Surrender game"),
-      content: Text("Are you sure?"),
+      title: Text(AppLocalizations.of(context)!.leave_game_dialog_title),
+      content: Text(AppLocalizations.of(context)!.leave_game_dialog_message),
       actions: [
         TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text("CANCEL")
+            child: Text(AppLocalizations.of(context)!.dialog_cancel_button_text.toString().toUpperCase())
         ),
         ElevatedButton(
-          child: Text("SURRENDER"),
-          style: ButtonStyle(backgroundColor: elevatedButtonDangerStyle),
+          child: Text(AppLocalizations.of(context)!.leave_game_dialog_confirm_text.toString().toUpperCase()),
+          style: ButtonStyle(backgroundColor: dangerButtonColorState),
           onPressed: () {
             context.read<MatchBloc>().add(PlayerQuitsGame(context.read<MatchBloc>().state.user));
             Navigator.of(context).pop();
