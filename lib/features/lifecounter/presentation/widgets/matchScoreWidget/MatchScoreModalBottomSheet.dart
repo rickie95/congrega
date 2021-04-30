@@ -1,4 +1,5 @@
 import 'package:congrega/features/dashboard/presentation/HomePage.dart';
+import 'package:congrega/features/lifecounter/model/Match.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
@@ -11,127 +12,91 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class MatchScoreModalBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
         children: [
-
           Container( // TITLE
-              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 20),
-              child: Text("Match", style: TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.54)))
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: Text("MATCH", style: TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.54)))
           ),
 
-          Material(
-            elevation: 14,
-            shadowColor: Colors.grey,
-            borderRadius: BorderRadius.circular(12.0),
-            child: Center(
-              child: Container( // MATCH STATUS
-                padding: EdgeInsets.all(10),
-                child: BlocBuilder<MatchBloc, MatchState>(
-                  buildWhen: (previous, current) => previous.match.userScore != current.match.userScore
-                      || previous.match.opponentScore != current.match.opponentScore,
-                  builder: (context, state) {
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Material(
+              elevation: 14,
+              shadowColor: Colors.grey,
+              borderRadius: BorderRadius.circular(12.0),
+              child: Center(
+                child: Container( // MATCH STATUS
+                  padding: EdgeInsets.all(10),
+                  child: BlocBuilder<MatchBloc, MatchState>(
+                    buildWhen: (previous, current) => previous.match.userScore != current.match.userScore
+                        || previous.match.opponentScore != current.match.opponentScore,
+                    builder: (context, state) {
 
-                    return Column(
-                      children: [
+                      return Column(
+                        children: [
 
-                        Row(
-                          children: [
-                            PlayerScoreWidget(
-                              playerUsername: "You",
-                              playerScore: state.match.userScore,
-                              callback: () => context.read<MatchBloc>()
-                                  .add(MatchPlayerWinsGame(state.user)),
-                            ),
-                            PlayerScoreWidget(
-                                playerUsername: state.opponentUsername,
-                                playerScore:state.match.opponentScore,
+                          Row(
+                            children: [
+                              PlayerScoreWidget(
+                                playerUsername: "You",
+                                playerScore: state.match.userScore,
                                 callback: () => context.read<MatchBloc>()
-                                    .add(MatchPlayerWinsGame(state.opponent))
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
+                                    .add(MatchPlayerWinsGame(state.user)), //FIXME
+                              ),
+                              PlayerScoreWidget(
+                                  playerUsername: state.opponentUsername,
+                                  playerScore:state.match.opponentScore,
+                                  callback: () => context.read<MatchBloc>()
+                                      .add(MatchPlayerWinsGame(state.opponent))
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
           ),
-
-          Column(
-              children: [
-                Container( // TITLE
-                    padding: EdgeInsets.symmetric(horizontal: 0, vertical: 15),
-                    child: Text("Danger zone", style: TextStyle(fontSize: 16, color: Color.fromRGBO(255, 0, 0, 0.54)))
-                ),
-
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(4),
-                      child: ElevatedButton(
-                        style: elevatedDangerButtonStyle,
-                        child: Text(AppLocalizations.of(context)!.leave_match_button_text.toString().toUpperCase()),
-                        onPressed: () {
-                          showDialog( context: context,
-                              builder: (_) =>
-                                  BlocProvider.value(
-                                    value: BlocProvider.of<MatchBloc>(context),
-                                    child: LeaveMatchDialog(),
-                                  )
-                          );
-                        },
-
-                      ),
-                    ),
-                    Container(
-
-                      padding: EdgeInsets.all(4),
-                      child: ElevatedButton(
-                        style: elevatedDangerButtonStyle,
-                        child: Text(AppLocalizations.of(context)!.leave_game_button_text.toString().toUpperCase()),
-                        onPressed: () { showDialog(
-                            context: context,
-                            builder: (_) =>
-                                BlocProvider.value(
-                                  value: BlocProvider.of<MatchBloc>(context),
-                                  child: SurrenderGameDialog(),
-                                )
-                        );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-
-                Row(
-                  children: [
-                    Container(
-
-                      padding: EdgeInsets.all(4),
-                      child: ElevatedButton(
-                        //color: Colors.redAccent,
-                        child: Text(AppLocalizations.of(context)!.call_judge_button_text.toString().toUpperCase()),
-                        onPressed: () { showDialog(
-                            context: context,
-                            builder: (_) =>
-                                BlocProvider.value(
-                                  value: BlocProvider.of<MatchBloc>(context),
-                                  child: SurrenderGameDialog(),
-                                )
-                        );
-                        },
-                      ),
-                    ),
-                  ],
+          Padding(padding: EdgeInsets.symmetric(vertical: 12)),
+          ListTile(
+            title: Text(AppLocalizations.of(context)!.leave_match_button_text),
+            leading: Icon(Icons.exit_to_app),
+            onTap: () => showDialog(context: context, builder: (_) =>
+                BlocProvider.value(
+                  value: BlocProvider.of<MatchBloc>(context),
+                  child: LeaveMatchDialog(),
                 )
-              ]
+            ),
+          ),
+          ListTile(
+            title: Text(AppLocalizations.of(context)!.leave_game_button_text),
+            leading: Icon(Icons.error),
+            onTap: () => showDialog(context: context, builder: (_) =>
+                BlocProvider.value(
+                  value: BlocProvider.of<MatchBloc>(context),
+                  child: SurrenderGameDialog(),
+                )
+            ),
+          ),
+          ListTile(
+            title: Text(AppLocalizations.of(context)!.call_judge_button_text),
+            leading: Icon(Icons.help),
+            enabled: BlocProvider.of<MatchBloc>(context).state.match.type != MatchType.offline,
+            onTap: () => showDialog(
+                context: context,
+                builder: (_) =>
+                    BlocProvider.value(
+                      value: BlocProvider.of<MatchBloc>(context),
+                      child: SurrenderGameDialog(),
+                    )
+            ),
           )
-        ],
-      ),
+        ]
     );
   }
 
