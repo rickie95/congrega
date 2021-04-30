@@ -1,7 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:congrega/features/tournaments/presentation/tournamentStatusPage/TournamentStatusPage.dart';
 import 'package:congrega/features/drawer/CongregaDrawer.dart';
-import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:congrega/features/tournaments/data/repositories/TournamentRepository.dart';
@@ -94,33 +93,6 @@ class TournamentPage extends StatelessWidget{
           ...new List.generate(eventList.length,
                   (index) => _eventRow(context, eventList.elementAt(index)))
         ]
-    );
-  }
-
-
-  Widget _noTournamentAvailableContainer(BuildContext context) {
-    return Center(
-      child: Container(
-        height: 200,
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: CongregaTheme.primaryColor,
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Text(AppLocalizations.of(context)!.events_notenrolled_msg,
-                style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-
-            ElevatedButton(child: Text("CREATE NEW EVENT"), onPressed: () {}),
-            ElevatedButton(child: Text("SEARCH FOR EVENTS"), onPressed: () {})
-          ],
-        ),
-      ),
     );
   }
 
