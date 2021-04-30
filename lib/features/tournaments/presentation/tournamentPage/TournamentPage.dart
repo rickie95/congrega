@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:congrega/features/tournaments/presentation/tournamentStatusPage/TournamentStatusPage.dart';
 import 'package:congrega/features/drawer/CongregaDrawer.dart';
 import 'package:congrega/theme/CongregaTheme.dart';
@@ -47,37 +48,14 @@ class TournamentPage extends StatelessWidget{
   }
 
   Widget _eventRow(BuildContext context, Tournament tournament) {
-    return GestureDetector(
-      onTap: () => Navigator.of(context).push(TournamentStatusPage.route(tournament)),
-      child: Container(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-          child: Row(
-              children: [
-                Expanded(
-                  flex: 12,
-                  child: CircleAvatar(
-                    child: Text(tournament.name[0]),
-                  ),
-                ),
-                Expanded(
-                  flex: 78,
-                  child: Container(
-                    padding: EdgeInsets.only(left: 10),
-                    child:  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(tournament.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                        Text(tournament.type)
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                    flex: 10,
-                    child: Icon(Icons.arrow_forward_ios_rounded)
-                )
-              ]
-          )
+    return OpenContainer(
+      transitionType: ContainerTransitionType.fade,
+      openBuilder: (BuildContext _, VoidCallback openContainer) => TournamentStatusPage(tournament),
+      closedBuilder: (BuildContext _, VoidCallback openContainer) => ListTile(
+        onTap: openContainer,
+        leading: CircleAvatar(child: Text(tournament.name[0])),
+        title: Text(tournament.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+        subtitle: Text(tournament.type),
       ),
     );
   }
