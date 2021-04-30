@@ -21,6 +21,7 @@ import 'features/authentication/AuthenticationRepository.dart';
 import 'features/loginSignup/data/AuthenticationHttpClient.dart';
 import 'features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'features/lifecounter/data/match/MatchController.dart';
+import 'features/tournaments/presentation/bloc/TournamentBloc.dart';
 
 part 'injector.g.dart';
 
@@ -60,6 +61,7 @@ abstract class Injector {
   @Register.factory(TournamentHttpClient)
   @Register.singleton(TournamentRepository)
   @Register.factory(TournamentController)
+  @Register.factory(TournamentBloc)
   void _configureTournamentsModuleFactories();
 
   @Register.singleton(AuthenticationHttpClient)
