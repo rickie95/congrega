@@ -12,10 +12,9 @@ import 'TournamentState.dart';
 
 class TournamentBloc extends Bloc<TournamentEvent, TournamentState> {
   TournamentBloc({
-    required TournamentState initialState,
     required TournamentController controller}) :
         _controller = controller,
-        super(initialState);
+        super(const TournamentState.unknown());
   
   final TournamentController _controller;
 
@@ -33,6 +32,8 @@ class TournamentBloc extends Bloc<TournamentEvent, TournamentState> {
       yield state.copyWith(status: TournamentStatus.ended);
     }else if(event is TournamentIsScheduled){
       yield state.copyWith(status: TournamentStatus.scheduled);
+    } else if (event is SetTournament){
+      yield _mapSetTournamentToState(event);
     }
   }
 
@@ -49,6 +50,12 @@ class TournamentBloc extends Bloc<TournamentEvent, TournamentState> {
     return state.copyWith(
         tournament: t,
         enrolled: false,
+    );
+  }
+
+  TournamentState _mapSetTournamentToState(SetTournament event) {
+    return state.copyWith(
+      tournament: event.tournament
     );
   }
   

@@ -1,4 +1,3 @@
-
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:equatable/equatable.dart';
 
@@ -10,6 +9,12 @@ class TournamentState extends Equatable {
     required this.round,
     required this.status,
   });
+
+  const TournamentState.unknown() :
+        this.tournament = Tournament.empty,
+        this.enrolled = false,
+        this.round = 0,
+        this.status = TournamentStatus.unknown;
 
   final Tournament tournament;
   final bool enrolled;
