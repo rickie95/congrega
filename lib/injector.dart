@@ -41,7 +41,7 @@ abstract class Injector {
   @Register.factory(MatchPersistence)
   @Register.factory(MatchRepository)
   @Register.factory(MatchController)
-  @Register.factory(MatchBloc)
+  @Register.singleton(MatchBloc)
   void _configureMatchBlocModuleFactories();
 
   @Register.factory(GamePersistence)
