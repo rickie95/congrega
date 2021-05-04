@@ -8,6 +8,12 @@ part of 'injector.dart';
 
 class _$Injector extends Injector {
   @override
+  void _configureValueBloc() {
+    final KiwiContainer container = KiwiContainer();
+    container.registerSingleton((c) => ValueBloc());
+  }
+
+  @override
   void _configureMatchBlocModuleFactories() {
     final KiwiContainer container = KiwiContainer();
     container.registerFactory((c) => MatchPersistence());
@@ -57,6 +63,8 @@ class _$Injector extends Injector {
     container.registerSingleton((c) => TournamentRepository());
     container.registerFactory(
         (c) => TournamentController(repository: c<TournamentRepository>()));
+    container.registerSingleton(
+        (c) => TournamentBloc(controller: c<TournamentController>()));
   }
 
   @override

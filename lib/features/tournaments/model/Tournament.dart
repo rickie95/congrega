@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:equatable/equatable.dart';
 
-enum TournamentStatus { scheduled, waiting, inProgress, ended}
+enum TournamentStatus { scheduled, waiting, inProgress, ended, unknown}
 
 class Tournament extends Equatable {
 
@@ -19,13 +19,13 @@ class Tournament extends Equatable {
     required this.round,
   });
 
-  final BigInt id;
+  final String id;
   final String name;
   final String type;
   final Set<User> playerList;
   final Set<User> adminList;
   final Set<User> judgeList;
-  final DateTime startingTime;
+  final DateTime? startingTime;
   final TournamentStatus status;
   final int round;
 
@@ -34,7 +34,7 @@ class Tournament extends Equatable {
       return TournamentStatus.ended;
 
     DateTime now = DateTime.now();
-    if (now.isAfter(startingTime))
+    if (now.isAfter(startingTime!))
       return TournamentStatus.inProgress;
 
     return TournamentStatus.scheduled;
@@ -42,7 +42,7 @@ class Tournament extends Equatable {
 
   bool isUserEnrolled(User user) => playerList.contains(user);
 
-  Tournament copyWith({BigInt? id, String? name, String? type, Set<User>? playerList,
+  Tournament copyWith({String? id, String? name, String? type, Set<User>? playerList,
     Set<User>? adminList, Set<User>? judgeList, DateTime? startingTime,
     TournamentStatus? status, int? round}){
     return Tournament(
@@ -60,7 +60,7 @@ class Tournament extends Equatable {
 
   factory Tournament.fromJson(Map<String, dynamic> json) {
     return Tournament(
-      id: BigInt.from(json['id']),
+      id: json['id'],
       name: json['name'],
       type: json['type'],
       playerList: decodeUserList(json['playerList']),
@@ -91,6 +91,18 @@ class Tournament extends Equatable {
 
 
   @override
-  List<Object> get props => [name, type, status];
+  List<Object> get props => [id];
+
+  static const empty = Tournament(
+      id: "-",
+      name: "",
+      playerList: {},
+      adminList: {},
+      judgeList: {},
+      type: "",
+      startingTime: null,
+      status: TournamentStatus.unknown,
+      round: 0
+  );
 
 }

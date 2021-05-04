@@ -7,7 +7,6 @@ import 'package:congrega/features/tournaments/presentation/bloc/TournamentEvent.
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentState.dart';
 import 'package:congrega/features/drawer/CongregaDrawer.dart';
 import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart';
-import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,60 +20,57 @@ import 'TournamentEventDetailsView.dart';
 class TournamentStatusPage extends StatelessWidget {
 
   static Route route(Tournament t) {
-    return MaterialPageRoute<void>(builder: (_) => TournamentStatusPage(t));
+    return MaterialPageRoute<void>(builder: (_) => TournamentStatusPage());
   }
 
-  TournamentStatusPage(Tournament tournament) : _tournament = tournament, super();
-
-  final Tournament _tournament;
-
-  TournamentState _getTournamentState(){
-    return TournamentState(
-        tournament: _tournament,
-        enrolled: false,
-        round: 0,
-        status: TournamentStatus.waiting
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
+
     return DefaultTabController(
         length: 2,
-        child: BlocProvider<TournamentBloc>(
-            create: (BuildContext context) => new TournamentBloc(
-                initialState: _getTournamentState(),
-                controller: KiwiContainer().resolve<TournamentController>()
+        child: BlocProvider.value(
+            value: KiwiContainer().resolve<TournamentBloc>(),
+            child: _TournamentStatusPageScaffold()
+        )
+    );
+  }
+
+}
+
+class _TournamentStatusPageScaffold extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(BlocProvider.of<TournamentBloc>(context).state.tournament.name),
+          actions: [
+            _popMenuButton(context),
+          ],
+          bottom: TabBar(
+            tabs: [
+              Tab(child: Text("Round")),
+              Tab(child: Text("Chart"))
+            ],
+          ),
+        ),
+        floatingActionButton: BlocBuilder<TournamentBloc, TournamentState>(
+          builder: (context, state) => FloatingActionButton(
+            child: Text("NEXT STATE"),
+            onPressed: () => BlocProvider.of<TournamentBloc>(context).add(
+                getNextState(state.status)
             ),
-            child: Scaffold(
-                appBar: AppBar(
-                  title: Text(_tournament.name),
-                  actions: [
-                    _popMenuButton(context),
-                  ],
-                  bottom: TabBar(
-                    tabs: [
-                      Tab(child: Text("Round")),
-                      Tab(child: Text("Chart"))
-                    ],
-                  ),
-                ),
-                floatingActionButton: BlocBuilder<TournamentBloc, TournamentState>(
-                  builder: (context, state) => FloatingActionButton(
-                    child: Text("NEXT STATE"),
-                    onPressed: () => BlocProvider.of<TournamentBloc>(context).add(
-                        getNextState(state.status)
-                    ),
-                  ),
-                ),
-                drawer: CongregaDrawer(),
-                body: TabBarView(
-                  children: [
-                    eventRoundView(context),
-                    TournamentChartTab()
-                  ],
-                )
-            )));
+          ),
+        ),
+        drawer: BlocProvider.of<TournamentBloc>(context).state.enrolled ? CongregaDrawer() : null,
+        body: TabBarView(
+          children: [
+            eventRoundView(context),
+            TournamentChartTab()
+          ],
+        )
+    );
   }
 
   String formattedDate(DateTime now) => "${now.day.toString().padLeft(2,'0')} ${now.month.toString().padLeft(2,'0')}";
@@ -90,7 +86,7 @@ class TournamentStatusPage extends StatelessWidget {
 
   Widget _roundInProgressPage(BuildContext context){
     User opponent = User(
-      id: Uuid().toString(),
+        id: Uuid().toString(),
         username: "WizeWizard"
     );
 
@@ -301,4 +297,5 @@ class TournamentStatusPage extends StatelessWidget {
 
     return TournamentIsScheduled();
   }
+
 }
