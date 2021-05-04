@@ -61,7 +61,7 @@ abstract class Injector {
   @Register.factory(TournamentHttpClient)
   @Register.singleton(TournamentRepository)
   @Register.factory(TournamentController)
-  @Register.factory(TournamentBloc)
+  @Register.singleton(TournamentBloc)
   void _configureTournamentsModuleFactories();
 
   @Register.singleton(AuthenticationHttpClient)
