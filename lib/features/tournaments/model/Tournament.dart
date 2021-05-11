@@ -67,7 +67,7 @@ class Tournament extends Equatable {
       adminList: decodeUserList(json['adminList']),
       judgeList: decodeUserList(json['judgeList']),
       startingTime: DateTime.parse(json['startingTime']),
-      status: json['status'],
+      status: parseTournamentStatus(json['status']),
       round: json['round'],
     );
   }
@@ -77,15 +77,34 @@ class Tournament extends Equatable {
     return Set<User>.from(lis.map((listElement) => User.fromJson(listElement)));
   }
 
+  static TournamentStatus parseTournamentStatus(String statusAsString){
+   if(statusAsString == TournamentStatus.inProgress.toString())
+     return TournamentStatus.inProgress;
+
+   if(statusAsString == TournamentStatus.scheduled.toString())
+     return TournamentStatus.scheduled;
+
+   if(statusAsString == TournamentStatus.ended.toString())
+     return TournamentStatus.ended;
+
+   if(statusAsString == TournamentStatus.waiting.toString())
+     return TournamentStatus.waiting;
+
+   if(statusAsString == TournamentStatus.unknown.toString())
+     return TournamentStatus.unknown;
+
+   throw Exception("DeserializationError: couldn't deserialize properly status => '$statusAsString'");
+  }
+
   Map<String, dynamic> toJson() => {
     "id": this.id,
     "name": this.name,
     "type": this.type,
-    "playerList": this.playerList,
-    "adminList" : this.adminList,
-    "judgeList" : this.judgeList,
-    "startingTime" : this.startingTime,
-    "status": this.status,
+    "playerList": jsonEncode(this.playerList.toList()),
+    "adminList" : jsonEncode(this.adminList.toList()),
+    "judgeList" : jsonEncode(this.judgeList.toList()),
+    "startingTime" : this.startingTime!.toIso8601String(),
+    "status": this.status.toString(),
     "round": this.round
   };
 
