@@ -40,6 +40,15 @@ class User extends Equatable {
     );
   }
 
+  factory User.fromObject(dynamic obj){
+    return User(
+        id: obj['id'],
+        username: obj['username'],
+        password: obj['password'] ?? '',
+        name: obj['name'] ?? ''
+    );
+  }
+
   Map<String, dynamic> toJson() => {
     "id": this.id,
     "name": this.name,
