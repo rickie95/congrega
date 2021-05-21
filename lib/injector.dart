@@ -12,6 +12,7 @@ import 'package:congrega/features/tournaments/data/datasources/TournamentHttpCli
 import 'package:congrega/features/tournaments/data/repositories/TournamentRepository.dart';
 import 'package:congrega/features/users/UserHttpClient.dart';
 import 'package:congrega/features/users/UserRepository.dart';
+import 'package:congrega/utils/Arcano.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
@@ -36,7 +37,11 @@ abstract class Injector {
     _configureUserModuleFactories();
     _configureGameBlocModuleFactories();
     _configureMatchBlocModuleFactories();
+    _configureGraphQLClient();
   }
+
+  @Register.singleton(ArcanoGraphQLClient)
+  void _configureGraphQLClient();
 
   @Register.factory(MatchPersistence)
   @Register.factory(MatchRepository)
