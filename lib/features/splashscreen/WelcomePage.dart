@@ -8,15 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:congrega/ui/CongregaCircleLogo.dart';
 
-
 void main() {
   SystemChrome.setEnabledSystemUIOverlays([]);
   runApp(WelcomePage());
 }
 
 class WelcomePage extends StatefulWidget {
-
-  static Route route (){
+  static Route route() {
     return MaterialPageRoute(builder: (_) => WelcomePage());
   }
 
@@ -24,7 +22,8 @@ class WelcomePage extends StatefulWidget {
   _WelcomePageState createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStateMixin {
+class _WelcomePageState extends State<WelcomePage>
+    with SingleTickerProviderStateMixin {
   final int delayedAmount = 500;
   late double _scale;
   late AnimationController _controller;
@@ -47,8 +46,7 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
       ),
       lowerBound: 0.0,
       upperBound: 0.1,
-    )
-      ..addListener(() {
+    )..addListener(() {
         setState(() {});
       });
     super.initState();
@@ -70,9 +68,7 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
       child: Text(
         loginButtonMessage.toUpperCase(),
         style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-            color: color),
+            fontSize: 20.0, fontWeight: FontWeight.bold, color: color),
       ),
       decoration: BoxDecoration(
         border: Border.all(width: 1, color: Colors.white),
@@ -84,13 +80,14 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-          backgroundColor: CongregaTheme
-              .congregaTheme()
-              .primaryColor,
-          body: Center(
-            child: Column(
-              children: <Widget>[
-                AvatarGlow(
+        backgroundColor: CongregaTheme.congregaTheme().primaryColor,
+        body: SafeArea(
+            child: Center(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                flex: 30,
+                child: AvatarGlow(
                   endRadius: 90,
                   duration: Duration(seconds: 2),
                   glowColor: Colors.white24,
@@ -102,70 +99,79 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                       shape: CircleBorder(),
                       child: CongregaCircleLogo()),
                 ),
-                DelayedAnimation(
-                  child: Text(
-                    greetingLineOne,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 35.0,
-                        color: color),
-                  ),
-                  delay: delayedAmount + 1000,
+              ),
+              Expanded(
+                flex: 35,
+                child: Column(
+                  children: [
+                    DelayedAnimation(
+                      child: Text(
+                        greetingLineOne,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 35.0,
+                            color: color),
+                      ),
+                      delay: delayedAmount + 1000,
+                    ),
+                    DelayedAnimation(
+                      child: Text(
+                        greetingLineTwo,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 35.0,
+                            color: color),
+                      ),
+                      delay: delayedAmount + 2000,
+                    ),
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                    DelayedAnimation(
+                      child: Text(
+                        descriptionLineOne,
+                        style: TextStyle(fontSize: 20.0, color: color),
+                      ),
+                      delay: delayedAmount + 3000,
+                    ),
+                    DelayedAnimation(
+                      child: Text(
+                        descriptionLineTwo,
+                        style: TextStyle(fontSize: 20.0, color: color),
+                      ),
+                      delay: delayedAmount + 3000,
+                    ),
+                  ],
                 ),
-                DelayedAnimation(
-                  child: Text(
-                    greetingLineTwo,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 35.0,
-                        color: color),
-                  ),
-                  delay: delayedAmount + 2000,
+              ),
+              Expanded(
+                flex: 35,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    DelayedAnimation(
+                      child: signUpButton,
+                      delay: delayedAmount + 4000,
+                    ),
+                    SizedBox(
+                      height: 40.0,
+                    ),
+                    DelayedAnimation(
+                      child: GestureDetector(
+                        child: loginButton,
+                        onTap: goToLoginPage,
+                      ),
+                      delay: delayedAmount + 5000,
+                    ),
+                    SizedBox(
+                      height: 50.0,
+                    )
+                  ],
                 ),
-                SizedBox(
-                  height: 30.0,
-                ),
-                DelayedAnimation(
-                  child: Text(
-                    descriptionLineOne,
-                    style: TextStyle(fontSize: 20.0, color: color),
-                  ),
-                  delay: delayedAmount + 3000,
-                ),
-                DelayedAnimation(
-                  child: Text(
-                    descriptionLineTwo,
-                    style: TextStyle(fontSize: 20.0, color: color),
-                  ),
-                  delay: delayedAmount + 3000,
-                ),
-                SizedBox(
-                  height: 50.0,
-                ),
-
-
-                DelayedAnimation(
-                  child: signUpButton,
-                  delay: delayedAmount + 4000,
-                ),
-
-
-                SizedBox(height: 40.0,),
-
-
-                DelayedAnimation(
-                  child: GestureDetector(
-                    child: loginButton,
-                    onTap: goToLoginPage,
-                  ),
-
-                  delay: delayedAmount + 5000,
-                ),
-
-
-              ],
-            ),
-          )
+              ),
+            ],
+          ),
+        )),
       ),
     );
   }
@@ -177,5 +183,4 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
   void goToSignUpPage() {
     Navigator.push(context, SignUpPage.route());
   }
-
 }
