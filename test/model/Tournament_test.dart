@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main(){
@@ -23,7 +22,7 @@ void main(){
           judgeList: {},
           type: "Limited",
           startingTime: new DateTime.now(),
-          status: TournamentStatus.scheduled,
+          status: TournamentStatus.SCHEDULED,
           round: 0
       );
 

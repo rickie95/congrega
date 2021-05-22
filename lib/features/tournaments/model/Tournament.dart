@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:equatable/equatable.dart';
 
-enum TournamentStatus { scheduled, waiting, inProgress, ended, unknown}
+enum TournamentStatus { SCHEDULED, WAITING, IN_PROGRESS, ENDED, UNKNOWN}
 
 class Tournament extends Equatable {
 
@@ -30,21 +30,21 @@ class Tournament extends Equatable {
   final int round;
 
   TournamentStatus getStatus(){
-    if(this.status == TournamentStatus.ended)
-      return TournamentStatus.ended;
+    if(this.status == TournamentStatus.ENDED)
+      return TournamentStatus.ENDED;
 
     DateTime now = DateTime.now();
     if (now.isAfter(startingTime!))
-      return TournamentStatus.inProgress;
+      return TournamentStatus.IN_PROGRESS;
 
-    return TournamentStatus.scheduled;
+    return TournamentStatus.SCHEDULED;
   }
 
   bool isUserEnrolled(User user) => playerList.contains(user);
 
   Tournament copyWith({String? id, String? name, String? type, Set<User>? playerList,
     Set<User>? adminList, Set<User>? judgeList, DateTime? startingTime,
-    TournamentStatus? status, int? round}){
+    TournamentStatus? status, int? round, Uri? eventUri}){
     return Tournament(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -54,7 +54,7 @@ class Tournament extends Equatable {
         judgeList: judgeList ?? this.judgeList,
         startingTime: startingTime ?? this.startingTime,
         status: status ?? this.status,
-        round: round ?? this.round
+        round: round ?? this.round,
     );
   }
 
@@ -72,26 +72,25 @@ class Tournament extends Equatable {
     );
   }
 
-  static Set<User> decodeUserList(String sourceList) {
-    Iterable lis = jsonDecode(sourceList);
-    return Set<User>.from(lis.map((listElement) => User.fromJson(listElement)));
+  static Set<User> decodeUserList(List<Object?> userList) {
+    return userList.map((dynamic obj) => new User.fromObject(obj)).toSet();
   }
 
   static TournamentStatus parseTournamentStatus(String statusAsString){
-   if(statusAsString == TournamentStatus.inProgress.toString())
-     return TournamentStatus.inProgress;
+   if(TournamentStatus.IN_PROGRESS.toString().contains(statusAsString))
+     return TournamentStatus.IN_PROGRESS;
 
-   if(statusAsString == TournamentStatus.scheduled.toString())
-     return TournamentStatus.scheduled;
+   if(TournamentStatus.SCHEDULED.toString().contains(statusAsString))
+     return TournamentStatus.SCHEDULED;
 
-   if(statusAsString == TournamentStatus.ended.toString())
-     return TournamentStatus.ended;
+   if(TournamentStatus.ENDED.toString().contains(statusAsString))
+     return TournamentStatus.ENDED;
 
-   if(statusAsString == TournamentStatus.waiting.toString())
-     return TournamentStatus.waiting;
+   if(TournamentStatus.WAITING.toString().contains(statusAsString))
+     return TournamentStatus.WAITING;
 
-   if(statusAsString == TournamentStatus.unknown.toString())
-     return TournamentStatus.unknown;
+   if(TournamentStatus.UNKNOWN.toString().contains(statusAsString))
+     return TournamentStatus.UNKNOWN;
 
    throw Exception("DeserializationError: couldn't deserialize properly status => '$statusAsString'");
   }
@@ -120,8 +119,8 @@ class Tournament extends Equatable {
       judgeList: {},
       type: "",
       startingTime: null,
-      status: TournamentStatus.unknown,
-      round: 0
+      status: TournamentStatus.UNKNOWN,
+      round: 0,
   );
 
 }

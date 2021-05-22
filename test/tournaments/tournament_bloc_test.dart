@@ -27,7 +27,7 @@ void main() {
       act: (bloc) => bloc.add(const RoundIsAvailable()),
       expect: () => [TournamentState(
           enrolled: false,
-          status: TournamentStatus.inProgress,
+          status: TournamentStatus.IN_PROGRESS,
           round: 0,
           tournament: Tournament.empty
       )]
@@ -39,7 +39,7 @@ void main() {
       act: (bloc) => bloc.add(SetTournament(Tournament(
           id: '45',
           round: 0,
-          status: TournamentStatus.unknown,
+          status: TournamentStatus.UNKNOWN,
           judgeList: {},
           adminList: {},
           playerList: {},
@@ -51,7 +51,7 @@ void main() {
         tournament: Tournament(
             id: '45',
             round: 0,
-            status: TournamentStatus.unknown,
+            status: TournamentStatus.UNKNOWN,
             judgeList: {},
             adminList: {},
             playerList: {},
@@ -59,7 +59,7 @@ void main() {
             type: "Limited",
             name: "foo"
         ),
-        status: TournamentStatus.unknown,
+        status: TournamentStatus.UNKNOWN,
         round: 0,
         enrolled: false,
       )]
@@ -74,7 +74,7 @@ void main() {
                 Tournament(
                     id: '45',
                     round: 0,
-                    status: TournamentStatus.unknown,
+                    status: TournamentStatus.UNKNOWN,
                     judgeList: {},
                     adminList: {},
                     playerList: {},
@@ -89,7 +89,7 @@ void main() {
                 Tournament(
                     id: '54',
                     round: 0,
-                    status: TournamentStatus.unknown,
+                    status: TournamentStatus.UNKNOWN,
                     judgeList: {},
                     adminList: {},
                     playerList: {},
@@ -105,7 +105,7 @@ void main() {
         tournament: Tournament(
             id: '54',
             round: 0,
-            status: TournamentStatus.unknown,
+            status: TournamentStatus.UNKNOWN,
             judgeList: {},
             adminList: {},
             playerList: {},
@@ -113,7 +113,7 @@ void main() {
             type: "Limited",
             name: "bar"
         ),
-        status: TournamentStatus.unknown,
+        status: TournamentStatus.UNKNOWN,
         round: 0,
         enrolled: false,
       )]

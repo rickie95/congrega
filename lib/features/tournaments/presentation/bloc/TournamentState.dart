@@ -14,7 +14,7 @@ class TournamentState extends Equatable {
         this.tournament = Tournament.empty,
         this.enrolled = false,
         this.round = 0,
-        this.status = TournamentStatus.unknown;
+        this.status = TournamentStatus.UNKNOWN;
 
   final Tournament tournament;
   final bool enrolled;

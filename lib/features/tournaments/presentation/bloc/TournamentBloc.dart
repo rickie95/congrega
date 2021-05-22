@@ -25,15 +25,15 @@ class TournamentBloc extends Bloc<TournamentEvent, TournamentState> {
     } else if(event is RetirePlayer){
       yield mapAbandoningToState(event);
     } else if(event is RoundIsAvailable){
-      yield state.copyWith(status: TournamentStatus.inProgress);
+      yield state.copyWith(status: TournamentStatus.IN_PROGRESS);
     }else if(event is WaitForRound){
-      yield state.copyWith(status: TournamentStatus.waiting);
+      yield state.copyWith(status: TournamentStatus.WAITING);
     }else if(event is EndTournament){
-      yield state.copyWith(status: TournamentStatus.ended);
+      yield state.copyWith(status: TournamentStatus.ENDED);
     }else if(event is TournamentIsScheduled){
-      yield state.copyWith(status: TournamentStatus.scheduled);
+      yield state.copyWith(status: TournamentStatus.SCHEDULED);
     } else if (event is SetTournament){
-      yield _mapSetTournamentToState(event);
+      yield* _mapSetTournamentToState(event);
     }
   }
 
@@ -53,10 +53,15 @@ class TournamentBloc extends Bloc<TournamentEvent, TournamentState> {
     );
   }
 
-  TournamentState _mapSetTournamentToState(SetTournament event) {
-    return state.copyWith(
-      tournament: event.tournament
-    );
+  Stream<TournamentState> _mapSetTournamentToState(SetTournament event) async* {
+    yield TournamentState.unknown();
+    try {
+      Tournament t = await _controller.getEventDetails(event.tournament.id);
+      yield state.copyWith(tournament: t);
+    } catch (exception){
+      print(exception);
+    }
+
+
   }
-  
 }
