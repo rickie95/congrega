@@ -1,6 +1,5 @@
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentBloc.dart';
-import 'package:congrega/features/tournaments/presentation/bloc/TournamentState.dart';
 import 'package:congrega/ui/congrega_elevated_button_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -146,12 +145,7 @@ class TournamentEventDetailsView extends StatelessWidget {
                               children: [
                                 Container(
                                   padding: EdgeInsets.symmetric(vertical: 5),
-                                  child: BlocBuilder<TournamentBloc, TournamentState>(
-                                    buildWhen: (previous, current) => previous.status != current.status,
-                                    builder: (context, state) {
-                                      return Text(statusToString(state.status), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold));
-                                    },
-                                  ),
+                                  child: Text(statusToString(tournament.status), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                                 ),
                                 Container(
                                   child: Text("Status", style: TextStyle(fontSize: 17)),
@@ -164,9 +158,6 @@ class TournamentEventDetailsView extends StatelessWidget {
 
                     ],
                   ),
-
-                  // Container(child: Text("MODERATORS ${adminsListToString(_tournament.adminList)}")),
-
                 ],
               ),
             ),
@@ -213,13 +204,13 @@ class TournamentEventDetailsView extends StatelessWidget {
   }
 
   String statusToString(TournamentStatus status) {
-    if(status == TournamentStatus.scheduled)
+    if(status == TournamentStatus.SCHEDULED)
       return "Scheduled";
 
-    if(status == TournamentStatus.waiting || status == TournamentStatus.inProgress)
+    if(status == TournamentStatus.WAITING || status == TournamentStatus.IN_PROGRESS)
       return "In Progress";
 
-    if(status == TournamentStatus.ended)
+    if(status == TournamentStatus.ENDED)
       return "Ended";
 
     // FIXME: use log

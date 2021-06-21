@@ -12,8 +12,7 @@ class DelayedAnimation extends StatefulWidget {
   _DelayedAnimationState createState() => _DelayedAnimationState();
 }
 
-class _DelayedAnimationState extends State<DelayedAnimation>  with TickerProviderStateMixin {
-  
+class _DelayedAnimationState extends State<DelayedAnimation> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _animOffset;
 
@@ -25,13 +24,9 @@ class _DelayedAnimationState extends State<DelayedAnimation>  with TickerProvide
     final curve = CurvedAnimation(curve: Curves.decelerate, parent: _controller);
     _animOffset = Tween<Offset>(begin: const Offset(0.0, 0.35), end: Offset.zero).animate(curve);
 
-    if (widget.delay == null) {
+    Timer(Duration(milliseconds: widget.delay), () {
       _controller.forward();
-    } else {
-      Timer(Duration(milliseconds: widget.delay), () {
-        _controller.forward();
-      });
-    }
+    });
   }
 
   @override

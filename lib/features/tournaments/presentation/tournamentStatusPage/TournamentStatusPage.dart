@@ -23,10 +23,8 @@ class TournamentStatusPage extends StatelessWidget {
     return MaterialPageRoute<void>(builder: (_) => TournamentStatusPage());
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
         length: 2,
         child: BlocProvider.value(
@@ -42,35 +40,49 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(BlocProvider.of<TournamentBloc>(context).state.tournament.name),
-          actions: [
-            _popMenuButton(context),
-          ],
-          bottom: TabBar(
-            tabs: [
-              Tab(child: Text("Round")),
-              Tab(child: Text("Chart"))
-            ],
-          ),
-        ),
-        floatingActionButton: BlocBuilder<TournamentBloc, TournamentState>(
-          builder: (context, state) => FloatingActionButton(
-            child: Text("NEXT STATE"),
-            onPressed: () => BlocProvider.of<TournamentBloc>(context).add(
-                getNextState(state.status)
-            ),
-          ),
-        ),
-        drawer: BlocProvider.of<TournamentBloc>(context).state.enrolled ? CongregaDrawer() : null,
-        body: TabBarView(
-          children: [
-            eventRoundView(context),
-            TournamentChartTab()
-          ],
-        )
+    return BlocBuilder<TournamentBloc, TournamentState>(
+        buildWhen: (previous, current) => previous.tournament != current.tournament,
+        builder: (BuildContext context, TournamentState state) {
+          if(state.tournament == Tournament.empty)
+            return Scaffold(
+                appBar: AppBar(
+                  title: Text("Loading..."),
+                ),
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator()
+                    ],
+                  ),
+                )
+            );
+
+          return Scaffold(
+              appBar: AppBar(
+                title: Text(BlocProvider.of<TournamentBloc>(context).state.tournament.name),
+                actions: [
+                  _popMenuButton(context),
+                ],
+                bottom: TabBar(
+                  tabs: [
+                    Tab(child: Text("Round")),
+                    Tab(child: Text("Chart"))
+                  ],
+                ),
+              ),
+              drawer: BlocProvider.of<TournamentBloc>(context).state.enrolled ? CongregaDrawer() : null,
+              body: TabBarView(
+                children: [
+                  eventRoundView(context),
+                  TournamentChartTab()
+                ],
+              )
+          );
+        }
     );
+    
   }
 
   String formattedDate(DateTime now) => "${now.day.toString().padLeft(2,'0')} ${now.month.toString().padLeft(2,'0')}";
@@ -179,12 +191,12 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
             (previous.enrolled != current.enrolled) || (previous.status != current.status),
         builder: (context, state) {
           // If ENDED or the user is not enrolled show the details page
-          if(state.status == TournamentStatus.ended || state.status == TournamentStatus.scheduled ||
+          if(state.status == TournamentStatus.ENDED || state.status == TournamentStatus.SCHEDULED ||
               !state.tournament.isUserEnrolled(BlocProvider.of<AuthenticationBloc>(context).state.user))
             return TournamentEventDetailsView(tournament: state.tournament);
 
           // If WAITING then standby until admin's action
-          if(state.status == TournamentStatus.waiting)
+          if(state.status == TournamentStatus.WAITING)
             return _standbyForAdmin(context);
 
           // Otherwise is in INPROGRESS, then show the round page
@@ -283,19 +295,25 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
   }
 
   TournamentEvent getNextState(TournamentStatus status) {
-    if(status == TournamentStatus.scheduled)
+    if(status == TournamentStatus.SCHEDULED)
       return WaitForRound();
 
-    if(status == TournamentStatus.waiting)
+    if(status == TournamentStatus.WAITING)
       return RoundIsAvailable();
 
-    if(status == TournamentStatus.inProgress)
+    if(status == TournamentStatus.IN_PROGRESS)
       return EndTournament();
 
-    if(status == TournamentStatus.ended)
+    if(status == TournamentStatus.ENDED)
       return TournamentIsScheduled();
 
     return TournamentIsScheduled();
+  }
+
+  bool _statusIsEndedOrInProgressOrWaiting(TournamentStatus status) {
+    return status == TournamentStatus.IN_PROGRESS ||
+          status == TournamentStatus.WAITING ||
+          status == TournamentStatus.ENDED;
   }
 
 }
