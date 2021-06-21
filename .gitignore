@@ -122,3 +122,4 @@ app.*.symbols
 lib/injector.g.dart
 test/**/*.mocks.dart
 lib/injector.g.dart
+tests-log.txt

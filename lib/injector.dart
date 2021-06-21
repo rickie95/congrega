@@ -10,6 +10,7 @@ import 'package:congrega/features/lifecounter/data/match/MatchRepository.dart';
 import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/data/datasources/TournamentHttpClient.dart';
 import 'package:congrega/features/tournaments/data/repositories/TournamentRepository.dart';
+import 'package:congrega/features/tournaments/presentation/event_form_bloc/event_form_bloc.dart';
 import 'package:congrega/features/users/UserHttpClient.dart';
 import 'package:congrega/features/users/UserRepository.dart';
 import 'package:congrega/utils/Arcano.dart';
@@ -27,9 +28,9 @@ import 'features/tournaments/presentation/bloc/TournamentBloc.dart';
 part 'injector.g.dart';
 
 abstract class Injector {
-
-  void configure(){
+  void configure() {
     _configureCommonUtilitiesFactories();
+    _configureEventFormBloc();
     _configureSignInModuleFactories();
     _configureLoginModuleFactories();
     _configureTournamentsModuleFactories();
@@ -39,6 +40,9 @@ abstract class Injector {
     _configureMatchBlocModuleFactories();
     _configureGraphQLClient();
   }
+
+  @Register.factory(EventFormBloc)
+  void _configureEventFormBloc();
 
   @Register.singleton(ArcanoGraphQLClient)
   void _configureGraphQLClient();
@@ -79,7 +83,6 @@ abstract class Injector {
 
   @Register.factory(LoginBloc)
   void _configureLoginModuleFactories();
-
 }
 
 class DepInj {
