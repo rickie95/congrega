@@ -33,19 +33,34 @@ class Arcano {
 
   static Uri getGraphQlUri() {
     return Uri(
-        scheme: SCHEME, host: Arcano.IP_ADDRESS, path: Arcano.GRAPH_QL_ENDPOINT, port: Arcano.PORT);
+        scheme: SCHEME,
+        host: Arcano.IP_ADDRESS,
+        path: Arcano.GRAPH_QL_ENDPOINT,
+        port: Arcano.PORT);
   }
 
   static Uri getEventsUri() {
-    return Uri(scheme: SCHEME, host: Arcano.IP_ADDRESS, path: Arcano.EVENTS_URL, port: Arcano.PORT);
+    return Uri(
+        scheme: SCHEME,
+        host: Arcano.IP_ADDRESS,
+        path: Arcano.EVENTS_URL,
+        port: Arcano.PORT);
   }
 
   static Uri getAuthUri() {
-    return Uri(scheme: SCHEME, host: Arcano.IP_ADDRESS, path: Arcano.AUTH_URL, port: Arcano.PORT);
+    return Uri(
+        scheme: SCHEME,
+        host: Arcano.IP_ADDRESS,
+        path: Arcano.AUTH_URL,
+        port: Arcano.PORT);
   }
 
   static Uri getUsersUri() {
-    return Uri(scheme: SCHEME, host: Arcano.IP_ADDRESS, path: Arcano.USERS_URL, port: Arcano.PORT);
+    return Uri(
+        scheme: SCHEME,
+        host: Arcano.IP_ADDRESS,
+        path: Arcano.USERS_URL,
+        port: Arcano.PORT);
   }
 
   static Uri getUserByUsernameUri(String username) {
@@ -64,5 +79,6 @@ class ArcanoGraphQLLink extends graphQL.HttpLink {
 class ArcanoGraphQLClient extends graphQL.GraphQLClient {
   ArcanoGraphQLClient()
       : super(
-            link: ArcanoGraphQLLink(), cache: graphQL.GraphQLCache(store: graphQL.InMemoryStore()));
+            link: ArcanoGraphQLLink(),
+            cache: graphQL.GraphQLCache(store: graphQL.InMemoryStore()));
 }
