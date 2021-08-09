@@ -24,7 +24,7 @@ class TournamentRepository {
     return tournamentHttpClient.getEventByUUID(uuid);
   }
 
-  Future<Tournament> newEvent(Tournament t) => tournamentHttpClient.sendNewEvent(t);
+  Future<void> newEvent(Tournament t) => tournamentHttpClient.sendNewEvent(t);
 
   Future<Tournament> enrollUserAsPlayer(User user, Tournament tournament) {
     return tournamentHttpClient.enrollUserInTournament(tournament.id, user);
@@ -35,7 +35,9 @@ class TournamentRepository {
   }
 
   List<Tournament> getParticipatedEvents() {
-    return _eventsList.where((element) => _participatedTournamentsID.contains(element.id)).toList();
+    return _eventsList
+        .where((element) => _participatedTournamentsID.contains(element.id))
+        .toList();
   }
 
   List<Tournament> getCreatedEvents() {
@@ -46,15 +48,16 @@ class TournamentRepository {
 
   List<Tournament> getEventsParticipatedByUser(User user) {
     return _eventsList
-        .where((element) =>
-            (_participatedTournamentsID.contains(element.id) && element.playerList.contains(user)))
+        .where((element) => (_participatedTournamentsID.contains(element.id) &&
+            element.playerList.contains(user)))
         .toList();
   }
 
   Future<void> addParticipatedEvent(Tournament updatedTournament) async {
     _participatedTournamentsID.add(updatedTournament.id);
     SharedPreferences storage = await SharedPreferences.getInstance();
-    storage.setString("EVENTS_IN_PROGRESS", jsonEncode(_participatedTournamentsID));
+    storage.setString(
+        "EVENTS_IN_PROGRESS", jsonEncode(_participatedTournamentsID));
   }
 
   Future<void> _loadParticipatedEvents() async {
