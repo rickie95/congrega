@@ -10,7 +10,8 @@ class FriendRepository {
   static List<User> _friends = [
     new User(id: "001", name: "Frank", username: "frankieHINRG"),
     new User(id: "002", name: "Rodrigo", username: "donRodrigo"),
-    new User(id: "003", name: "John Wick", username: "babaYaga")
+    new User(id: "003", name: "John Wick", username: "babaYaga"),
+    new User(id: "004", name: "Mike Tyson", username: "mikeTheBite")
   ];
 
   final FlutterSecureStorage secureStorage;
