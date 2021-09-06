@@ -44,4 +44,13 @@ class FriendRepository {
       _friends = User.decodeUserList(encodedList as List<Object?>).toList();
     }
   }
+
+  Future<List<User>> searchByUsername(String username) {
+    return Future.delayed(
+        Duration(milliseconds: 200),
+        () => _friends
+            .where((user) =>
+                user.username.toLowerCase().contains(username.toLowerCase()))
+            .toList());
+  }
 }
