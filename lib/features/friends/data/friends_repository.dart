@@ -49,8 +49,11 @@ class FriendRepository {
     return Future.delayed(
         Duration(milliseconds: 200),
         () => _friends
-            .where((user) =>
-                user.username.toLowerCase().contains(username.toLowerCase()))
+            .where((user) => user.username.toLowerCase().contains(username.toLowerCase()))
             .toList());
+  }
+
+  bool isFriendWith(User user) {
+    return _friends.contains(user);
   }
 }

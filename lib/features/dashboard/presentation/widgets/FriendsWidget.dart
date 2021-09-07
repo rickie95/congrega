@@ -82,8 +82,7 @@ class FriendCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => showModalBottomSheet<void>(
-          context: context,
-          builder: (BuildContext context) => FriendBottomSheet(user: user)),
+          context: context, builder: (BuildContext context) => FriendBottomSheet(user: user)),
       child: Card(
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6),
@@ -137,7 +136,9 @@ class FriendBottomSheet extends StatelessWidget {
             IconButton(
                 onPressed: () => {},
                 icon: Icon(
-                  Icons.star,
+                  KiwiContainer().resolve<FriendRepository>().isFriendWith(user)
+                      ? Icons.star
+                      : Icons.star_outline,
                   size: 30,
                 ))
           ],

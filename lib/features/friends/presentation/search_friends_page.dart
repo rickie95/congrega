@@ -1,5 +1,7 @@
+import 'package:congrega/features/dashboard/presentation/widgets/FriendsWidget.dart';
 import 'package:congrega/features/friends/data/friends_repository.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/users/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:kiwi/kiwi.dart';
@@ -18,10 +20,7 @@ class SearchFriendPage extends StatefulWidget {
 
 class _SearchFriendPageState extends State<SearchFriendPage> {
   void updateSearchText(String username) {
-    KiwiContainer()
-        .resolve<FriendRepository>()
-        .searchByUsername(username)
-        .then((searchResults) {
+    KiwiContainer().resolve<UserRepository>().searchByUsername(username).then((searchResults) {
       results = searchResults;
       setState(() {});
     });
@@ -34,36 +33,36 @@ class _SearchFriendPageState extends State<SearchFriendPage> {
     return Scaffold(
       appBar: AppBar(title: const Text("Add friend")),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: ListView.builder(
-            itemCount: results.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0)
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: Text(
-                        "Search for an user",
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    TextField(
-                      onChanged: (value) => {updateSearchText(value)},
-                      decoration: InputDecoration(
-                          labelText: "Write an username",
-                          border: SearchFriendPage.newEventOutlineInputBorder),
-                    )
-                  ],
-                );
+        child: ListView.builder(
+          itemCount: results.length + 1,
+          itemBuilder: (context, index) {
+            if (index == 0)
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  onChanged: (value) => {updateSearchText(value)},
+                  decoration: InputDecoration(
+                      labelText: "Search for username or name",
+                      border: SearchFriendPage.newEventOutlineInputBorder),
+                ),
+              );
 
-              return ListTile(title: Text(results[index - 1].name));
-            },
-          ),
+            return createResultTile(results[index - 1]);
+          },
         ),
       ),
+    );
+  }
+
+  Widget createResultTile(User user) {
+    return ListTile(
+      leading: CircleAvatar(
+        child: Text(user.username[0].toUpperCase()),
+      ),
+      title: Text(user.username),
+      subtitle: Text(user.name),
+      onTap: () => showModalBottomSheet<void>(
+          context: context, builder: (BuildContext context) => FriendBottomSheet(user: user)),
     );
   }
 }
