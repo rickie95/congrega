@@ -82,7 +82,8 @@ class FriendCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => showModalBottomSheet<void>(
-          context: context, builder: (BuildContext context) => FriendBottomSheet(user: user)),
+          context: context,
+          builder: (BuildContext context) => FriendBottomSheet(user: user)),
       child: Card(
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6),
@@ -131,18 +132,7 @@ class FriendBottomSheet extends StatelessWidget {
             children: [userTitle(), userName()],
           ),
         ),
-        Column(
-          children: [
-            IconButton(
-                onPressed: () => {},
-                icon: Icon(
-                  KiwiContainer().resolve<FriendRepository>().isFriendWith(user)
-                      ? Icons.star
-                      : Icons.star_outline,
-                  size: 30,
-                ))
-          ],
-        )
+        FollowButton(user: user),
       ],
     );
   }
@@ -175,5 +165,37 @@ class FriendBottomSheet extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class FollowButton extends StatefulWidget {
+  final User user;
+
+  FollowButton({required this.user});
+
+  @override
+  State<FollowButton> createState() => _FollowButtonState(user: user);
+}
+
+class _FollowButtonState extends State<FollowButton> {
+  User user;
+
+  _FollowButtonState({required this.user}) : super();
+
+  @override
+  Widget build(BuildContext context) {
+    return KiwiContainer().resolve<FriendRepository>().isFriendWith(user)
+        ? OutlinedButton(
+            onPressed: () {
+              KiwiContainer().resolve<FriendRepository>().removeFriend(user);
+              setState(() {});
+            },
+            child: Text("Unfollow"))
+        : OutlinedButton(
+            onPressed: () {
+              KiwiContainer().resolve<FriendRepository>().addFriend(user);
+              setState(() {});
+            },
+            child: Text("Follow"));
   }
 }
