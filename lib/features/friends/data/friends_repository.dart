@@ -28,6 +28,12 @@ class FriendRepository {
     //this._updateFriendList(friend);
   }
 
+  /// Removes an [User] from the collection
+  void removeFriend(User friend) {
+    _friends.remove(friend);
+    //this._updateFriendList(friend);
+  }
+
   List<User> getFriendsList() {
     return _friends;
   }
@@ -49,7 +55,8 @@ class FriendRepository {
     return Future.delayed(
         Duration(milliseconds: 200),
         () => _friends
-            .where((user) => user.username.toLowerCase().contains(username.toLowerCase()))
+            .where((user) =>
+                user.username.toLowerCase().contains(username.toLowerCase()))
             .toList());
   }
 
