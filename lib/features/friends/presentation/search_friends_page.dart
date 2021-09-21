@@ -1,4 +1,4 @@
-import 'package:congrega/features/dashboard/presentation/widgets/FriendsWidget.dart';
+import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/FriendsWidget.dart';
 import 'package:congrega/features/friends/data/friends_repository.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/users/UserRepository.dart';
@@ -20,7 +20,10 @@ class SearchFriendPage extends StatefulWidget {
 
 class _SearchFriendPageState extends State<SearchFriendPage> {
   void updateSearchText(String username) {
-    KiwiContainer().resolve<UserRepository>().searchByUsername(username).then((searchResults) {
+    KiwiContainer()
+        .resolve<UserRepository>()
+        .searchByUsername(username)
+        .then((searchResults) {
       results = searchResults;
       setState(() {});
     });
@@ -62,7 +65,8 @@ class _SearchFriendPageState extends State<SearchFriendPage> {
       title: Text(user.username),
       subtitle: Text(user.name),
       onTap: () => showModalBottomSheet<void>(
-          context: context, builder: (BuildContext context) => FriendBottomSheet(user: user)),
+          context: context,
+          builder: (BuildContext context) => FriendBottomSheet(user: user)),
     );
   }
 }

@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:congrega/features/loginSignup/data/AuthenticationHttpClient.dart';
 import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
-import 'package:congrega/utils/Arcano.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 

@@ -4,10 +4,10 @@ import 'package:graphql_flutter/graphql_flutter.dart' as graphQL;
 
 class Arcano {
   static const String SCHEME = 'http';
-  static const String IP_ADDRESS = "192.168.1.59";
+  static const String IP_ADDRESS = "192.168.1.58";
   static const int PORT = 8080;
 
-  static const String BASE_URL = "https://$IP_ADDRESS:$PORT/arcano";
+  static const String BASE_URL = "http://$IP_ADDRESS:$PORT/arcano";
 
   static const String ARCANO = '/arcano';
 

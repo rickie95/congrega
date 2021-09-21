@@ -1,11 +1,15 @@
+import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_bloc.dart';
+import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_events.dart';
+import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_state.dart';
 import 'package:congrega/features/friends/data/friends_repository.dart';
 import 'package:congrega/features/friends/presentation/search_friends_page.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:kiwi/kiwi.dart';
 
-import 'DashboardWideTile.dart';
+import '../DashboardWideTile.dart';
 
 class FriendsWidget extends StatelessWidget {
   const FriendsWidget();
@@ -22,22 +26,27 @@ class FriendsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DashboardWideTile(
-        title: AppLocalizations.of(context)!.friends_widget_title,
-        popupMenuButton: PopupMenuButton<String>(
-          onSelected: (choice) => handleChoice(choice, context),
-          itemBuilder: (BuildContext context) {
-            return {'Add friend'}.map((String choice) {
-              return PopupMenuItem<String>(
-                value: choice,
-                child: Text(choice),
-              );
-            }).toList();
-          },
-        ),
-        child: Container(
-          height: 125,
+      title: AppLocalizations.of(context)!.friends_widget_title,
+      popupMenuButton: PopupMenuButton<String>(
+        onSelected: (choice) => handleChoice(choice, context),
+        itemBuilder: (BuildContext context) {
+          return {'Add friend'}.map((String choice) {
+            return PopupMenuItem<String>(
+              value: choice,
+              child: Text(choice),
+            );
+          }).toList();
+        },
+      ),
+      child: Container(
+        height: 125,
+        child: BlocProvider<FriendsWidgetBloc>(
+          create: (BuildContext context) =>
+              KiwiContainer().resolve<FriendsWidgetBloc>(),
           child: FriendCardList(),
-        ));
+        ),
+      ),
+    );
   }
 }
 
@@ -50,24 +59,28 @@ class FriendCardList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (getFriendCount() == 0) {
-      return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(width: 2, color: Colors.black54),
-          ),
-          child: Center(
-            child: Text("You have no friends! Tap here to add someone"),
-          ));
-    }
+    return BlocBuilder<FriendsWidgetBloc, FriendsWidgetState>(
+      builder: (context, state) {
+        if (getFriendCount() == 0) {
+          return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(width: 2, color: Colors.black54),
+              ),
+              child: Center(
+                child: Text("You have no friends! Tap here to add someone"),
+              ));
+        }
 
-    return ListView(
-      scrollDirection: Axis.horizontal,
-      children: KiwiContainer()
-          .resolve<FriendRepository>()
-          .getFriendsList()
-          .map((friend) => FriendCard(user: friend))
-          .toList(),
+        return ListView(
+          scrollDirection: Axis.horizontal,
+          children: KiwiContainer()
+              .resolve<FriendRepository>()
+              .getFriendsList()
+              .map((friend) => FriendCard(user: friend))
+              .toList(),
+        );
+      },
     );
   }
 }
@@ -188,12 +201,24 @@ class _FollowButtonState extends State<FollowButton> {
         ? OutlinedButton(
             onPressed: () {
               KiwiContainer().resolve<FriendRepository>().removeFriend(user);
+              KiwiContainer().resolve<FriendsWidgetBloc>().add(
+                  FriendListUpdated(
+                      listLenght: KiwiContainer()
+                          .resolve<FriendRepository>()
+                          .getFriendsList()
+                          .length));
               setState(() {});
             },
             child: Text("Unfollow"))
         : OutlinedButton(
             onPressed: () {
               KiwiContainer().resolve<FriendRepository>().addFriend(user);
+              KiwiContainer().resolve<FriendsWidgetBloc>().add(
+                  FriendListUpdated(
+                      listLenght: KiwiContainer()
+                          .resolve<FriendRepository>()
+                          .getFriendsList()
+                          .length));
               setState(() {});
             },
             child: Text("Follow"));

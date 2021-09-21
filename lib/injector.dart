@@ -1,4 +1,5 @@
 import 'package:congrega/features/authentication/AuthenticationBloc.dart';
+import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_bloc.dart';
 import 'package:congrega/features/friends/data/friends_repository.dart';
 import 'package:congrega/features/lifecounter/data/game/GamePersistance.dart';
 import 'package:congrega/features/lifecounter/data/game/GameRepository.dart';
@@ -86,6 +87,7 @@ abstract class Injector {
   @Register.factory(LoginBloc)
   void _configureLoginModuleFactories();
 
+  @Register.singleton(FriendsWidgetBloc)
   @Register.factory(FriendRepository)
   void _configureFriendsModule();
 }
