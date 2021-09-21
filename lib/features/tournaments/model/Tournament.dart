@@ -1,5 +1,6 @@
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
 
 enum TournamentStatus { SCHEDULED, WAITING, IN_PROGRESS, ENDED, UNKNOWN }
 
@@ -42,6 +43,7 @@ class Tournament extends Equatable {
   }
 
   bool isUserEnrolled(User user) => playerList.contains(user);
+  bool isUserAdmin(User user) => adminList.contains(user);
 
   Tournament copyWith(
       {String? id,
@@ -92,7 +94,8 @@ class Tournament extends Equatable {
     if (TournamentStatus.SCHEDULED.toString().contains(statusAsString))
       return TournamentStatus.SCHEDULED;
 
-    if (TournamentStatus.ENDED.toString().contains(statusAsString)) return TournamentStatus.ENDED;
+    if (TournamentStatus.ENDED.toString().contains(statusAsString))
+      return TournamentStatus.ENDED;
 
     if (TournamentStatus.WAITING.toString().contains(statusAsString))
       return TournamentStatus.WAITING;

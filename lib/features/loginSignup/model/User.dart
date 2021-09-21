@@ -6,7 +6,11 @@ class User extends Equatable {
   final String username;
   final String password;
 
-  const User({required this.id, this.name = "", required this.username, this.password = ""});
+  const User(
+      {required this.id,
+      this.name = "",
+      required this.username,
+      this.password = ""});
 
   @override
   List<Object> get props => [id, username];
@@ -16,7 +20,8 @@ class User extends Equatable {
     return "[ID: $id | Name: $name | Username: $username | Password: $password]";
   }
 
-  User copyWith({String? id, String? name, String? username, String? password}) {
+  User copyWith(
+      {String? id, String? name, String? username, String? password}) {
     return User(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -50,6 +55,10 @@ class User extends Equatable {
       };
 
   static const empty = User(id: '-', username: '-');
+
+  static Set<User> decodeUserList(List<Object?> userList) {
+    return userList.map((dynamic obj) => new User.fromObject(obj)).toSet();
+  }
 }
 
 class UserBrief {

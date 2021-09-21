@@ -1,6 +1,7 @@
 import 'package:congrega/features/tournaments/presentation/event_form_bloc/event_form_bloc.dart';
 import 'package:congrega/features/tournaments/presentation/event_form_bloc/event_form_event.dart';
 import 'package:congrega/features/tournaments/presentation/event_form_bloc/event_form_state.dart';
+import 'package:congrega/features/tournaments/presentation/tournamentPage/tournament_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,9 +59,11 @@ class EventFormPageBody extends StatelessWidget {
         BlocBuilder<EventFormBloc, EventFormState>(
           buildWhen: (previous, current) => previous.name != current.name,
           builder: (context, state) => TextFormField(
-            onChanged: (name) => context.read<EventFormBloc>().add(EventFormNameChanged(name)),
+            onChanged: (name) =>
+                context.read<EventFormBloc>().add(EventFormNameChanged(name)),
             decoration: InputDecoration(
-              errorText: state.name.invalid ? 'Insert a name for the event' : null,
+              errorText:
+                  state.name.invalid ? 'Insert a name for the event' : null,
               labelText: "Name",
               border: newEventOutlineInputBorder,
             ),
@@ -82,8 +85,9 @@ class EventFormPageBody extends StatelessWidget {
         ),
         SizedBox(height: 8),
         TextFormField(
-          onChanged: (location) =>
-              context.read<EventFormBloc>().add(EventFormLocationChanged(location)),
+          onChanged: (location) => context
+              .read<EventFormBloc>()
+              .add(EventFormLocationChanged(location)),
           decoration: InputDecoration(
             labelText: "Location",
             border: newEventOutlineInputBorder,
@@ -101,7 +105,8 @@ class EventFormPageBody extends StatelessWidget {
                 "NOTE:",
                 style: TextStyle(color: Colors.grey),
               ),
-              Text("You will be an admin of this event", style: TextStyle(color: Colors.grey)),
+              Text("You will be an admin of this event",
+                  style: TextStyle(color: Colors.grey)),
             ],
           ),
         ),
@@ -112,9 +117,12 @@ class EventFormPageBody extends StatelessWidget {
             builder: (context, state) => ElevatedButton(
               style: ButtonStyle(
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(18))),
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18))),
               ),
-              onPressed: state.status == FormzStatus.valid ? () => _sendEvent(context) : null,
+              onPressed: state.status == FormzStatus.valid
+                  ? () => _sendEvent(context)
+                  : null,
               child: Text(
                 "CREATE EVENT",
                 style: TextStyle(fontSize: 17),
@@ -133,52 +141,72 @@ class EventFormPageBody extends StatelessWidget {
         builder: (contex) => BlocProvider<EventFormBloc>.value(
               value: context.read<EventFormBloc>(),
               child: CongregaDialog(
-                icon: BlocBuilder<EventFormBloc, EventFormState>(
-                  buildWhen: (previous, current) => previous.status != current.status,
-                  builder: (context, state) {
-                    if (state.status == FormzStatus.submissionInProgress)
-                      return Container(
-                          child: Padding(
-                              padding: EdgeInsets.all(8), child: CircularProgressIndicator()));
-
-                    if (state.status == FormzStatus.submissionSuccess)
-                      return Icon(Icons.check_circle, color: Colors.green.shade800, size: 50);
-
-                    if (state.status == FormzStatus.submissionFailure)
-                      return Icon(Icons.error, color: Colors.red.shade800, size: 50);
-
-                    return Icon(Icons.info, color: Colors.grey, size: 50);
-                  },
-                ),
-                title: BlocBuilder<EventFormBloc, EventFormState>(
-                    buildWhen: (previous, current) => previous.status != current.status,
+                  icon: BlocBuilder<EventFormBloc, EventFormState>(
+                    buildWhen: (previous, current) =>
+                        previous.status != current.status,
                     builder: (context, state) {
                       if (state.status == FormzStatus.submissionInProgress)
-                        return CongregaDialog.createTitle("Please wait");
+                        return Container(
+                            child: Padding(
+                                padding: EdgeInsets.all(8),
+                                child: CircularProgressIndicator()));
 
                       if (state.status == FormzStatus.submissionSuccess)
-                        return CongregaDialog.createTitle("Success!");
+                        return Icon(Icons.check_circle,
+                            color: Colors.green.shade800, size: 50);
 
                       if (state.status == FormzStatus.submissionFailure)
-                        return CongregaDialog.createTitle("Error");
+                        return Icon(Icons.error,
+                            color: Colors.red.shade800, size: 50);
 
-                      return CongregaDialog.createTitle("Something appened");
-                    }),
-                body: BlocBuilder<EventFormBloc, EventFormState>(
-                  buildWhen: (previous, current) => previous.status != current.status,
-                  builder: (context, state) {
-                    if (state.status == FormzStatus.submissionInProgress)
-                      return Text("The event is being created");
+                      return Icon(Icons.info, color: Colors.grey, size: 50);
+                    },
+                  ),
+                  title: BlocBuilder<EventFormBloc, EventFormState>(
+                      buildWhen: (previous, current) =>
+                          previous.status != current.status,
+                      builder: (context, state) {
+                        if (state.status == FormzStatus.submissionInProgress)
+                          return CongregaDialog.createTitle("Please wait");
 
-                    if (state.status == FormzStatus.submissionSuccess)
-                      return Text("Event created correctly");
+                        if (state.status == FormzStatus.submissionSuccess)
+                          return CongregaDialog.createTitle("Success!");
 
-                    if (state.status == FormzStatus.submissionFailure) return Text(state.errorMsg);
+                        if (state.status == FormzStatus.submissionFailure)
+                          return CongregaDialog.createTitle("Error");
 
-                    return Text("Something happened during event creation. Try again");
-                  },
-                ),
-              ),
+                        return CongregaDialog.createTitle("Something appened");
+                      }),
+                  body: BlocBuilder<EventFormBloc, EventFormState>(
+                    buildWhen: (previous, current) =>
+                        previous.status != current.status,
+                    builder: (context, state) {
+                      if (state.status == FormzStatus.submissionInProgress)
+                        return Text("The event is being created");
+
+                      if (state.status == FormzStatus.submissionSuccess)
+                        return Text("Event created correctly");
+
+                      if (state.status == FormzStatus.submissionFailure)
+                        return Text(state.errorMsg);
+
+                      return Text(
+                          "Something happened during event creation. Try again");
+                    },
+                  ),
+                  buttonRow: BlocBuilder<EventFormBloc, EventFormState>(
+                    buildWhen: (previous, current) =>
+                        previous.status != current.status,
+                    builder: (context, state) {
+                      if (state.status == FormzStatus.submissionSuccess)
+                        return TextButton(
+                            onPressed: () => Navigator.popUntil(context,
+                                ModalRoute.withName(TournamentPage.ROUTE_NAME)),
+                            child: Text("OK"));
+
+                      return Text("");
+                    },
+                  )),
             ));
   }
 }
@@ -192,9 +220,11 @@ class CongregaDialog extends StatelessWidget {
     this.buttonRow,
   }) : super(key: key);
 
-  static const TextStyle titleTextStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 20);
+  static const TextStyle titleTextStyle =
+      TextStyle(fontWeight: FontWeight.bold, fontSize: 20);
 
-  static Widget createTitle(String titleText) => Text(titleText, style: titleTextStyle);
+  static Widget createTitle(String titleText) =>
+      Text(titleText, style: titleTextStyle);
 
   final Widget icon;
   final Widget title;
@@ -239,7 +269,8 @@ class CongregaDialog extends StatelessWidget {
           ),
         ),
         Container(
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+          decoration:
+              BoxDecoration(shape: BoxShape.circle, color: Colors.white),
           child: this.icon,
         )
       ]),
@@ -272,7 +303,8 @@ class FormatPickerFormField extends StatelessWidget {
           DropdownMenuItem(child: Text("Vintage"), value: "Vintage"),
         ],
         onChanged: (value) {
-          if (value != null) context.read<EventFormBloc>().add(EventFormatChanged(value));
+          if (value != null)
+            context.read<EventFormBloc>().add(EventFormatChanged(value));
         },
       ),
     );
@@ -360,9 +392,11 @@ class TimeFormFieldState extends State<TimeFormField> {
           initialTime: TimeOfDay.fromDateTime(dateTime),
         );
         if (time != null) {
-          DateTime updatedDateTime =
-              new DateTime(dateTime.year, dateTime.month, dateTime.day, time.hour, time.minute);
-          context.read<EventFormBloc>().add(EventFormDateChanged(updatedDateTime));
+          DateTime updatedDateTime = new DateTime(dateTime.year, dateTime.month,
+              dateTime.day, time.hour, time.minute);
+          context
+              .read<EventFormBloc>()
+              .add(EventFormDateChanged(updatedDateTime));
           setState(() {
             dateTime = updatedDateTime;
           });

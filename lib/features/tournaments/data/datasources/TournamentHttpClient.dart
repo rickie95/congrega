@@ -13,8 +13,9 @@ class TournamentHttpClient {
   final ArcanoGraphQLClient graphQLClient;
   final http.Client restClient;
 
-  static final QueryOptions fetchAllQueryOptions =
-      QueryOptions(document: gql(getAllTournamentsQuery), fetchPolicy: FetchPolicy.cacheAndNetwork);
+  static final QueryOptions fetchAllQueryOptions = QueryOptions(
+      document: gql(getAllTournamentsQuery),
+      fetchPolicy: FetchPolicy.cacheAndNetwork);
 
   static final String getAllTournamentsQuery = """
       { eventList { 
@@ -79,14 +80,16 @@ class TournamentHttpClient {
 
   void handleException(OperationException? operationException) {
     if (operationException != null) {
-      if (operationException.linkException is ServerException) throw ConnectionException();
+      if (operationException.linkException is ServerException)
+        throw ConnectionException();
     }
 
     throw OtherErrorException();
   }
 
   Future<Tournament> getEventByUUID(String uuid) async {
-    QueryOptions queryOpt = QueryOptions(document: gql(getTournamentByUUIDQuery(uuid)));
+    QueryOptions queryOpt =
+        QueryOptions(document: gql(getTournamentByUUIDQuery(uuid)));
 
     final QueryResult result = await graphQLClient.query(queryOpt);
 
@@ -97,13 +100,14 @@ class TournamentHttpClient {
     return Tournament.fromJson(result.data!["eventById"] as dynamic);
   }
 
-  Future<Tournament> sendNewEvent(Tournament t) async {
+  Future<void> sendNewEvent(Tournament t) async {
     final http.Response response = await restClient.post(Arcano.getEventsUri(),
-        body: jsonEncode(t.toBriefJson()), headers: {'Content-Type': 'application/json'});
+        body: jsonEncode(t.toBriefJson()),
+        headers: {'Content-Type': 'application/json'});
 
     switch (response.statusCode) {
       case (201):
-        return Tournament.fromJson(jsonDecode(response.body));
+        return;
       case (400):
         print(response.body);
         throw BadRequestException();
@@ -116,9 +120,10 @@ class TournamentHttpClient {
     }
   }
 
-  Future<Tournament> enrollUserInTournament(String tournamentUIID, User user) async {
-    final http.Response response =
-        await restClient.post(Arcano.enrollUserInEventUri(tournamentUIID, user.id.toString()));
+  Future<Tournament> enrollUserInTournament(
+      String tournamentUIID, User user) async {
+    final http.Response response = await restClient
+        .post(Arcano.enrollUserInEventUri(tournamentUIID, user.id.toString()));
 
     switch (response.statusCode) {
       case (202):
