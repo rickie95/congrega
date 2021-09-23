@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'package:congrega/features/lifecounter/model/Match.dart';
@@ -10,11 +11,7 @@ import 'package:congrega/features/lifecounter/model/Match.dart';
 import 'MatchRepository.dart';
 
 class MatchController {
-
-  MatchController({
-    required this.matchRepository,
-    required this.playerRepository
-  });
+  MatchController({required this.matchRepository, required this.playerRepository});
 
   final StreamController<MatchStatus> _controller = new BehaviorSubject();
   final MatchRepository matchRepository;
@@ -25,15 +22,16 @@ class MatchController {
     yield* _controller.stream;
   }
 
-  Future<Match> _newOfflineMatch() async {
+  Future<Match> newOfflineMatch({User? opponent}) async {
     return matchRepository.newOfflineMatch(new Match(
         id: '-',
         user: await playerRepository.getAuthenticatedPlayer(),
-        opponent: playerRepository.genericOpponent(),
+        opponent: opponent != null
+            ? playerRepository.fromUser(opponent)
+            : playerRepository.genericOpponent(),
         userScore: 0,
         opponentScore: 0,
-        type: MatchType.offline
-    ));
+        type: MatchType.offline));
   }
 
   Future<Match> _recoverMatch() async {
@@ -42,7 +40,7 @@ class MatchController {
 
   Future<Match> getCurrentMatch() async {
     return _matchInProgress()
-        .then((bool isInProgress) => isInProgress ? _recoverMatch() : _newOfflineMatch());
+        .then((bool isInProgress) => isInProgress ? _recoverMatch() : newOfflineMatch());
   }
 
   Future<void> createOnlineMatch(Match match) async {
@@ -60,11 +58,8 @@ class MatchController {
   Match playerQuitsGame(Match match, Player player) {
     Match updatedMatch = match.copyWith(
         opponentScore: player.id == match.user.id ? match.opponentScore + 1 : match.opponentScore,
-        userScore: player.id == match.opponent.id ? match.userScore + 1: match.userScore
-    );
-    matchRepository
-        .updateMatch(updatedMatch)
-        .then((_) => _controller.add(MatchStatus.updated));
+        userScore: player.id == match.opponent.id ? match.userScore + 1 : match.userScore);
+    matchRepository.updateMatch(updatedMatch).then((_) => _controller.add(MatchStatus.updated));
 
     return updatedMatch;
   }
@@ -72,23 +67,19 @@ class MatchController {
   Match playerResign(Match match, Player player) {
     Match updatedMatch = match.copyWith(
         opponentScore: player.id == match.user.id ? 2 : 0,
-        userScore: player.id == match.opponent.id ? 2: 0
-    );
-    matchRepository
-        .endMatch(updatedMatch)
-        .then((_) => _controller.add(MatchStatus.ended));
+        userScore: player.id == match.opponent.id ? 2 : 0);
+    matchRepository.endMatch(updatedMatch).then((_) => _controller.add(MatchStatus.ended));
     return updatedMatch;
   }
 
   Match playerWinsGame(Match match, Player player) {
     Match updatedMatch = match.copyWith(
-        opponentScore: player.id == match.opponent.id ? match.opponentScore + 1 : match.opponentScore,
-        userScore: player.id == match.user.id ? match.userScore + 1: match.userScore
-    );
+        opponentScore:
+            player.id == match.opponent.id ? match.opponentScore + 1 : match.opponentScore,
+        userScore: player.id == match.user.id ? match.userScore + 1 : match.userScore);
     // call repo and update game
     return updatedMatch;
   }
 
   void dispose() => _controller.close();
-
 }

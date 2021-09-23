@@ -3,11 +3,17 @@ import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/
 import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_state.dart';
 import 'package:congrega/features/friends/data/friends_repository.dart';
 import 'package:congrega/features/friends/presentation/search_friends_page.dart';
+import 'package:congrega/features/lifecounter/model/Player.dart';
+import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:kiwi/kiwi.dart';
+import 'package:provider/provider.dart';
 
 import '../DashboardWideTile.dart';
 
@@ -41,8 +47,7 @@ class FriendsWidget extends StatelessWidget {
       child: Container(
         height: 125,
         child: BlocProvider<FriendsWidgetBloc>(
-          create: (BuildContext context) =>
-              KiwiContainer().resolve<FriendsWidgetBloc>(),
+          create: (BuildContext context) => KiwiContainer().resolve<FriendsWidgetBloc>(),
           child: FriendCardList(),
         ),
       ),
@@ -95,8 +100,7 @@ class FriendCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => showModalBottomSheet<void>(
-          context: context,
-          builder: (BuildContext context) => FriendBottomSheet(user: user)),
+          context: context, builder: (BuildContext context) => FriendBottomSheet(user: user)),
       child: Card(
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 6, horizontal: 6),
@@ -131,7 +135,7 @@ class FriendBottomSheet extends StatelessWidget {
     return ListView(
       shrinkWrap: true,
       padding: EdgeInsets.all(14),
-      children: [titleRow(), actionsContainer()],
+      children: [titleRow(), actionsContainer(context)],
     );
   }
 
@@ -166,14 +170,17 @@ class FriendBottomSheet extends StatelessWidget {
         ));
   }
 
-  Widget actionsContainer() {
+  Widget actionsContainer(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(8),
       child: Column(
         children: [
-          OutlinedButton(
-            child: Text("ENGAGE"),
-            onPressed: () => {},
+          ElevatedButton(
+            child: Text("CHALLENGE HIM!"),
+            onPressed: () {
+              KiwiContainer().resolve<MatchBloc>().add(Create1V1Match(opponent: user));
+              Navigator.of(context).push(LifeCounterPage.route());
+            },
           )
         ],
       ),
@@ -201,24 +208,16 @@ class _FollowButtonState extends State<FollowButton> {
         ? OutlinedButton(
             onPressed: () {
               KiwiContainer().resolve<FriendRepository>().removeFriend(user);
-              KiwiContainer().resolve<FriendsWidgetBloc>().add(
-                  FriendListUpdated(
-                      listLenght: KiwiContainer()
-                          .resolve<FriendRepository>()
-                          .getFriendsList()
-                          .length));
+              KiwiContainer().resolve<FriendsWidgetBloc>().add(FriendListUpdated(
+                  listLenght: KiwiContainer().resolve<FriendRepository>().getFriendsList().length));
               setState(() {});
             },
             child: Text("Unfollow"))
         : OutlinedButton(
             onPressed: () {
               KiwiContainer().resolve<FriendRepository>().addFriend(user);
-              KiwiContainer().resolve<FriendsWidgetBloc>().add(
-                  FriendListUpdated(
-                      listLenght: KiwiContainer()
-                          .resolve<FriendRepository>()
-                          .getFriendsList()
-                          .length));
+              KiwiContainer().resolve<FriendsWidgetBloc>().add(FriendListUpdated(
+                  listLenght: KiwiContainer().resolve<FriendRepository>().getFriendsList().length));
               setState(() {});
             },
             child: Text("Follow"));
