@@ -192,14 +192,96 @@ class FriendBottomSheet extends StatelessWidget {
         children: [
           ElevatedButton(
             child: Text("CHALLENGE HIM!"),
-            onPressed: () {
-              KiwiContainer().resolve<MatchBloc>().add(Create1V1Match(opponent: user));
-              Navigator.of(context).push(LifeCounterPage.route());
-            },
+            onPressed: () => showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                      title: Text("Send invite"),
+                      content: Text("Do you want to challenge ${user.username}?"),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.of(context).pop(), child: Text("Cancel")),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              showWaitForChallengedUserAlert(context);
+                              // KiwiContainer()
+                              //     .resolve<MatchBloc>()
+                              //     .add(Create1V1Match(opponent: user));
+                              // Navigator.of(context).push(LifeCounterPage.route());
+                            },
+                            child: Text("Send"))
+                      ],
+                    )),
           )
         ],
       ),
     );
+  }
+
+  void showWaitForChallengedUserAlert(BuildContext context) {
+    // create a Future which waits for a confirmation and has a timer
+
+    final Duration opponentConfirmTimemout = Duration(seconds: 4);
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          Future.delayed(Duration(seconds: 2), () => print("ok")).timeout(opponentConfirmTimemout,
+              onTimeout: () {
+            Navigator.of(context).pop();
+            showErrorDialog(context, "Timeout!", "${user.username} didn't answer you in time.");
+          }).whenComplete(() {
+            Navigator.of(context).pop();
+            showSuccessDialog(context);
+          }).onError((error, stackTrace) => showErrorDialog(context, "Something gone wrong",
+              "We tried to reach ${user.username}, really, but an error occurred: $error"));
+
+          return AlertDialog(
+            title: Text("Please wait"),
+            content: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Waiting for a response from ${user.username}.."),
+                  CircularProgressIndicator()
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("Cancel"))
+            ],
+          );
+        });
+  }
+
+  void showErrorDialog(BuildContext context, String title, String text) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(title),
+              content: Text(text),
+              actions: [
+                ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: Text("Dismiss"))
+              ],
+            ));
+  }
+
+  showSuccessDialog(BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          Future.delayed(Duration(seconds: 2), () {
+            Navigator.of(context).pop();
+            KiwiContainer().resolve<MatchBloc>().add(Create1V1Match(opponent: user));
+            Navigator.of(context).push(LifeCounterPage.route());
+          });
+          return AlertDialog(
+            title: Text("Success!"),
+            content:
+                Text("${user.username} said yes, sharpen your axe or what, you're starting now!"),
+          );
+        });
   }
 }
 
