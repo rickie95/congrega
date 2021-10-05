@@ -47,9 +47,8 @@ class FriendsWidget extends StatelessWidget {
       child: Container(
         height: 125,
         child: BlocProvider<FriendsWidgetBloc>(
-          create: (BuildContext context) => KiwiContainer().resolve<FriendsWidgetBloc>(),
-          child: FriendCardList(),
-        ),
+            create: (BuildContext context) => KiwiContainer().resolve<FriendsWidgetBloc>(),
+            child: FriendCardList()),
       ),
     );
   }
@@ -58,15 +57,31 @@ class FriendsWidget extends StatelessWidget {
 class FriendCardList extends StatelessWidget {
   const FriendCardList();
 
-  int getFriendCount() {
-    return KiwiContainer().resolve<FriendRepository>().getFriendsList().length;
+  Future<void> friendListIsReady() {
+    return KiwiContainer().resolve<FriendRepository>().fetchFriendsList();
   }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: KiwiContainer().resolve<FriendRepository>().fetchFriendsList(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) return Text("Ops, something went wrong");
+
+        if (snapshot.hasData) return FriendsWidgetBody();
+
+        return CircularProgressIndicator();
+      },
+    );
+  }
+}
+
+class FriendsWidgetBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<FriendsWidgetBloc, FriendsWidgetState>(
       builder: (context, state) {
-        if (getFriendCount() == 0) {
+        if (KiwiContainer().resolve<FriendRepository>().isEmpty()) {
           return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
