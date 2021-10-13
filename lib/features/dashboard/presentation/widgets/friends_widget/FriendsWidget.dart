@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_bloc.dart';
 import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_events.dart';
 import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_state.dart';
@@ -223,18 +225,30 @@ class FriendBottomSheet extends StatelessWidget {
 
     final Duration opponentConfirmTimemout = Duration(seconds: 4);
 
+    Future<bool> askOpponentForAnswer(User user) {
+      return Future.delayed(Duration(seconds: 2), () => false);
+    }
+
     showDialog(
         context: context,
         builder: (context) {
-          Future.delayed(Duration(seconds: 2), () => print("ok")).timeout(opponentConfirmTimemout,
-              onTimeout: () {
+          askOpponentForAnswer(user)
+              .timeout(opponentConfirmTimemout, onTimeout: () => throw TimeoutError())
+              .then((bool value) {
             Navigator.of(context).pop();
-            showErrorDialog(context, "Timeout!", "${user.username} didn't answer you in time.");
-          }).whenComplete(() {
-            Navigator.of(context).pop();
-            showSuccessDialog(context);
-          }).onError((error, stackTrace) => showErrorDialog(context, "Something gone wrong",
-              "We tried to reach ${user.username}, really, but an error occurred: $error"));
+            value
+                ? showSuccessDialog(context)
+                : showErrorDialog(
+                    context, "Invite refused", "${user.username} refused your challenge!");
+          }).onError((error, stackTrace) {
+            if (error is TimeoutError) {
+              Navigator.of(context).pop();
+              showErrorDialog(
+                  context, "Timeout!", "${user.username} didn't answer your invite in time.");
+            }
+            showErrorDialog(context, "Something gone wrong",
+                "We tried to reach ${user.username}, really, but an error occurred: $error");
+          });
 
           return AlertDialog(
             title: Text("Please wait"),
@@ -284,6 +298,8 @@ class FriendBottomSheet extends StatelessWidget {
         });
   }
 }
+
+class TimeoutError extends Error {}
 
 class FollowButton extends StatefulWidget {
   final User user;
