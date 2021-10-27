@@ -3,15 +3,17 @@ import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
 import 'package:congrega/features/exceptions/HttpExceptions.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:http/http.dart' as http;
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'AuthenticationHttpClient_test.mocks.dart';
 
 const String username = "jondoe";
 const String password = "psswd";
 const String name = "Jon Doe";
 
-class MockClient extends Mock implements http.Client {}
-
+@GenerateMocks([http.Client])
 void main(){
   final UserCredentials user = new UserCredentials(username: username, password: password, name: name);
 

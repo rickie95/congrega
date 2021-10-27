@@ -1,107 +1,71 @@
+import 'dart:convert';
+
 import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/tournaments/data/datasources/TournamentHttpClient.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
-import 'package:uuid/uuid.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TournamentRepository {
-
-  static Set<Tournament> _participatedTournaments = {};
+  static Set<String> _participatedTournamentsID = {};
   static Set<Tournament> _createdTournaments = {};
-  static Set<Tournament> _allEventsFromServer = {
+  static Set<Tournament> _eventsList = {};
 
-    Tournament(
-      id: BigInt.from(1),
-      status: TournamentStatus.scheduled,
-      round: 0,
-      name: "John's House Limited",
-      type: "Limited",
-      playerList: {
-        User(
-            id: Uuid().toString(),
-            username: "mikeMoz"
-        ),
-        User(
-            id: Uuid().toString(),
-            username: "DragonSlayer"
-        ),
-        User(
-            id: Uuid().toString(),
-            username: "BroccoliBob"
-        ),
-      },
-      adminList: {
-        User(
-            id: Uuid().toString(),
-            username: "BrokenImpala"
-        ),
-        User(
-            id: Uuid().toString(),
-            username: "JohnDoe"
-        ),
-      },
-      judgeList: {
-
-      },
-      startingTime: new DateTime(2021, 2, 21, 16, 0),
-    ),
-
-    Tournament(
-      id: BigInt.from(2),
-      status: TournamentStatus.scheduled,
-      round: 0,
-      name: "Magic Mike Constructed",
-      type: "Constructed",
-      playerList: {
-
-      },
-      adminList: {
-
-      },
-      judgeList: {
-
-      },
-      startingTime: new DateTime(2021, 2, 22, 17, 0),
-    ),
-
-    Tournament(
-      id: BigInt.from(3),
-      status: TournamentStatus.scheduled,
-      round: 0,
-      name: "Calamity Store Draft",
-      type: "Draft",
-      playerList: {
-
-      },
-      adminList: {
-
-      },
-      judgeList: {
-
-      },
-      startingTime: new DateTime(2021, 2, 14, 10, 0),
-    )
-
-  };
-
-  List<Tournament> getAllEvents() {
-    return _allEventsFromServer.toList();
+  TournamentRepository({required this.tournamentHttpClient}) {
+    _fetchTournamentList();
   }
 
-  List<Tournament> getParticipatedEvents(){
-    return _participatedTournaments.toList();
+  final TournamentHttpClient tournamentHttpClient;
+
+  Future<List<Tournament>> getAllEvents() {
+    return tournamentHttpClient.getTournamentList();
   }
 
-  List<Tournament> getCreatedEvents(){
+  Future<Tournament> getEventById(String uuid) {
+    return tournamentHttpClient.getEventByUUID(uuid);
+  }
+
+  Future<void> newEvent(Tournament t) => tournamentHttpClient.sendNewEvent(t);
+
+  Future<Tournament> enrollUserAsPlayer(User user, Tournament tournament) {
+    return tournamentHttpClient.enrollUserInTournament(tournament.id, user);
+  }
+
+  Future<void> _fetchTournamentList() async {
+    _eventsList.addAll(await tournamentHttpClient.getTournamentList());
+  }
+
+  List<Tournament> getParticipatedEvents() {
+    return _eventsList
+        .where((element) => _participatedTournamentsID.contains(element.id))
+        .toList();
+  }
+
+  List<Tournament> getCreatedEvents() {
     return _createdTournaments.toList();
   }
 
-  void updateEvent(Tournament event){}
+  void updateEvent(Tournament event) {}
 
-  Set<Tournament> getEventsParticipatedByUser(User user){
-    return _participatedTournaments;
+  List<Tournament> getEventsParticipatedByUser(User user) {
+    return _eventsList
+        .where((element) => (_participatedTournamentsID.contains(element.id) &&
+            element.playerList.contains(user)))
+        .toList();
   }
 
-  void addParticipatedEvent(Tournament updatedTournament) {
-    _participatedTournaments.add(updatedTournament);
+  Future<void> addParticipatedEvent(Tournament updatedTournament) async {
+    _participatedTournamentsID.add(updatedTournament.id);
+    SharedPreferences storage = await SharedPreferences.getInstance();
+    storage.setString(
+        "EVENTS_IN_PROGRESS", jsonEncode(_participatedTournamentsID));
   }
 
+  Future<void> _loadParticipatedEvents() async {
+    SharedPreferences storage = await SharedPreferences.getInstance();
+    String? encodedIDs = storage.getString("EVENTS_IN_PROGRESS");
+    if (encodedIDs != null && encodedIDs.isNotEmpty)
+      _participatedTournamentsID = jsonDecode(encodedIDs);
+  }
+
+  Future<void> refreshList() => _fetchTournamentList();
 }

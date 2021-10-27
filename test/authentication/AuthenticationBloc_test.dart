@@ -5,23 +5,22 @@ import 'package:congrega/features/authentication/AuthenticationState.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/users/UserRepository.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
+import 'package:mocktail/mocktail.dart';
 
-class MockAuthenticationRepository extends Mock
-    implements AuthenticationRepository {}
 
 class MockUserRepository extends Mock implements UserRepository {}
+class MockAuthenticationRepository extends Mock implements AuthenticationRepository {}
 
 void main() {
-  const user = User(username: 'mike', id: '2');
+  const User user = User(username: 'mike', id: '2');
   late AuthenticationRepository authenticationRepository;
   late UserRepository userRepository;
 
   setUp(() {
     authenticationRepository = MockAuthenticationRepository();
     when(() => authenticationRepository.status)
-        .thenAnswer((_) => const Stream.empty());
+        .thenAnswer((_) => const Stream<AuthenticationStatus>.empty());
     userRepository = MockUserRepository();
   });
 
@@ -39,7 +38,7 @@ void main() {
       'emits [unauthenticated] when status is unauthenticated',
       build: () {
         when(() => authenticationRepository.status).thenAnswer(
-              (_) => Stream.value(AuthenticationStatus.unauthenticated),
+              (_) => Stream.value(AuthenticationStatus.unauthenticated)
         );
         return AuthenticationBloc(
           authenticationRepository: authenticationRepository,
@@ -130,7 +129,7 @@ void main() {
       'emits [unauthenticated] when status is authenticated '
           'but getUser returns null',
       build: () {
-        when(() => userRepository.getUser()).thenAnswer((_) async => User(id: '-', name: '', username: '-', password: ''));
+        when(() => userRepository.getUser()).thenAnswer((_) async => throw Exception());
         return AuthenticationBloc(
           authenticationRepository: authenticationRepository,
           userRepository: userRepository,

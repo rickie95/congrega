@@ -1,8 +1,9 @@
 import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:congrega/features/tournaments/presentation/bloc/TournamentBloc.dart';
-import 'package:congrega/features/tournaments/presentation/bloc/TournamentState.dart';
+import 'package:congrega/ui/congrega_elevated_button_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import 'ConfirmJoiningEventDialog.dart';
 
@@ -45,8 +46,8 @@ class TournamentEventDetailsView extends StatelessWidget {
                       child: Container(
                           child: Column(
                               children: [
-                                Text("21", style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-                                Text("Feb", style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w300)),
+                                Text(tournament.startingTime!.day.toString(), style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                                Text(DateFormat.MMMM().format(tournament.startingTime!).substring(0,3), style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w300)),
                               ]
                           )
                       )
@@ -62,7 +63,7 @@ class TournamentEventDetailsView extends StatelessWidget {
                                 Icon(Icons.access_time_outlined, color: Color.fromRGBO(0, 0, 0, 0.6),),
                                 Container(
                                     padding: const EdgeInsets.only(left: 5),
-                                    child: Text(formatTime(tournament.startingTime),
+                                    child: Text(formatTime(tournament.startingTime!),
                                       style: const TextStyle(
                                           fontSize: 17,
                                           color: Color.fromRGBO(0, 0, 0, 0.6)
@@ -144,12 +145,7 @@ class TournamentEventDetailsView extends StatelessWidget {
                               children: [
                                 Container(
                                   padding: EdgeInsets.symmetric(vertical: 5),
-                                  child: BlocBuilder<TournamentBloc, TournamentState>(
-                                    buildWhen: (previous, current) => previous.status != current.status,
-                                    builder: (context, state) {
-                                      return Text(statusToString(state.status), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold));
-                                    },
-                                  ),
+                                  child: Text(statusToString(tournament.status), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
                                 ),
                                 Container(
                                   child: Text("Status", style: TextStyle(fontSize: 17)),
@@ -162,9 +158,6 @@ class TournamentEventDetailsView extends StatelessWidget {
 
                     ],
                   ),
-
-                  // Container(child: Text("MODERATORS ${adminsListToString(_tournament.adminList)}")),
-
                 ],
               ),
             ),
@@ -178,8 +171,8 @@ class TournamentEventDetailsView extends StatelessWidget {
                   Expanded(
                     flex: 50,
                     child: Center(
-                      child: RaisedButton(
-                        color: Colors.redAccent,
+                      child: ElevatedButton(
+                        style: elevatedDangerButtonStyle,
                         onPressed: () {},
                         child: Text("ADD TO CALENDAR"),
                       ),
@@ -188,8 +181,8 @@ class TournamentEventDetailsView extends StatelessWidget {
                   Expanded(
                     flex: 50,
                     child: Center(
-                      child: RaisedButton(
-                        color: Colors.lightBlue,
+                      child: ElevatedButton(
+                        style: elevatedActionButtonStyle,
                         onPressed: () => showDialog<void>(
                             context: context,
                             builder: (_) =>
@@ -211,13 +204,13 @@ class TournamentEventDetailsView extends StatelessWidget {
   }
 
   String statusToString(TournamentStatus status) {
-    if(status == TournamentStatus.scheduled)
+    if(status == TournamentStatus.SCHEDULED)
       return "Scheduled";
 
-    if(status == TournamentStatus.waiting || status == TournamentStatus.inProgress)
+    if(status == TournamentStatus.WAITING || status == TournamentStatus.IN_PROGRESS)
       return "In Progress";
 
-    if(status == TournamentStatus.ended)
+    if(status == TournamentStatus.ENDED)
       return "Ended";
 
     // FIXME: use log

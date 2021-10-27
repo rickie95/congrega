@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:congrega/features/lifecounter/model/Player.dart';
+import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main(){

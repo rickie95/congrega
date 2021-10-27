@@ -1,13 +1,14 @@
-import 'package:congrega/match/MatchBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/widgets/timeWidgets/widgets/TimeWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'LifeCounterModalBottomSheet.dart';
+import '../../../../congrega_icons.dart';
+import 'dicePage/DicePage.dart';
 import 'matchScoreWidget/MatchScoreModalBottomSheet.dart';
 import 'matchScoreWidget/MatchScoreWidget.dart';
-import '../../timeWidgets/presentation/widgets/TimeWidget.dart';
-import '../bloc/GameBloc.dart';
-import '../bloc/GameState.dart';
+import '../bloc/LifeCounterBloc.dart';
+import '../bloc/LifeCounterState.dart';
 
 class StatusBar extends StatelessWidget {
   const StatusBar();
@@ -21,14 +22,10 @@ class StatusBar extends StatelessWidget {
         children: [
 
           // Time Widget
-          Expanded(flex: 33,
-            child: TimeWidget(),
-          ),
-
+          Expanded(flex: 33, child: TimeWidget()),
 
           // Score
           Expanded(flex: 33,
-            // child: Text("Status BAr"),
             child: GestureDetector(
                 onTap: () => showModalBottomSheet<void>(
                     context: context,
@@ -47,34 +44,21 @@ class StatusBar extends StatelessWidget {
           ),
 
           // Option Button
-          Expanded(flex: 33,
-              child: OptionButton()
-          )
+          Expanded(flex: 33, child: DicePageButton()),
         ],
       ),
     );
   }
 }
 
-
-
-class OptionButton extends StatelessWidget {
+class DicePageButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GameBloc, GameState>(
-        builder: (context, GameState state){
-          return GestureDetector(
-              onTap: () {
-                showModalBottomSheet<void>(context: context,
-                    builder: (_) {
-                      return BlocProvider.value(
-                          value: BlocProvider.of<GameBloc>(context),
-                          child: LifeCounterModalBottomSheet());
-                    });
-              },
-              child: Container(
-                child:  Center(child: Icon(Icons.settings, size: 30,),),
-              )
+    return BlocBuilder<LifeCounterBloc, LifeCounterState>(
+        builder: (context, LifeCounterState state){
+          return IconButton(
+            onPressed: () => showDicePage(context),
+            icon: Icon(CongregaIcons.dice_d20, size: 30),
           );
         });
   }

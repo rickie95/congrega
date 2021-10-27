@@ -12,12 +12,11 @@ import 'package:congrega/features/authentication/AuthenticationBloc.dart';
 import 'package:congrega/features/authentication/AuthenticationState.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'features/lifecounter/timeWidgets/presentation/bloc/pages/SplashPage.dart';
-import 'features/lifecounter/timeWidgets/presentation/bloc/pages/WelcomePage.dart';
+import 'features/splashscreen/SplashPage.dart';
+import 'features/splashscreen/WelcomePage.dart';
 
 
 class Congrega extends StatelessWidget {
-
   const Congrega();
 
   @override
@@ -31,7 +30,7 @@ class CongregaView extends StatefulWidget {
   _CongregaViewState createState() => _CongregaViewState();
 }
 
-class _CongregaViewState extends State<CongregaView>{
+class _CongregaViewState extends State<CongregaView> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   NavigatorState? get _navigator => _navigatorKey.currentState;
@@ -56,19 +55,18 @@ class _CongregaViewState extends State<CongregaView>{
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate
         ],
-        supportedLocales: [
-          const Locale('en'),
-          const Locale('it')
-        ],
+        supportedLocales: [const Locale('en'), const Locale('it')],
         builder: (context, child) {
           return BLOC.BlocListener<AuthenticationBloc, AuthenticationState>(
             listener: (context, state) {
               switch (state.status) {
                 case AuthenticationStatus.authenticated:
-                  _navigator!.pushAndRemoveUntil<void>(HomePage.route(), (route) => false);
+                  _navigator!.pushAndRemoveUntil<void>(
+                      HomePage.route(), (route) => false);
                   break;
                 case AuthenticationStatus.unauthenticated:
-                  _navigator!.pushAndRemoveUntil<void>(WelcomePage.route(), (route) => false);
+                  _navigator!.pushAndRemoveUntil<void>(
+                      WelcomePage.route(), (route) => false);
                   break;
                 default:
                   break;
@@ -82,4 +80,3 @@ class _CongregaViewState extends State<CongregaView>{
     );
   }
 }
-

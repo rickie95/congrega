@@ -5,16 +5,18 @@ import 'package:congrega/features/exceptions/HttpExceptions.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:http/http.dart' as http;
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class MockClient extends Mock implements http.Client {}
+import 'AuthenticationHttpClient_test.mocks.dart';
 
 final String twoUserList = '[{"id": 1,"username": "johnDoe","uri": "${Arcano.USERS_URL}/1"},'
     '{"id": 2, "username":"Jojo42", "uri": "${Arcano.USERS_URL}/2"}]';
 
 final String emptyUserList = '[]';
 
+@GenerateMocks([http.Client])
 void main() {
 
   group('Get entire user list', (){

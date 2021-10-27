@@ -1,4 +1,5 @@
 import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/tournaments/model/Tournament.dart';
 import 'package:equatable/equatable.dart';
 
 class TournamentEvent extends Equatable{
@@ -8,8 +9,8 @@ class TournamentEvent extends Equatable{
   List<Object> get props => [];
 }
 
-class EnrollingInTournament extends TournamentEvent {
-  const EnrollingInTournament(this.user);
+class EnrollPlayer extends TournamentEvent {
+  const EnrollPlayer(this.user);
 
   final User user;
 
@@ -17,8 +18,8 @@ class EnrollingInTournament extends TournamentEvent {
   List<Object> get props => [user];
 }
 
-class AbandoningTournament extends TournamentEvent {
-  const AbandoningTournament(this.user);
+class RetirePlayer extends TournamentEvent {
+  const RetirePlayer(this.user);
 
   final User user;
 
@@ -26,21 +27,36 @@ class AbandoningTournament extends TournamentEvent {
   List<Object> get props => [user];
 }
 
-class TournamentIsWaiting extends TournamentEvent {
+class SetTournament extends TournamentEvent {
+  SetTournament(this.tournament);
+
+  final Tournament tournament;
+
+  @override
+  List<Object> get props => [tournament];
+}
+
+class WaitForRound extends TournamentEvent {
+  const WaitForRound();
   @override
   List<Object> get props => [];
 }
 
-class TournamentIsInProgress extends TournamentEvent {
+class RoundIsAvailable extends TournamentEvent {
+  const RoundIsAvailable();
+
   @override
   List<Object> get props => [];
 }
 
-class TournamentEnds extends TournamentEvent {
+class EndTournament extends TournamentEvent {
+  const EndTournament();
   @override
   List<Object> get props => [];
 }
 class TournamentIsScheduled extends TournamentEvent {
+  const TournamentIsScheduled();
+
   @override
   List<Object> get props => [];
 }

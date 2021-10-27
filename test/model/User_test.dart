@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:congrega/features/loginSignup/model/User.dart';
@@ -66,6 +65,20 @@ void main(){
       User decodedUser = User.fromJson(jsonDecode(jsonVersion));
 
       expect(decodedUser, equals(user));
+
+    });
+
+    test(' toJson as a list', (){
+      User user = User(id: '1', name: 'Mike', username: 'mike', password: 'secret');
+      User otherUser = User(id: '2', name: 'Bob', username: 'bob', password: 'secret');
+
+      String userListBody = jsonEncode(List<User>.of([user, otherUser]));
+
+      Iterable i = jsonDecode(userListBody);
+      List<User> userList = List<User>.from(i.map((model) => User.fromJson(model)));
+
+      expect(userList, hasLength(2));
+      expect(userList, containsAll([user, otherUser]));
 
     });
 
