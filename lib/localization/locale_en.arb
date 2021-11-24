@@ -1,0 +1,151 @@
+{
+    "homepage_title": "Dashboard",
+    "@homepage_title": {},
+
+    "tournament_page_title": "Tournaments",
+    "@tournament_page_title": {},
+
+    "lifecounter_page_title": "Life Counter",
+    "@lifecounter_page_title": {},
+
+    "profile_page_title": "My Profile",
+    "@profile_page_title": {},
+
+    "settings_page_title": "Settings",
+    "@settings_page_title": {},
+
+    "dashboard_message": "Welcome back",
+    "@dashboard_message": {
+        "description": "welcome message shown in dashboard"
+    },
+
+    "quick_match": "Quick Match",
+    "@quick_match": {
+        "description": "Label title for quick match button"
+    },
+
+    "quick_match_subtitle": "Start a duel",
+    "@quick_match_subtitle": {
+        "description": "Label subtitle for quick match button"
+    },
+
+    "my_profile_title": "Profile",
+    "@my_profile_title": {
+        "description": "Label title for my profile button"
+    },
+
+    "my_profile_subtitle": "Check your stats",
+    "@my_profile_subtitle": {
+        "description": "Label subtitle for my profile button"
+    },
+
+    "events_widget_title": "Events",
+    "@events_widget_title": {
+        "description": "Events widget title"
+    },
+
+    "friends_widget_title": "Friends",
+    "@friends_widget_title": {
+        "description": "Friends widget title"
+    },
+
+    "events_page_title": "Tournaments",
+    "@events_page_title": {
+        "description": "Title for tournament's page"
+    },
+
+    "events_action_create": "Create new event",
+    "@events_action_create": {
+        "description": "label for tournament's creation option"
+    },
+
+    "events_action_search": "Search",
+    "@events_action_search": {
+        "description": "label for tournament's search option"
+    },
+
+    "events_join_by_code": "Join by Code",
+    "@events_join_by_code": {
+        "description": "label for tournament's join by code button"
+    },
+
+    "events_inProgress_label" : "In Progress",
+    "@events_inProgress_label": {
+        "description": "title for tournament's in progress section"
+    },
+
+    "events_myevents_label" : "My Events",
+    "@events_myevents_label": {
+        "description": "title for user's own events section"
+    },
+
+    "events_nearby_label" : "Nearby",
+    "@events_nearby_label": {
+        "description": "title for user nearby events section"
+    },
+
+    "events_notenrolled_msg" : "You're not enrolled in any event yet",
+    "@events_notenrolled_msg": {
+        "description": "msg when usr is not enrolled in an event"
+    },
+
+    "opponent": "Opponent",
+    "@opponent": {
+        "description": "Generic name when opponent's name is not available"
+    },
+
+    "time_widget_settings_title": "Time widget settings",
+    "@time_widget_settings_title": {
+        "description": "Title for time widget section"
+    },
+
+    "widget_section_label": "Widget type",
+    "@widget_section_label": {
+        "description": "Label for widget section"
+    },
+
+    "countdown_starting_time_label": "Countdown starting time",
+    "@countdown_starting_time_label": {
+        "description": "Title for countdown starting time option"
+    },
+
+    "timer_reset_label": "Reset timer",
+    "@timer_reset_label": {
+        "description": "Label text for timer reset button"
+    },
+
+    "clock_type_section_title": "Clock widget type",
+    "@clock_type_section_title": {
+        "description": "Title for the clock widget type section."
+    },
+
+    "venom_points_name" : "Venom Points",
+    "@venom_points_name" : {
+        "description" : "Name for VenomPoints"
+    },
+
+    "energy_points_name" : "Energy Points",
+    "@energy_points_name" : {
+        "description" : "Name for EnergyPoints"
+    },
+
+    "mana_color_points_name" : "Mana Colored Points",
+    "@mana_color_points_name" : {
+        "description" : "Name for ManaColorPoints"
+    },
+
+    "dialog_cancel_button_text" : "Cancel",
+
+    "leave_match_button_text" : "Leave Match",
+    "leave_match_dialog_title" : "Leave match?",
+    "leave_match_dialog_message" : "Leaving the match will result as a total resign.",
+    "leave_match_dialog_confirm_text" : "Leave",
+
+    "leave_game_button_text" : "Concede game",
+    "leave_game_dialog_title" : "Surrender the game?",
+    "leave_game_dialog_message" : "Are you sure?",
+    "leave_game_dialog_confirm_text" : "Surrender",
+
+    "call_judge_button_text" : "Call Judge"
+
+}

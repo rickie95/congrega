@@ -1,0 +1,71 @@
+name: congrega
+description: Congrega
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  avatar_glow: 2.0.1
+  http: ^0.13.0
+  uuid: ^3.0.2
+  equatable: ^2.0.0
+  formz: ^0.4.0
+  provider: ^5.0.0
+  flutter_bloc: ^7.0.0
+  meta: ^1.1.6
+  settings_ui: ^1.0.0
+  shared_preferences: ^2.0.5
+  state_persistence: ^0.1.0
+  rxdart: ^0.26.0
+  duration_picker: ^1.0.1
+  flutter_secure_storage: ^4.1.0
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.17.0
+  kiwi: ^3.0.0-nullsafety.1
+  animations: 2.0.0
+  graphql_flutter: ^5.0.0
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.0
+
+dev_dependencies:
+  mockito: ^5.0.10
+  mocktail: ^0.1.1
+  bloc_test: ^8.0.0
+  build_runner: ^2.0.4
+  kiwi_generator: ^3.0.0-nullsafety.4
+  flutter_test:
+    sdk: flutter
+
+
+# The following section is specific to Flutter.
+flutter:
+  generate: true
+  uses-material-design: true
+  fonts:
+  - family:  CongregaIcons
+    fonts:
+     - asset: fonts/MyFlutterApp.ttf
+
+  assets:
+    - assets/
