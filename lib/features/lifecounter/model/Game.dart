@@ -15,21 +15,32 @@ class Game extends Equatable {
   @override
   List<Object?> get props => [team, opponents];
 
-  Map<String, dynamic> toJson() => {
-        "team": this.team.map((Player p) => p.toJson()).toList(),
-        "opponents": this.opponents.map((Player p) => p.toJson()).toList(),
-      };
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = {
+      "team": this.team.map((Player p) => p.toJson()).toList(),
+      "opponents": this.opponents.map((Player p) => p.toJson()).toList(),
+    };
+    if (this.id != null) json["id"] = id;
 
-  Map<String, dynamic> toArcanoJson() => {
-        "gamePoints": {
-          "${this.team[0].id}":
-              this.team[0].points.where((element) => element is LifePoints).first.value,
-          "${this.opponents[0].id}":
-              this.opponents[0].points.where((element) => element is LifePoints).first.value,
-        }
-      };
+    return json;
+  }
 
-  factory Game.fromArcanoJson(Map<String, dynamic> obj, User user) {
+  Map<String, dynamic> toArcanoJson() {
+    Map<String, dynamic> json = {
+      "gamePoints": {
+        "${this.team[0].id}":
+            this.team[0].points.where((element) => element is LifePoints).first.value,
+        "${this.opponents[0].id}":
+            this.opponents[0].points.where((element) => element is LifePoints).first.value,
+      }
+    };
+    if (id != null) {
+      json["id"] = id;
+    }
+    return json;
+  }
+
+  factory Game.fromArcanoJson(Map<String, dynamic> obj) {
     Map<String, dynamic> gamePoints = obj["gamePoints"];
     List<Player> pp = [];
 
@@ -47,13 +58,14 @@ class Game extends Equatable {
 
     return Game(
       id: obj["id"].toString(),
-      team: pp.where((Player p) => p.id == user.id).toList(),
-      opponents: pp.where((Player p) => p.id != user.id).toList(),
+      team: [pp[0]],
+      opponents: [pp[1]],
     );
   }
 
   factory Game.fromJson(Map<String, dynamic> obj) {
     return Game(
+      id: obj.containsKey("id") ? obj["key"] : null,
       team: List<Player>.from(obj['team'].map((val) => Player.fromJson(val))),
       opponents: List<Player>.from(obj['opponents'].map((val) => Player.fromJson(val))),
     );

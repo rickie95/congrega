@@ -41,7 +41,7 @@ class GameRepository {
   }
 
   Future<Game?> fetchOnlineGame(String id, User user) {
-    return gameClient.getGameById(id, user);
+    return gameClient.getGameById(id);
   }
 
   Future<Game> _recoverGame() => persistence.recoverGame();

@@ -61,7 +61,7 @@ void main() {
       when(client.get(Arcano.getGamesUri(gameId: gameId)))
           .thenAnswer((_) async => http.Response(response, 200));
 
-      Game? game = await gc.getGameById(gameId, user);
+      Game? game = await gc.getGameById(gameId);
 
       expect(game, isNotNull);
       expect(game!.id, isNotNull);

@@ -30,14 +30,14 @@ class GameClient {
 
     switch (response.statusCode) {
       case 201:
-        return Game.fromArcanoJson(jsonDecode(response.body), game.team.first.user);
+        return Game.fromArcanoJson(jsonDecode(response.body));
       default:
         print(response.statusCode.toString() + " " + response.body);
     }
     return null;
   }
 
-  Future<Game?> getGameById(String gameId, User u) async {
+  Future<Game?> getGameById(String gameId) async {
     http.Response response;
 
     try {
@@ -49,7 +49,7 @@ class GameClient {
 
     switch (response.statusCode) {
       case 200:
-        return Game.fromArcanoJson(jsonDecode(response.body), u);
+        return Game.fromArcanoJson(jsonDecode(response.body));
       case 404:
         return null;
       default:

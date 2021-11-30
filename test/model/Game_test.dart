@@ -32,7 +32,7 @@ void main() {
           '{"id": 0, "gamePoints": {"0290b4e0-b88f-4ea7-ba50-2794970a8a57": 20,  "7584c21b-5b6c-4820-9dde-57f6a31d31d3": 20 }, "ended": false, "winnerId": null}';
       Map<String, dynamic> decoded = jsonDecode(json);
 
-      Game g = Game.fromArcanoJson(decoded, user);
+      Game g = Game.fromArcanoJson(decoded);
 
       expect(g.team[0].id, user.id);
       expect(g.team[0].points.first, LifePoints(20));

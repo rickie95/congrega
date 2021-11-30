@@ -1,4 +1,5 @@
 import 'package:congrega/features/lifecounter/model/Player.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:equatable/equatable.dart';
 
 import 'Game.dart';
@@ -74,7 +75,7 @@ class Match extends Equatable {
       type: MatchType.online,
       playerOneScore: jsonObj['playerOneScore'],
       playerTwoScore: jsonObj['playerTwoScore'],
-      gameList: List<Game>.from(jsonObj['gameList'].map((val) => Game.fromJson(val))),
+      gameList: List<Game>.from(jsonObj['gameList'].map((val) => Game.fromArcanoJson(val))),
     );
   }
 
@@ -98,7 +99,7 @@ class Match extends Equatable {
     arcanoMap["playerTwo"] = m.playerTwo.user.toJson();
     arcanoMap["playerTwoScore"] = m.playerTwoScore;
     arcanoMap["gameList"] =
-        m.gameList != null ? m.gameList!.map((Game g) => g.toJson()).toList() : null;
+        m.gameList != null ? m.gameList!.map((Game g) => g.toArcanoJson()).toList() : null;
     return arcanoMap;
   }
 
