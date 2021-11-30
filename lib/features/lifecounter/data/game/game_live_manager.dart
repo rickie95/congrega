@@ -4,10 +4,13 @@ import 'package:congrega/features/users/UserRepository.dart';
 import 'package:congrega/features/websocket/websocket_client.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:kiwi/kiwi.dart';
+import 'package:logger/logger.dart';
 
 class GameLiveManager {
   late WebSocketClient wsClient;
   late User authenticatedUser;
+
+  final Logger logger = Logger();
 
   GameLiveManager() {
     this.wsClient = WebSocketClient(wsUri: Arcano.getWSGameUri('', ''));
@@ -26,5 +29,8 @@ class GameLiveManager {
     });
   }
 
-  void updateLifePoints(int points) => wsClient.sendMessage(points.toString());
+  void updateLifePoints(int points) {
+    logger.d("Updating life points " + points.toString());
+    wsClient.sendMessage(points.toString());
+  }
 }

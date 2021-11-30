@@ -5,6 +5,7 @@ import 'package:congrega/features/lifecounter/data/game/GamePersistance.dart';
 import 'package:congrega/features/lifecounter/data/game/game_client.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterState.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../model/Game.dart';
@@ -19,6 +20,8 @@ class GameRepository {
   final PlayerRepository playerRepository;
   final GameClient gameClient;
   final StreamController<GameStatus> _controller = new BehaviorSubject();
+
+  final Logger logger = Logger();
 
   Stream<GameStatus> get status async* {
     yield await _gameInProgress().then((_) => GameStatus.inProgress);
@@ -37,6 +40,7 @@ class GameRepository {
   Future<Game> newGame(Game g) => updateGame(g).then((_) => g);
 
   Future<Game?> newOnlineGame(Game g) {
+    logger.i("Creating game " + g.toString());
     return gameClient.createGame(g).then((createdGame) => updateGame(createdGame));
   }
 
@@ -56,6 +60,7 @@ class GameRepository {
   }
 
   Future<Game?> updateGame(Game? game) async {
+    logger.i("Updating game with " + game.toString());
     if (game != null)
       return persistence.persistGame(game).then((_) {
         _controller.add(GameStatus.inProgress);

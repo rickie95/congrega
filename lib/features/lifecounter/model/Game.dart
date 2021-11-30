@@ -13,7 +13,7 @@ class Game extends Equatable {
   final List<Player> opponents;
 
   @override
-  List<Object?> get props => [team, opponents];
+  List<Object?> get props => [id, team, opponents];
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
@@ -65,7 +65,7 @@ class Game extends Equatable {
 
   factory Game.fromJson(Map<String, dynamic> obj) {
     return Game(
-      id: obj.containsKey("id") ? obj["key"] : null,
+      id: obj.containsKey("id") ? obj["id"] : null,
       team: List<Player>.from(obj['team'].map((val) => Player.fromJson(val))),
       opponents: List<Player>.from(obj['opponents'].map((val) => Player.fromJson(val))),
     );

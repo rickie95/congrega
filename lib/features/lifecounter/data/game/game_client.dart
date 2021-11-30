@@ -2,13 +2,15 @@ import 'dart:convert';
 
 import 'package:congrega/features/authentication/AuthenticationRepository.dart';
 import 'package:congrega/features/lifecounter/model/Game.dart';
-import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 class GameClient {
   final http.Client httpClient;
   final AuthenticationRepository authRepo;
+
+  final Logger logger = Logger();
 
   GameClient({required this.httpClient, required this.authRepo});
 
@@ -30,7 +32,10 @@ class GameClient {
 
     switch (response.statusCode) {
       case 201:
-        return Game.fromArcanoJson(jsonDecode(response.body));
+        logger.i("Response from endpoint " + response.body);
+        Game g = Game.fromArcanoJson(jsonDecode(response.body));
+        logger.i("Game received " + g.toString());
+        return g;
       default:
         print(response.statusCode.toString() + " " + response.body);
     }

@@ -26,11 +26,11 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
     if (event is GameUpdated) {
       yield await _mapGameUpdatedToState(event, state);
     } else if (event is GamePlayerPointsChanged) {
-      yield _mapPlayerPointsChangedToState(event, state);
+      yield await _mapPlayerPointsChangedToState(event, state);
     } else if (event is GamePlayerPointsAdded) {
-      yield _mapPlayerPointsAddedToState(event, state);
+      yield await _mapPlayerPointsAddedToState(event, state);
     } else if (event is GamePlayerPointsRemoved) {
-      yield _mapPlayerPointsRemovedToState(event, state);
+      yield await _mapPlayerPointsRemovedToState(event, state);
     }
   }
 
@@ -47,7 +47,7 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
     return state;
   }
 
-  LifeCounterState _mapPlayerPointsChangedToState(
+  Future<LifeCounterState> _mapPlayerPointsChangedToState(
       GamePlayerPointsChanged event, LifeCounterState state) {
     final PlayerPoints pointsToBeUpdated = event.points;
     Set<PlayerPoints> updatedList = {};
@@ -62,7 +62,7 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
     return _updatedGameState(playerToBeUpdated);
   }
 
-  LifeCounterState _mapPlayerPointsAddedToState(
+  Future<LifeCounterState> _mapPlayerPointsAddedToState(
       GamePlayerPointsAdded event, LifeCounterState state) {
     Set<PlayerPoints> grownList = event.player.points.toSet();
     grownList.add(event.points);
@@ -73,7 +73,7 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
   }
 
   /// Handles event PlayerPointsRemoved
-  LifeCounterState _mapPlayerPointsRemovedToState(
+  Future<LifeCounterState> _mapPlayerPointsRemovedToState(
       GamePlayerPointsRemoved event, LifeCounterState state) {
     Set<PlayerPoints> reducedList = event.player.points.toSet();
     reducedList.remove(event.points);
@@ -83,10 +83,15 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
     return _updatedGameState(playerToBeUpdated);
   }
 
-  LifeCounterState _updatedGameState(Player updatedPlayer) {
+  Future<LifeCounterState> _updatedGameState(Player updatedPlayer) async {
+    Game currentGame = await gameRepository.getCurrentGame();
+
+    // fixme: meglio un copy with
     Game updatedGame = new Game(
+        id: currentGame.id,
         opponents: [updatedPlayer.id == state.opponent.id ? updatedPlayer : state.opponent],
         team: [updatedPlayer.id == state.user.id ? updatedPlayer : state.user]);
+
     gameRepository.updateGame(updatedGame);
 
     return state.copyWith(
