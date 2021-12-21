@@ -126,10 +126,10 @@ class HomePageState extends State<HomePage> {
         Future.delayed(
           Duration(seconds: 2),
           () {
-            Navigator.of(context).pop();
             KiwiContainer().resolve<MatchBloc>().add(
                   FetchOnline1vs1Match(opponent: matchDetails.sender, matchId: matchDetails.data!),
                 );
+            Navigator.of(context).pop();
             Navigator.of(context).push(LifeCounterPage.route());
           },
         );

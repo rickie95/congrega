@@ -9,6 +9,7 @@ import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/users/UserRepository.dart';
 import 'package:congrega/features/websocket/invitation_manager.dart';
+import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'package:congrega/features/lifecounter/model/Match.dart';
@@ -16,6 +17,8 @@ import 'package:congrega/features/lifecounter/model/Match.dart';
 import 'MatchRepository.dart';
 
 class MatchController {
+  static final Logger logger = Logger();
+
   MatchController(
       {required this.matchRepository,
       required this.playerRepository,
@@ -58,7 +61,9 @@ class MatchController {
 
   Future<Match> fetchOnlineMatch(User opponent, String matchId) async {
     Match m = await matchRepository.fetchOnlineMatch(matchId);
-    gameRepository.fetchOnlineGame(m.gameList!.first.id!, opponent);
+    logger.i("Fetched Match " + m.toString());
+    Game? g = await gameRepository.fetchOnlineGame(m.gameList!.first.id!, opponent);
+    logger.i("Fetched Game " + g.toString());
     return m;
   }
 
@@ -72,18 +77,20 @@ class MatchController {
   }
 
   Future<Match> createOnlineMatch(Message acceptedInvite) async {
+    Match m = await matchRepository.createOnlineMatch(
+        await playerRepository.getAuthenticatedPlayer(),
+        playerRepository.fromUser(acceptedInvite.sender));
+
     Game? newGame = await gameRepository.newOnlineGame(Game(
-      team: [await playerRepository.getAuthenticatedPlayer()],
-      opponents: [Player.playerFromUser(acceptedInvite.sender)],
-    ));
-    return matchRepository
-        .createOnlineMatch(await playerRepository.getAuthenticatedPlayer(),
-            playerRepository.fromUser(acceptedInvite.sender),
-            game: newGame)
-        .then((Match m) {
-      _controller.add(MatchStatus.updated);
-      return m;
-    });
+        team: [await playerRepository.getAuthenticatedPlayer()],
+        opponents: [Player.playerFromUser(acceptedInvite.sender)],
+        parentMatch: m));
+
+    Match createdMatch = m.copyWith(gameList: [newGame!]);
+    matchRepository.updateMatch(createdMatch);
+    _controller.add(MatchStatus.updated);
+    gameRepository.updateGame(newGame);
+    return createdMatch;
   }
 
   Future<bool> _matchInProgress() async {

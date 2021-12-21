@@ -1,16 +1,21 @@
+import 'dart:convert';
+
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:equatable/equatable.dart';
 
+import "package:congrega/features/lifecounter/model/Match.dart";
+
 class Game extends Equatable {
   static const empty = const Game(team: [], opponents: []);
 
-  const Game({required this.team, required this.opponents, this.id});
+  const Game({required this.team, required this.opponents, this.id, this.parentMatch});
 
   final String? id;
   final List<Player> team;
   final List<Player> opponents;
+  final Match? parentMatch;
 
   @override
   List<Object?> get props => [id, team, opponents];
@@ -36,6 +41,9 @@ class Game extends Equatable {
     };
     if (id != null) {
       json["id"] = id;
+    }
+    if (parentMatch != null) {
+      json["parentMatch"] = {"id": parentMatch!.id};
     }
     return json;
   }

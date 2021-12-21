@@ -44,6 +44,14 @@ class Match extends Equatable {
         gameList: gameList ?? this.gameList);
   }
 
+  Player opponentOf(User user) {
+    return playerOne.user.id == user.id ? playerTwo : playerOne;
+  }
+
+  Player getUserAsPlayer(User user) {
+    return playerOne.user.id == user.id ? playerOne : playerTwo;
+  }
+
   Map<String, dynamic> toJson() => {
         "id": this.id,
         "type": this.type.toString(),

@@ -58,10 +58,9 @@ class MatchRepository {
     });
   }
 
-  Future<Match> createOnlineMatch(Player user, Player opponent, {Game? game}) {
+  Future<Match> createOnlineMatch(Player user, Player opponent) {
     return matchClient
-        .createMatch(
-            new Match(playerOne: user, playerTwo: opponent, gameList: game != null ? [game] : null))
+        .createMatch(new Match(playerOne: user, playerTwo: opponent))
         .then((Match createdMatch) {
       persistMatch(createdMatch);
       return createdMatch;

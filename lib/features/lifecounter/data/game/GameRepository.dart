@@ -29,8 +29,11 @@ class GameRepository {
   }
 
   Future<Game> getCurrentGame() async {
-    return _gameInProgress()
-        .then((bool isInProgress) => isInProgress ? _recoverGame() : _newOfflineGame());
+    return _gameInProgress().then((bool isInProgress) {
+      if (isInProgress) return _recoverGame();
+
+      return _newOfflineGame();
+    });
   }
 
   Future<bool> _gameInProgress() async {
@@ -45,7 +48,7 @@ class GameRepository {
   }
 
   Future<Game?> fetchOnlineGame(String id, User user) {
-    return gameClient.getGameById(id);
+    return gameClient.getGameById(id).then((Game? game) => updateGame(game));
   }
 
   Future<Game> _recoverGame() => persistence.recoverGame();

@@ -4,10 +4,13 @@ import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/users/UserRepository.dart';
 import 'package:congrega/ui/congrega_elevated_button_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:kiwi/kiwi.dart';
 
 class MatchScoreModalBottomSheet extends StatelessWidget {
   @override
@@ -28,34 +31,10 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
             child: Container(
               // MATCH STATUS
               padding: EdgeInsets.all(10),
-              child: BlocBuilder<MatchBloc, MatchState>(
-                buildWhen: (previous, current) =>
-                    previous.match.playerOneScore != current.match.playerOneScore ||
-                    previous.match.playerTwoScore != current.match.playerTwoScore,
-                builder: (context, state) {
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          PlayerScoreWidget(
-                            playerUsername: "You",
-                            playerScore: state.match.playerOneScore,
-                            callback: () => context
-                                .read<MatchBloc>()
-                                .add(MatchPlayerWinsGame(state.user)), //FIXME
-                          ),
-                          PlayerScoreWidget(
-                              playerUsername: state.opponentUsername,
-                              playerScore: state.match.playerTwoScore,
-                              callback: () => context
-                                  .read<MatchBloc>()
-                                  .add(MatchPlayerWinsGame(state.opponent))),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
+              child: FutureBuilder(
+                  future: KiwiContainer().resolve<UserRepository>().getUser(),
+                  builder: (context, AsyncSnapshot<User> userSnapshot) =>
+                      createWidget(userSnapshot)),
             ),
           ),
         ),
@@ -93,6 +72,42 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                 )),
       )
     ]);
+  }
+
+  Widget createWidget(AsyncSnapshot<User> userSnapshot) {
+    if (userSnapshot.hasData && userSnapshot.data != null)
+      return BlocBuilder<MatchBloc, MatchState>(
+        buildWhen: (previous, current) =>
+            previous.match.playerOneScore != current.match.playerOneScore ||
+            previous.match.playerTwoScore != current.match.playerTwoScore,
+        builder: (context, state) {
+          return Column(
+            children: [
+              Row(
+                children: [
+                  PlayerScoreWidget(
+                    playerUsername: "You",
+                    playerScore: state.match.playerOneScore,
+                    callback: () => context
+                        .read<MatchBloc>()
+                        .add(MatchPlayerWinsGame(state.user(userSnapshot.data!))), //FIXME
+                  ),
+                  PlayerScoreWidget(
+                      playerUsername: state.opponentUsername,
+                      playerScore: state.match.playerTwoScore,
+                      callback: () => context
+                          .read<MatchBloc>()
+                          .add(MatchPlayerWinsGame(state.opponent(userSnapshot.data!)))),
+                ],
+              ),
+            ],
+          );
+        },
+      );
+
+    return Center(
+      child: CircularProgressIndicator(),
+    );
   }
 }
 
@@ -183,8 +198,11 @@ class SurrenderGameDialog extends StatelessWidget {
               .toString()
               .toUpperCase()),
           style: ButtonStyle(backgroundColor: dangerButtonColorState),
-          onPressed: () {
-            context.read<MatchBloc>().add(PlayerQuitsGame(context.read<MatchBloc>().state.user));
+          onPressed: () async {
+            User user = await KiwiContainer().resolve<UserRepository>().getUser();
+            context
+                .read<MatchBloc>()
+                .add(PlayerQuitsGame(context.read<MatchBloc>().state.user(user)));
             Navigator.of(context).pop();
           },
         ),

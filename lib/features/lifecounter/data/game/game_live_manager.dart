@@ -19,11 +19,12 @@ class GameLiveManager {
   void setupWs(Game game) async {
     authenticatedUser = await KiwiContainer().resolve<UserRepository>().getUser();
     this.wsClient.setUri(Arcano.getWSGameUri(game.id!, authenticatedUser.id));
+    logger.i("Setting uri as " + Arcano.getWSGameUri(game.id!, authenticatedUser.id).toString());
   }
 
   void setOnLifePointsUpdateCallback(Function(int) onLifePointsUpdate) {
     wsClient.setOnMessage((points) {
-      print("[${authenticatedUser.username} | GAME_LIVE_MNG ] => " + points);
+      logger.i("Message arrived: " + points.toString());
       int? pointsAmount = int.tryParse(points);
       if (pointsAmount != null) onLifePointsUpdate(pointsAmount);
     });

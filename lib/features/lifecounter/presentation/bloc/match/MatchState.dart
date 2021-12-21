@@ -1,6 +1,7 @@
 import 'package:congrega/features/lifecounter/model/Game.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/model/Match.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:equatable/equatable.dart';
 
 enum MatchStatus { unknown, inProgress, ended, updated }
@@ -22,8 +23,8 @@ class MatchState extends Equatable {
         status: status ?? this.status, match: match ?? this.match, game: game ?? this.game);
   }
 
-  Player get opponent => this.match.playerTwo;
-  Player get user => this.match.playerOne;
+  Player opponent(User user) => this.match.opponentOf(user);
+  Player user(User user) => this.match.getUserAsPlayer(user);
   String get opponentUsername => this.match.playerTwo.username;
   String get userUsername => this.match.playerOne.username;
   int get opponentScore => this.match.playerTwoScore;

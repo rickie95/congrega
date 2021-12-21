@@ -1,14 +1,19 @@
+import 'package:congrega/features/lifecounter/data/game/game_live_manager.dart';
 import 'package:congrega/features/lifecounter/model/Match.dart';
+import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:congrega/features/lifecounter/presentation/widgets/LifeCounterModalBottomSheet.dart';
 import 'package:congrega/features/lifecounter/presentation/widgets/PlayerPointsWidget.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
 import 'package:congrega/features/lifecounter/presentation/widgets/timeWidgets/bloc/TimeSettingsBloc.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/users/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiwi/kiwi.dart';
 
 import 'bloc/LifeCounterBloc.dart';
+import 'bloc/LifeCounterEvents.dart';
 import 'bloc/LifeCounterState.dart';
 import 'widgets/LifeCounterStatusBar.dart';
 
@@ -31,7 +36,7 @@ class LifeCounterPage extends StatelessWidget {
                 future: createInitialMatchState(),
                 builder: (BuildContext context, AsyncSnapshot<MatchState> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting)
-                    return Text("Just a sec bro");
+                    return Center(child: Text("Just a sec bro"));
 
                   if (snapshot.hasData && snapshot.data != null)
                     return MultiBlocProvider(
@@ -47,83 +52,117 @@ class LifeCounterPage extends StatelessWidget {
                           create: (BuildContext context) => TimeSettingsBloc(),
                         )
                       ],
-                      child: Column(
-                        children: [
-                          // OPPONENT BAR
-                          Expanded(
-                              flex: 46,
-                              child: Container(
-                                // opponent
-                                child: Column(
-                                  children: [
-                                    // SEZIONE PUNTEGGIO AVVERSARIO
-                                    Expanded(
-                                      flex: 100,
-                                      child: BlocBuilder<MatchBloc, MatchState>(
-                                        builder: (context, state) {
-                                          return Transform.rotate(
-                                            angle: state.match.type == MatchType.offline ? 3.14 : 0,
-                                            child: PlayerPointsWidget(
-                                              pointSectionBlocBuilder:
-                                                  BlocBuilder<LifeCounterBloc, LifeCounterState>(
-                                                      buildWhen: (previous, current) =>
-                                                          previous.opponent.points !=
-                                                          current.opponent.points,
-                                                      builder: (context, state) {
-                                                        return Column(
-                                                          children:
-                                                              getPointRows(context, state.opponent),
-                                                        );
-                                                      }),
-                                              settingsBlocBuilder: state.match.type ==
-                                                      MatchType.offline
-                                                  ? BlocBuilder<LifeCounterBloc, LifeCounterState>(
-                                                      buildWhen: (previous, current) =>
-                                                          (previous.opponent.points !=
-                                                              current.opponent.points),
-                                                      builder: (context, state) =>
-                                                          PlayerCountersSettings(
-                                                              player: state.opponent))
-                                                  : null,
-                                              backgroundColor: Colors.deepPurple,
+                      child: FutureBuilder(
+                          future: KiwiContainer().resolve<UserRepository>().getUser(),
+                          builder: (context, AsyncSnapshot<User> userSnapshot) {
+                            if (userSnapshot.hasData && userSnapshot.data != null) {
+                              User user = userSnapshot.data!;
+                              return Column(
+                                children: [
+                                  // OPPONENT BAR
+                                  Expanded(
+                                      flex: 46,
+                                      child: Container(
+                                        // opponent
+                                        child: Column(
+                                          children: [
+                                            // SEZIONE PUNTEGGIO AVVERSARIO
+                                            Expanded(
+                                              flex: 100,
+                                              child: BlocBuilder<MatchBloc, MatchState>(
+                                                builder: (context, matchState) {
+                                                  KiwiContainer()
+                                                      .resolve<GameLiveManager>()
+                                                      .setOnLifePointsUpdateCallback(
+                                                          (int updatedLifePoints) => KiwiContainer()
+                                                              .resolve<LifeCounterBloc>()
+                                                              .add(GamePlayerPointsChanged(
+                                                                  matchState.opponent(user),
+                                                                  LifePoints(updatedLifePoints))));
+
+                                                  return Transform.rotate(
+                                                    angle:
+                                                        matchState.match.type == MatchType.offline
+                                                            ? 3.14
+                                                            : 0,
+                                                    child: PlayerPointsWidget(
+                                                      pointSectionBlocBuilder: BlocBuilder<
+                                                              LifeCounterBloc, LifeCounterState>(
+                                                          buildWhen: (previous, current) =>
+                                                              previous.opponentOf(user).points !=
+                                                              current.opponentOf(user).points,
+                                                          builder: (context, state) {
+                                                            return Column(
+                                                              children: getPointRows(
+                                                                  context, state.opponentOf(user)),
+                                                            );
+                                                          }),
+                                                      settingsBlocBuilder: matchState.match.type ==
+                                                              MatchType.offline
+                                                          ? BlocBuilder<LifeCounterBloc,
+                                                              LifeCounterState>(
+                                                              buildWhen: (previous, current) =>
+                                                                  (previous
+                                                                          .opponentOf(user)
+                                                                          .points !=
+                                                                      current
+                                                                          .opponentOf(user)
+                                                                          .points),
+                                                              builder: (context, state) =>
+                                                                  PlayerCountersSettings(
+                                                                      player:
+                                                                          state.opponentOf(user)),
+                                                            )
+                                                          : null,
+                                                      backgroundColor: Colors.deepPurple,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
                                             ),
-                                          );
-                                        },
-                                      ),
+                                          ],
+                                        ),
+                                      )),
+
+                                  // STATUS BAR
+                                  Expanded(flex: 8, child: StatusBar()),
+
+                                  // PLAYER BAR
+                                  Expanded(
+                                    flex: 46,
+                                    child: PlayerPointsWidget(
+                                      pointSectionBlocBuilder:
+                                          BlocBuilder<LifeCounterBloc, LifeCounterState>(
+                                              buildWhen: (previous, current) =>
+                                                  previous.getUser(user).points !=
+                                                  current.getUser(user).points,
+                                              builder: (context, state) {
+                                                return Column(
+                                                  children:
+                                                      getPointRows(context, state.getUser(user)),
+                                                );
+                                              }),
+                                      settingsBlocBuilder:
+                                          BlocBuilder<LifeCounterBloc, LifeCounterState>(
+                                              buildWhen: (previous, current) =>
+                                                  (previous.getUser(user).points !=
+                                                      current.getUser(user).points),
+                                              builder: (context, state) => PlayerCountersSettings(
+                                                  player: state.getUser(user))),
+                                      backgroundColor: Colors.orange,
                                     ),
-                                  ],
-                                ),
-                              )),
+                                  ),
+                                ],
+                              );
+                            }
 
-                          // STATUS BAR
-                          Expanded(flex: 8, child: StatusBar()),
-
-                          // PLAYER BAR
-                          Expanded(
-                            flex: 46,
-                            child: PlayerPointsWidget(
-                              pointSectionBlocBuilder:
-                                  BlocBuilder<LifeCounterBloc, LifeCounterState>(
-                                      buildWhen: (previous, current) =>
-                                          previous.user.points != current.user.points,
-                                      builder: (context, state) {
-                                        return Column(
-                                          children: getPointRows(context, state.user),
-                                        );
-                                      }),
-                              settingsBlocBuilder: BlocBuilder<LifeCounterBloc, LifeCounterState>(
-                                  buildWhen: (previous, current) =>
-                                      (previous.user.points != current.user.points),
-                                  builder: (context, state) =>
-                                      PlayerCountersSettings(player: state.user)),
-                              backgroundColor: Colors.orange,
-                            ),
-                          ),
-                        ],
-                      ),
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }),
                     );
 
-                  return Text("Error");
+                  return Center(child: Text("Error"));
                 })));
   }
 }

@@ -43,7 +43,10 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
                 return game;
               }))
           .then((Game game) => state.copyWith(
-              user: game.team[0], opponent: game.opponents[0], status: GameStatus.inProgress));
+              user: state.user.id == game.team[0].id ? game.team[0] : game.opponents[0],
+              opponent:
+                  state.opponent.id == game.opponents[0].id ? game.opponents[0] : game.team[0],
+              status: GameStatus.inProgress));
     return state;
   }
 
@@ -57,7 +60,7 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
           : updatedList.add(pp);
 
     final Player playerToBeUpdated = event.player.copyWith(list: updatedList);
-    if (state.user == event.player.user && pointsToBeUpdated.isTheSameTypeOf(LifePoints))
+    if (state.user.id == event.player.user.id && pointsToBeUpdated.isTheSameTypeOf(LifePoints))
       gameLiveManager.updateLifePoints(pointsToBeUpdated.value);
     return _updatedGameState(playerToBeUpdated);
   }
@@ -87,10 +90,11 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
     Game currentGame = await gameRepository.getCurrentGame();
 
     // fixme: meglio un copy with
-    Game updatedGame = new Game(
-        id: currentGame.id,
-        opponents: [updatedPlayer.id == state.opponent.id ? updatedPlayer : state.opponent],
-        team: [updatedPlayer.id == state.user.id ? updatedPlayer : state.user]);
+    Game updatedGame = new Game(id: currentGame.id, opponents: [
+      updatedPlayer.id == currentGame.opponents[0].id ? updatedPlayer : currentGame.opponents[0]
+    ], team: [
+      updatedPlayer.id == currentGame.team[0].id ? updatedPlayer : currentGame.team[0]
+    ]);
 
     gameRepository.updateGame(updatedGame);
 
