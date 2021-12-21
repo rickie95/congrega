@@ -6,7 +6,9 @@ import 'package:congrega/features/lifecounter/data/game/GameRepository.dart';
 import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterState.dart';
+import 'package:congrega/features/users/UserRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kiwi/kiwi.dart';
 
 import '../../model/Player.dart';
 
@@ -51,7 +53,7 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
   }
 
   Future<LifeCounterState> _mapPlayerPointsChangedToState(
-      GamePlayerPointsChanged event, LifeCounterState state) {
+      GamePlayerPointsChanged event, LifeCounterState state) async {
     final PlayerPoints pointsToBeUpdated = event.points;
     Set<PlayerPoints> updatedList = {};
     for (PlayerPoints pp in event.player.points)
@@ -60,7 +62,9 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
           : updatedList.add(pp);
 
     final Player playerToBeUpdated = event.player.copyWith(list: updatedList);
-    if (state.user.id == event.player.user.id && pointsToBeUpdated.isTheSameTypeOf(LifePoints))
+    if (state.getUser(await KiwiContainer().resolve<UserRepository>().getUser()).id ==
+            event.player.user.id &&
+        pointsToBeUpdated.isTheSameTypeOf(LifePoints))
       gameLiveManager.updateLifePoints(pointsToBeUpdated.value);
     return _updatedGameState(playerToBeUpdated);
   }
