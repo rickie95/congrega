@@ -1,9 +1,15 @@
 import 'dart:async';
 
 import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
+import 'package:congrega/features/lifecounter/data/game/GameRepository.dart';
+import 'package:congrega/features/lifecounter/model/Game.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterState.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/users/UserRepository.dart';
+import 'package:congrega/features/websocket/invitation_manager.dart';
+import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'package:congrega/features/lifecounter/model/Match.dart';
@@ -11,11 +17,23 @@ import 'package:congrega/features/lifecounter/model/Match.dart';
 import 'MatchRepository.dart';
 
 class MatchController {
-  MatchController({required this.matchRepository, required this.playerRepository});
+  static final Logger logger = Logger();
+
+  MatchController(
+      {required this.matchRepository,
+      required this.playerRepository,
+      required this.userRepository,
+      required this.gameRepository});
 
   final StreamController<MatchStatus> _controller = new BehaviorSubject();
   final MatchRepository matchRepository;
   final PlayerRepository playerRepository;
+  final UserRepository userRepository;
+  final GameRepository gameRepository;
+
+  Stream<GameStatus> get gameStatus async* {
+    yield* gameRepository.status;
+  }
 
   Stream<MatchStatus> get status async* {
     yield await _matchInProgress().then((_) => MatchStatus.updated);
@@ -23,15 +41,30 @@ class MatchController {
   }
 
   Future<Match> newOfflineMatch({User? opponent}) async {
+    gameRepository.newGame(
+      Game(team: [
+        await playerRepository.getAuthenticatedPlayer()
+      ], opponents: [
+        opponent == null ? playerRepository.genericOpponent() : Player.playerFromUser(opponent)
+      ]),
+    );
     return matchRepository.newOfflineMatch(new Match(
         id: '-',
-        user: await playerRepository.getAuthenticatedPlayer(),
-        opponent: opponent != null
+        playerOne: await playerRepository.getAuthenticatedPlayer(),
+        playerTwo: opponent != null
             ? playerRepository.fromUser(opponent)
             : playerRepository.genericOpponent(),
-        userScore: 0,
-        opponentScore: 0,
+        playerOneScore: 0,
+        playerTwoScore: 0,
         type: MatchType.offline));
+  }
+
+  Future<Match> fetchOnlineMatch(User opponent, String matchId) async {
+    Match m = await matchRepository.fetchOnlineMatch(matchId);
+    logger.i("Fetched Match " + m.toString());
+    Game? g = await gameRepository.fetchOnlineGame(m.gameList!.first.id!, opponent);
+    logger.i("Fetched Game " + g.toString());
+    return m;
   }
 
   Future<Match> _recoverMatch() async {
@@ -43,12 +76,21 @@ class MatchController {
         .then((bool isInProgress) => isInProgress ? _recoverMatch() : newOfflineMatch());
   }
 
-  Future<void> createOnlineMatch(Match match) async {
-    // usato dal tournamentBloc/controller per creare un nuovo match di un torneo
-    // ad un certo punto deve salvarlo sul matchRepo
-    // e poi sparare un evento per notificare il match bloc
-    matchRepository.persistMatch(match);
+  Future<Match> createOnlineMatch(Message acceptedInvite) async {
+    Match m = await matchRepository.createOnlineMatch(
+        await playerRepository.getAuthenticatedPlayer(),
+        playerRepository.fromUser(acceptedInvite.sender));
+
+    Game? newGame = await gameRepository.newOnlineGame(Game(
+        team: [await playerRepository.getAuthenticatedPlayer()],
+        opponents: [Player.playerFromUser(acceptedInvite.sender)],
+        parentMatch: m));
+
+    Match createdMatch = m.copyWith(gameList: [newGame!]);
+    matchRepository.updateMatch(createdMatch);
     _controller.add(MatchStatus.updated);
+    gameRepository.updateGame(newGame);
+    return createdMatch;
   }
 
   Future<bool> _matchInProgress() async {
@@ -57,8 +99,10 @@ class MatchController {
 
   Match playerQuitsGame(Match match, Player player) {
     Match updatedMatch = match.copyWith(
-        opponentScore: player.id == match.user.id ? match.opponentScore + 1 : match.opponentScore,
-        userScore: player.id == match.opponent.id ? match.userScore + 1 : match.userScore);
+        opponentScore:
+            player.id == match.playerOne.id ? match.playerTwoScore + 1 : match.playerTwoScore,
+        userScore:
+            player.id == match.playerTwo.id ? match.playerOneScore + 1 : match.playerOneScore);
     matchRepository.updateMatch(updatedMatch).then((_) => _controller.add(MatchStatus.updated));
 
     return updatedMatch;
@@ -66,20 +110,24 @@ class MatchController {
 
   Match playerResign(Match match, Player player) {
     Match updatedMatch = match.copyWith(
-        opponentScore: player.id == match.user.id ? 2 : 0,
-        userScore: player.id == match.opponent.id ? 2 : 0);
+        opponentScore: player.id == match.playerOne.id ? 2 : 0,
+        userScore: player.id == match.playerTwo.id ? 2 : 0);
     matchRepository.endMatch(updatedMatch).then((_) => _controller.add(MatchStatus.ended));
+    gameRepository.endGame();
     return updatedMatch;
   }
 
   Match playerWinsGame(Match match, Player player) {
     Match updatedMatch = match.copyWith(
         opponentScore:
-            player.id == match.opponent.id ? match.opponentScore + 1 : match.opponentScore,
-        userScore: player.id == match.user.id ? match.userScore + 1 : match.userScore);
+            player.id == match.playerTwo.id ? match.playerTwoScore + 1 : match.playerTwoScore,
+        userScore:
+            player.id == match.playerOne.id ? match.playerOneScore + 1 : match.playerOneScore);
     // call repo and update game
     return updatedMatch;
   }
 
   void dispose() => _controller.close();
+
+  Future<Game> getCurrentGame() => gameRepository.getCurrentGame();
 }

@@ -4,18 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MatchScoreWidget extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MatchBloc, MatchState>(
         buildWhen: (previous, current) =>
-        previous.match.userScore != current.match.userScore || previous.match.opponentScore != current.match.opponentScore,
+            previous.match.playerOneScore != current.match.playerOneScore ||
+            previous.match.playerTwoScore != current.match.playerTwoScore,
         builder: (context, state) {
           final String userScore = state.userScore.toString();
           final String opponentScore = state.opponentScore.toString();
-          return Text("$userScore - $opponentScore", style: TextStyle(fontSize: 30),);
-        }
-    );
+          return Text(
+            "$userScore - $opponentScore",
+            style: TextStyle(fontSize: 30),
+          );
+        });
   }
-
 }

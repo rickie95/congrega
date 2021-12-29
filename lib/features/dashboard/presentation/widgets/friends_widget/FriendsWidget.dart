@@ -3,17 +3,16 @@ import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/
 import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_state.dart';
 import 'package:congrega/features/friends/data/friends_repository.dart';
 import 'package:congrega/features/friends/presentation/search_friends_page.dart';
-import 'package:congrega/features/lifecounter/model/Player.dart';
+import 'package:congrega/features/lifecounter/data/match/MatchController.dart';
 import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart';
-import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/websocket/invitation_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:kiwi/kiwi.dart';
-import 'package:provider/provider.dart';
 
 import '../DashboardWideTile.dart';
 
@@ -47,9 +46,8 @@ class FriendsWidget extends StatelessWidget {
       child: Container(
         height: 125,
         child: BlocProvider<FriendsWidgetBloc>(
-          create: (BuildContext context) => KiwiContainer().resolve<FriendsWidgetBloc>(),
-          child: FriendCardList(),
-        ),
+            create: (BuildContext context) => KiwiContainer().resolve<FriendsWidgetBloc>(),
+            child: FriendCardList()),
       ),
     );
   }
@@ -58,15 +56,31 @@ class FriendsWidget extends StatelessWidget {
 class FriendCardList extends StatelessWidget {
   const FriendCardList();
 
-  int getFriendCount() {
-    return KiwiContainer().resolve<FriendRepository>().getFriendsList().length;
+  Future<void> friendListIsReady() {
+    return KiwiContainer().resolve<FriendRepository>().fetchFriendsList();
   }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: KiwiContainer().resolve<FriendRepository>().fetchFriendsList(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) return Text("Ops, something went wrong");
+
+        if (snapshot.hasData) return FriendsWidgetBody();
+
+        return CircularProgressIndicator();
+      },
+    );
+  }
+}
+
+class FriendsWidgetBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<FriendsWidgetBloc, FriendsWidgetState>(
       builder: (context, state) {
-        if (getFriendCount() == 0) {
+        if (KiwiContainer().resolve<FriendRepository>().isEmpty()) {
           return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
@@ -177,16 +191,112 @@ class FriendBottomSheet extends StatelessWidget {
         children: [
           ElevatedButton(
             child: Text("CHALLENGE HIM!"),
-            onPressed: () {
-              KiwiContainer().resolve<MatchBloc>().add(Create1V1Match(opponent: user));
-              Navigator.of(context).push(LifeCounterPage.route());
-            },
+            onPressed: () => showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                      title: Text("Send invite"),
+                      content: Text("Do you want to challenge ${user.username}?"),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.of(context).pop(), child: Text("Cancel")),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              showWaitForChallengedUserAlert(context);
+                            },
+                            child: Text("Send"))
+                      ],
+                    )),
           )
         ],
       ),
     );
   }
+
+  void showWaitForChallengedUserAlert(BuildContext context) {
+    // create a Future which waits for a confirmation and has a timer
+
+    final Duration opponentConfirmTimemout = Duration(seconds: 4);
+
+    Future<Message> askOpponentForAnswer(User user) {
+      return KiwiContainer().resolve<InvitationManager>().sendInvite(user);
+    }
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          askOpponentForAnswer(user)
+              .timeout(opponentConfirmTimemout, onTimeout: () => throw TimeoutError())
+              .then((Message acceptedInvite) {
+            Navigator.of(context).pop();
+            acceptedInvite.type == MessageType.ACCEPT
+                ? showSuccessDialog(context, acceptedInvite)
+                : showErrorDialog(
+                    context, "Invite refused", "${user.username} refused your challenge!");
+          }).onError((error, stackTrace) {
+            Navigator.of(context).pop();
+            error is TimeoutError
+                ? showErrorDialog(
+                    context, "Timeout!", "${user.username} didn't answer your invite in time.")
+                : showErrorDialog(context, "Something gone wrong",
+                    "We tried to reach ${user.username}, really, but an error occurred: $error");
+          });
+
+          return AlertDialog(
+            title: Text("Please wait"),
+            content: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Waiting for a response from ${user.username}.."),
+                  CircularProgressIndicator()
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("Cancel"))
+            ],
+          );
+        });
+  }
+
+  void showErrorDialog(BuildContext context, String title, String text) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(title),
+              content: Text(text),
+              actions: [
+                ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: Text("Dismiss"))
+              ],
+            ));
+  }
+
+  showSuccessDialog(BuildContext context, Message acceptedInvite) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          KiwiContainer()
+              .resolve<MatchController>()
+              .createOnlineMatch(acceptedInvite)
+              .then((match) {
+            KiwiContainer().resolve<InvitationManager>().sendMatchDetails(acceptedInvite, match);
+            Navigator.of(context).pop();
+            KiwiContainer().resolve<MatchBloc>().add(Online1vs1Match(match: match));
+            Navigator.of(context).push(LifeCounterPage.route());
+          });
+
+          return AlertDialog(
+            title: Text("Success!"),
+            content:
+                Text("${user.username} said yes, sharpen your axe or what, you're starting now!"),
+          );
+        });
+  }
 }
+
+class TimeoutError extends Error {}
 
 class FollowButton extends StatefulWidget {
   final User user;

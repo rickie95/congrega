@@ -37,6 +37,13 @@ class Player extends Equatable {
         points:
             Set<PlayerPoints>.from(obj['playerPoints'].map((val) => PlayerPoints.fromJson(val))));
   }
+  factory Player.decodeArcanoJson(
+    Map<String, dynamic> obj,
+  ) {
+    return Player(
+        user: new User(id: obj['id'], username: obj['username'], name: obj['name'] ?? ""),
+        points: Set<PlayerPoints>()..add(LifePoints(20)));
+  }
 
   Map<String, dynamic> toJson() {
     return {

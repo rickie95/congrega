@@ -4,7 +4,7 @@ import 'package:kiwi/kiwi.dart';
 
 import 'features/authentication/AuthenticationRepository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' as BLOC;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:congrega/features/dashboard/presentation/HomePage.dart';
 
@@ -14,7 +14,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'features/splashscreen/SplashPage.dart';
 import 'features/splashscreen/WelcomePage.dart';
-
 
 class Congrega extends StatelessWidget {
   const Congrega();
@@ -43,7 +42,7 @@ class _CongregaViewState extends State<CongregaView> {
 
   @override
   Widget build(BuildContext context) {
-    return BLOC.BlocProvider(
+    return BlocProvider(
       create: (_) => KiwiContainer().resolve<AuthenticationBloc>(),
       child: MaterialApp(
         title: 'Congrega',
@@ -56,23 +55,26 @@ class _CongregaViewState extends State<CongregaView> {
           GlobalCupertinoLocalizations.delegate
         ],
         supportedLocales: [const Locale('en'), const Locale('it')],
-        builder: (context, child) {
-          return BLOC.BlocListener<AuthenticationBloc, AuthenticationState>(
-            listener: (context, state) {
-              switch (state.status) {
-                case AuthenticationStatus.authenticated:
-                  _navigator!.pushAndRemoveUntil<void>(
-                      HomePage.route(), (route) => false);
-                  break;
-                case AuthenticationStatus.unauthenticated:
-                  _navigator!.pushAndRemoveUntil<void>(
-                      WelcomePage.route(), (route) => false);
-                  break;
-                default:
-                  break;
-              }
-            },
-            child: child,
+        builder: (context, childWidget) {
+          return MultiBlocListener(
+            listeners: [
+              // Listener for authentication state
+              BlocListener<AuthenticationBloc, AuthenticationState>(
+                listener: (context, state) {
+                  switch (state.status) {
+                    case AuthenticationStatus.authenticated:
+                      _navigator!.pushAndRemoveUntil<void>(HomePage.route(), (route) => false);
+                      break;
+                    case AuthenticationStatus.unauthenticated:
+                      _navigator!.pushAndRemoveUntil<void>(WelcomePage.route(), (route) => false);
+                      break;
+                    default:
+                      break;
+                  }
+                },
+              ),
+            ],
+            child: childWidget!,
           );
         },
         onGenerateRoute: (_) => SplashPage.route(),

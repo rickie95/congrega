@@ -1,20 +1,16 @@
 import 'package:congrega/features/lifecounter/model/Game.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/model/Match.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:equatable/equatable.dart';
 
-enum MatchStatus {unknown, inProgress, ended, updated}
+enum MatchStatus { unknown, inProgress, ended, updated }
 
 class MatchState extends Equatable {
+  const MatchState({this.status = MatchStatus.unknown, required this.match, required this.game});
 
-  const MatchState({
-    this.status = MatchStatus.unknown,
-    required this.match,
-    required this.game
-  });
-
-  const MatchState.unknown() :
-        this.status = MatchStatus.unknown,
+  const MatchState.unknown()
+      : this.status = MatchStatus.unknown,
         this.match = Match.empty,
         this.game = Game.empty;
 
@@ -22,26 +18,18 @@ class MatchState extends Equatable {
   final Match match;
   final Game game;
 
-  MatchState copyWith({
-    MatchStatus? status,
-    Match? match,
-    Game? game
-  }){
+  MatchState copyWith({MatchStatus? status, Match? match, Game? game}) {
     return MatchState(
-        status: status ?? this.status,
-        match: match ?? this.match,
-        game: game ?? this.game
-    );
+        status: status ?? this.status, match: match ?? this.match, game: game ?? this.game);
   }
-  
-  Player get opponent => this.match.opponent;
-  Player get user => this.match.user;
-  String get opponentUsername => this.match.opponent.username;
-  String get userUsername => this.match.user.username;
-  int get opponentScore => this.match.opponentScore;
-  int get userScore => this.match.userScore;
+
+  Player opponent(User user) => this.match.opponentOf(user);
+  Player user(User user) => this.match.getUserAsPlayer(user);
+  String get opponentUsername => this.match.playerTwo.username;
+  String get userUsername => this.match.playerOne.username;
+  int get opponentScore => this.match.playerTwoScore;
+  int get userScore => this.match.playerOneScore;
 
   @override
-  List<Object> get props => [status, match, match.opponentScore, match.userScore];
-
+  List<Object> get props => [status, match, match.playerTwoScore, match.playerOneScore];
 }

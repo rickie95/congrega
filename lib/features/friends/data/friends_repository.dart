@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:congrega/features/loginSignup/model/User.dart';
@@ -7,56 +8,59 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class FriendRepository {
   static const FRIENDS_LIST = "FRIENDS_LIST";
 
-  static List<User> _friends = [
-    new User(id: "001", name: "Frank", username: "frankieHINRG"),
-    new User(id: "002", name: "Rodrigo", username: "donRodrigo"),
-    new User(id: "003", name: "John Wick", username: "babaYaga"),
-    new User(id: "004", name: "Mike Tyson", username: "mikeTheBite")
-  ];
+  static List<User> _friends = [];
 
   final FlutterSecureStorage secureStorage;
 
   /// Initialize and create a [FriendRepository]
   FriendRepository({required this.secureStorage}) {
-    //_loadFriendList();
+    _loadFriendList();
   }
 
   /// Adds an [User] as a friend, stored in the static collection, then
   /// persisted in local storage.
   void addFriend(User friend) {
     _friends.add(friend);
-    //this._updateFriendList(friend);
+    this._updateFriendList();
   }
 
   /// Removes an [User] from the collection
   void removeFriend(User friend) {
     _friends.remove(friend);
-    //this._updateFriendList(friend);
+    this._updateFriendList();
+  }
+
+  bool isEmpty() {
+    return _friends.isEmpty;
+  }
+
+  Future<List<User>> fetchFriendsList() {
+    return _loadFriendList();
   }
 
   List<User> getFriendsList() {
     return _friends;
   }
 
-  Future<void> _updateFriendList(User friend) async {
+  Future<void> _updateFriendList() async {
     secureStorage.write(key: FRIENDS_LIST, value: jsonEncode(_friends));
   }
 
-  Future<void> _loadFriendList() async {
+  Future<List<User>> _loadFriendList() async {
     String? encodedList = await secureStorage.read(key: FRIENDS_LIST);
     if (encodedList == null || encodedList.isEmpty) {
       _friends = [];
     } else {
-      _friends = User.decodeUserList(encodedList as List<Object?>).toList();
+      _friends = User.decodeUserList(jsonDecode(encodedList) as List<Object?>).toList();
     }
+    return _friends;
   }
 
   Future<List<User>> searchByUsername(String username) {
     return Future.delayed(
         Duration(milliseconds: 200),
         () => _friends
-            .where((user) =>
-                user.username.toLowerCase().contains(username.toLowerCase()))
+            .where((user) => user.username.toLowerCase().contains(username.toLowerCase()))
             .toList());
   }
 

@@ -14,7 +14,7 @@ class PlayerPointsWidget extends StatelessWidget {
   }) : super();
 
   final BlocBuilder pointSectionBlocBuilder;
-  final BlocBuilder settingsBlocBuilder;
+  final BlocBuilder? settingsBlocBuilder;
   final Color backgroundColor;
 
   @override
@@ -24,40 +24,40 @@ class PlayerPointsWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 6.0),
       child: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.black87,
-                borderRadius: BorderRadius.circular(12.0)
-            ),
-            child: settingsBlocBuilder,
-          ),
+          settingsBlocBuilder != null
+              ? Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black87, borderRadius: BorderRadius.circular(12.0)),
+                  child: settingsBlocBuilder,
+                )
+              : Container(),
           SlidableWidget(
+            slidable: settingsBlocBuilder != null,
             child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Material(
-                    elevation: 14,
-                    color: backgroundColor,
-                    shadowColor:  Colors.black,
-                    borderRadius: BorderRadius.circular(12.0),
-                    child: Container(
-                        child: pointSectionBlocBuilder
+              alignment: Alignment.topCenter,
+              children: [
+                Material(
+                  elevation: 14,
+                  color: backgroundColor,
+                  shadowColor: Colors.black,
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Container(child: pointSectionBlocBuilder),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                      color: Colors.black87,
                     ),
+                    height: 5,
+                    width: 20,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
-                        color: Colors.black87,
-                      ),
-                      height: 5,
-                      width: 20,
-                    ),
-                  ),
-                ],
+                ),
+              ],
             ),
-          )],
+          )
+        ],
       ),
     );
   }
@@ -67,16 +67,17 @@ class SlidableWidget extends StatefulWidget {
   const SlidableWidget({
     Key? key,
     required this.child,
+    required this.slidable,
   }) : super(key: key);
 
   final Widget child;
+  final bool slidable;
 
   @override
   State<StatefulWidget> createState() => _SlidableWidgetState();
 }
 
 class _SlidableWidgetState extends State<SlidableWidget> with SingleTickerProviderStateMixin {
-
   late AnimationController _controller = AnimationController(vsync: this, upperBound: 0.85);
   double _dragExtent = 0;
 
@@ -90,12 +91,12 @@ class _SlidableWidgetState extends State<SlidableWidget> with SingleTickerProvid
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
-      builder:(context, child) => SlideTransition(
+      builder: (context, child) => SlideTransition(
         position: AlwaysStoppedAnimation(Offset(0, _controller.value)),
         child: GestureDetector(
-          onVerticalDragStart: _onDragStart,
-          onVerticalDragUpdate: _onDragUpdate,
-          onVerticalDragEnd: _onDragEnd,
+          onVerticalDragStart: widget.slidable ? _onDragStart : null,
+          onVerticalDragUpdate: widget.slidable ? _onDragUpdate : null,
+          onVerticalDragEnd: widget.slidable ? _onDragEnd : null,
           child: widget.child,
         ),
       ),
@@ -108,19 +109,18 @@ class _SlidableWidgetState extends State<SlidableWidget> with SingleTickerProvid
     });
   }
 
-  void _onDragUpdate(DragUpdateDetails details){
+  void _onDragUpdate(DragUpdateDetails details) {
     _dragExtent += (details.primaryDelta ?? 0);
     setState(() {
       _controller.value = _dragExtent / context.size!.height;
     });
   }
 
-  void _onDragEnd(DragEndDetails details){
+  void _onDragEnd(DragEndDetails details) {
     _controller.value > 0.4 ? _controller.fling() : _controller.fling(velocity: -1.0);
     setState(() {
       _dragExtent = 0;
     });
-
   }
 }
 
@@ -132,60 +132,52 @@ class PlayerPointRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Stack(children: [
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                  child: Text(points.value.toString(), style: TextStyle(fontSize: 45))
-              ),
-              const Padding(padding: EdgeInsets.all(2)),
-              Center(
-                child: Icon(
-                  getIconForPoints(points),
-                  size: 20,
-                ),
-              )
-            ],
-          ),
-
-          Row(
-            children: [
-              Expanded(
-                flex: 50,
-                child: Stack(
-                  children: [
-                    ColorAnimatedContainer(),
-                    GestureDetector(
-                      onTap: () => context.read<LifeCounterBloc>().add(
-                          GamePlayerPointsChanged(
-                              player, points.copyWith(points.value - 1))
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Expanded(
-                flex: 50,
-                child: Stack(
-                  children: [
-                    ColorAnimatedContainer(),
-                    GestureDetector(
-                      onTap: () => context.read<LifeCounterBloc>().add(
-                          GamePlayerPointsChanged(
-                              player, points.copyWith(points.value + 1))
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          Center(child: Text(points.value.toString(), style: TextStyle(fontSize: 45))),
+          const Padding(padding: EdgeInsets.all(2)),
+          Center(
+            child: Icon(
+              getIconForPoints(points),
+              size: 20,
+            ),
           )
-        ]
-    );
+        ],
+      ),
+      Row(
+        children: [
+          Expanded(
+            flex: 50,
+            child: Stack(
+              children: [
+                ColorAnimatedContainer(),
+                GestureDetector(
+                  onTap: () => context
+                      .read<LifeCounterBloc>()
+                      .add(GamePlayerPointsChanged(player, points.copyWith(points.value - 1))),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 50,
+            child: Stack(
+              children: [
+                ColorAnimatedContainer(),
+                GestureDetector(
+                  onTap: () => context
+                      .read<LifeCounterBloc>()
+                      .add(GamePlayerPointsChanged(player, points.copyWith(points.value + 1))),
+                ),
+              ],
+            ),
+          ),
+        ],
+      )
+    ]);
   }
 
   IconData getIconForPoints(PlayerPoints points) {
@@ -206,8 +198,8 @@ class ColorAnimatedContainer extends StatefulWidget {
   State<StatefulWidget> createState() => _ColorAnimatedContainer();
 }
 
-class _ColorAnimatedContainer extends State<ColorAnimatedContainer> with SingleTickerProviderStateMixin {
-
+class _ColorAnimatedContainer extends State<ColorAnimatedContainer>
+    with SingleTickerProviderStateMixin {
   late Animation<Color?> _animation;
   late AnimationController _controller;
 
@@ -215,8 +207,11 @@ class _ColorAnimatedContainer extends State<ColorAnimatedContainer> with SingleT
   void initState() {
     super.initState();
     _controller = AnimationController(duration: Duration(milliseconds: 150), vsync: this);
-    _animation = ColorTween(begin: Colors.transparent, end: Color.fromRGBO(0, 0, 0, 0.3)).animate(_controller)
-      ..addListener(() {setState(() {});});
+    _animation = ColorTween(begin: Colors.transparent, end: Color.fromRGBO(0, 0, 0, 0.3))
+        .animate(_controller)
+      ..addListener(() {
+        setState(() {});
+      });
   }
 
   void animateColor() => _controller.forward().then((value) => _controller.reverse());
@@ -238,28 +233,15 @@ class _ColorAnimatedContainer extends State<ColorAnimatedContainer> with SingleT
     _controller.dispose();
     super.dispose();
   }
-
 }
 
-List<Widget> getPointRows(BuildContext context, Player player){
-  return new List.generate(player.points.length, (int index){
+List<Widget> getPointRows(BuildContext context, Player player) {
+  return new List.generate(player.points.length, (int index) {
     return new Expanded(
-        flex: (index==0 ? mainFlex[player.points.length] : secondaryFlex[player.points.length])!,
-        child: PlayerPointRow(player: player, points: player.points.elementAt(index))
-    );
+        flex: (index == 0 ? mainFlex[player.points.length] : secondaryFlex[player.points.length])!,
+        child: PlayerPointRow(player: player, points: player.points.elementAt(index)));
   });
 }
 
-const Map<int, int> mainFlex = {
-  1 : 100,
-  2 : 60,
-  3 : 40,
-  4 : 30,
-  5 : 20
-};
-const Map<int, int> secondaryFlex = {
-  2 : 40,
-  3 : 30,
-  4 : 23,
-  5 : 20
-};
+const Map<int, int> mainFlex = {1: 100, 2: 60, 3: 40, 4: 30, 5: 20};
+const Map<int, int> secondaryFlex = {2: 40, 3: 30, 4: 23, 5: 20};

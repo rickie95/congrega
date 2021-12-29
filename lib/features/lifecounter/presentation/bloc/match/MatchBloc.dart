@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:congrega/features/lifecounter/data/game/GameRepository.dart';
 import 'package:congrega/features/lifecounter/model/Game.dart';
-import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterState.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:congrega/features/lifecounter/model/Match.dart';
@@ -12,12 +10,11 @@ import 'MatchEvents.dart';
 import 'MatchState.dart';
 
 class MatchBloc extends Bloc<MatchEvent, MatchState> {
-  MatchBloc({required this.matchController, required this.gameRepository})
-      : super(const MatchState.unknown()) {
+  MatchBloc({required this.matchController}) : super(const MatchState.unknown()) {
     _matchStatusObserver = matchController.status.listen((MatchStatus status) {
       if (status == MatchStatus.updated || status == MatchStatus.inProgress) add(MatchAvailable());
     });
-    _gameStatusObserver = gameRepository.status.listen((GameStatus gameAvailable) {
+    _gameStatusObserver = matchController.gameStatus.listen((GameStatus gameAvailable) {
       if (gameAvailable == GameStatus.inProgress) add(GameUpdated());
     });
   }
@@ -25,7 +22,6 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   late StreamSubscription<MatchStatus> _matchStatusObserver;
   late StreamSubscription<GameStatus> _gameStatusObserver;
   final MatchController matchController;
-  final GameRepository gameRepository;
 
   bool isAnOfflineMatch() => state.match.type == MatchType.offline;
 
@@ -33,8 +29,12 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   Stream<MatchState> mapEventToState(MatchEvent event) async* {
     if (event is MatchAvailable) {
       yield await _mapMatchAvailableToState(event, state);
-    } else if (event is Create1V1Match) {
+    } else if (event is CreateOffline1V1Match) {
       yield await _mapCreate1vs1MatchToState(event, state);
+    } else if (event is Online1vs1Match) {
+      yield await _mapCreate1vs1OnlineMatchToState(event, state);
+    } else if (event is FetchOnline1vs1Match) {
+      yield await _mapFetch1vs1OnlineMatchToState(event, state);
     } else if (event is GameUpdated) {
       yield await _mapGameAvailableToState(event, state);
     } else if (event is PlayerQuitsGame) {
@@ -51,7 +51,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   }
 
   Future<MatchState> _mapGameAvailableToState(GameUpdated event, MatchState state) async {
-    return await gameRepository
+    return await matchController
         .getCurrentGame()
         .then((Game recoveredGame) => state.copyWith(game: recoveredGame));
   }
@@ -62,14 +62,25 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   }
 
   MatchState _mapPlayerLeaveMatch(PlayerLeavesMatch event, MatchState state) {
-    Match updatedMatch = matchController.playerResign(state.match, event.player);
-    gameRepository.endGame();
-    return state.copyWith(match: updatedMatch);
+    return state.copyWith(match: matchController.playerResign(state.match, event.player));
   }
 
-  Future<MatchState> _mapCreate1vs1MatchToState(Create1V1Match event, MatchState state) async {
+  Future<MatchState> _mapCreate1vs1MatchToState(
+      CreateOffline1V1Match event, MatchState state) async {
     return await matchController
         .newOfflineMatch(opponent: event.opponent)
+        .then((Match newMatch) => state.copyWith(match: newMatch, status: MatchStatus.inProgress));
+  }
+
+  Future<MatchState> _mapCreate1vs1OnlineMatchToState(
+      Online1vs1Match event, MatchState state) async {
+    return state.copyWith(match: event.match, status: MatchStatus.inProgress);
+  }
+
+  Future<MatchState> _mapFetch1vs1OnlineMatchToState(
+      FetchOnline1vs1Match event, MatchState state) async {
+    return await matchController
+        .fetchOnlineMatch(event.opponent, event.matchId)
         .then((Match newMatch) => state.copyWith(match: newMatch, status: MatchStatus.inProgress));
   }
 
