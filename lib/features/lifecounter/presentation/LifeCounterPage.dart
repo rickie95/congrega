@@ -1,6 +1,7 @@
 import 'package:congrega/features/lifecounter/data/game/game_live_manager.dart';
 import 'package:congrega/features/lifecounter/model/Match.dart';
 import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/widgets/LifeCounterModalBottomSheet.dart';
 import 'package:congrega/features/lifecounter/presentation/widgets/PlayerPointsWidget.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
@@ -8,6 +9,7 @@ import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState
 import 'package:congrega/features/lifecounter/presentation/widgets/timeWidgets/bloc/TimeSettingsBloc.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/users/UserRepository.dart';
+import 'package:congrega/features/websocket/invitation_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiwi/kiwi.dart';
@@ -74,11 +76,25 @@ class LifeCounterPage extends StatelessWidget {
                                                   KiwiContainer()
                                                       .resolve<GameLiveManager>()
                                                       .setOnLifePointsUpdateCallback(
-                                                          (int updatedLifePoints) => KiwiContainer()
-                                                              .resolve<LifeCounterBloc>()
-                                                              .add(GamePlayerPointsChanged(
-                                                                  matchState.opponent(user),
-                                                                  LifePoints(updatedLifePoints))));
+                                                        (int updatedLifePoints) => KiwiContainer()
+                                                            .resolve<LifeCounterBloc>()
+                                                            .add(
+                                                              GamePlayerPointsChanged(
+                                                                matchState.opponent(user),
+                                                                LifePoints(updatedLifePoints),
+                                                              ),
+                                                            ),
+                                                      );
+
+                                                  KiwiContainer()
+                                                      .resolve<InvitationManager>()
+                                                      .setOnMessageCallback((message) {
+                                                    if (message.type == MessageType.MATCH) {
+                                                      KiwiContainer().resolve<MatchBloc>().add(
+                                                          PlayerQuitsGame(
+                                                              matchState.user(message.sender)));
+                                                    }
+                                                  });
 
                                                   return Transform.rotate(
                                                     angle:

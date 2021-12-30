@@ -9,6 +9,7 @@ import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/users/UserRepository.dart';
 import 'package:congrega/features/websocket/invitation_manager.dart';
+import 'package:kiwi/kiwi.dart';
 import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -104,8 +105,24 @@ class MatchController {
         userScore:
             player.id == match.playerTwo.id ? match.playerOneScore + 1 : match.playerOneScore);
     matchRepository.updateMatch(updatedMatch).then((_) => _controller.add(MatchStatus.updated));
+    _sendUpdateMessage(updatedMatch, player);
 
     return updatedMatch;
+  }
+
+  // Send notification only if resigning player is the current user
+  void _sendUpdateMessage(Match updatedMatch, Player player) async {
+    User currentUser = await KiwiContainer().resolve<UserRepository>().getUser();
+    if (updatedMatch.type != MatchType.offline && player.id == currentUser.id) {
+      matchRepository.syncMatch(updatedMatch);
+
+      Message matchMessage = Message(
+          type: MessageType.GAME,
+          recipient: updatedMatch.opponentOf(currentUser).user,
+          sender: currentUser,
+          data: updatedMatch.id);
+      KiwiContainer().resolve<InvitationManager>().sendMatchUpdate(matchMessage);
+    }
   }
 
   Match playerResign(Match match, Player player) {

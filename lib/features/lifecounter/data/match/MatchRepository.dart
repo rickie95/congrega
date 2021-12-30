@@ -1,5 +1,4 @@
 import 'package:congrega/features/lifecounter/data/match/MatchPersistance.dart';
-import 'package:congrega/features/lifecounter/model/Game.dart';
 import 'package:congrega/features/lifecounter/model/Match.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:flutter/material.dart';
@@ -21,13 +20,11 @@ class MatchRepository {
 
   Future<void> updateMatch(Match tobeUpdated) async {
     debugPrint("Updated $tobeUpdated");
-    syncMatch(tobeUpdated);
     persistMatch(tobeUpdated);
   }
 
   Future<void> endMatch(Match toBeEnded) async {
     debugPrint("Leaving $toBeEnded");
-    syncMatch(toBeEnded);
     removeSavedMatch();
   }
 
@@ -47,8 +44,8 @@ class MatchRepository {
     return persistence.deleteSavedMatch();
   }
 
-  void syncMatch(Match m) {
-    if (m.type == MatchType.tournament) debugPrint("Sent to server");
+  void syncMatch(Match m) async {
+    matchClient.updateMatch(m);
   }
 
   Future<Match> fetchOnlineMatch(String matchId) {

@@ -6,8 +6,10 @@ import 'package:congrega/utils/Arcano.dart';
 import 'package:congrega/features/lifecounter/model/Match.dart';
 import 'package:http/http.dart' as http;
 import 'package:kiwi/kiwi.dart';
+import 'package:logger/logger.dart';
 
 class MatchClient {
+  static final Logger logger = Logger();
   final http.Client httpClient;
 
   MatchClient({required this.httpClient});
@@ -53,5 +55,14 @@ class MatchClient {
         print(response.body);
         throw OtherErrorException();
     }
+  }
+
+  void updateMatch(Match match) async {
+    String? token = await KiwiContainer().resolve<AuthenticationRepository>().getToken();
+    final http.Response response = await httpClient.put(Arcano.getMatchUri(),
+        body: jsonEncode(match),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${token!}'});
+
+    logger.i("Response status code: " + response.statusCode.toString());
   }
 }

@@ -61,6 +61,10 @@ class InvitationManager {
     wsClient.sendMessage(m.toString());
   }
 
+  void sendMatchUpdate(Message message) {
+    wsClient.sendMessage(message.toString());
+  }
+
   Future<Message> sendInvite(User opponent) {
     final Completer<Message> completer = Completer<Message>();
     final String requestId = Message.idGenerator.v4();
