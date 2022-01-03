@@ -87,14 +87,14 @@ class MatchScoreModalBottomSheet extends StatelessWidget {
                 children: [
                   PlayerScoreWidget(
                     playerUsername: "You",
-                    playerScore: state.match.playerOneScore,
+                    playerScore: state.userScore(state.user(userSnapshot.data!).user),
                     callback: () => context
                         .read<MatchBloc>()
                         .add(MatchPlayerWinsGame(state.user(userSnapshot.data!))), //FIXME
                   ),
                   PlayerScoreWidget(
-                      playerUsername: state.opponentUsername,
-                      playerScore: state.match.playerTwoScore,
+                      playerUsername: state.opponent(state.user(userSnapshot.data!).user).username,
+                      playerScore: state.opponentScore(state.user(userSnapshot.data!).user),
                       callback: () => context
                           .read<MatchBloc>()
                           .add(MatchPlayerWinsGame(state.opponent(userSnapshot.data!)))),

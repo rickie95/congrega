@@ -25,10 +25,10 @@ class MatchState extends Equatable {
 
   Player opponent(User user) => this.match.opponentOf(user);
   Player user(User user) => this.match.getUserAsPlayer(user);
-  String get opponentUsername => this.match.playerTwo.username;
-  String get userUsername => this.match.playerOne.username;
-  int get opponentScore => this.match.playerTwoScore;
-  int get userScore => this.match.playerOneScore;
+  int opponentScore(User user) =>
+      user.id == this.match.playerOne.id ? this.match.playerOneScore : this.match.playerTwoScore;
+  int userScore(User user) =>
+      user.id == this.match.playerOne.id ? this.match.playerTwoScore : this.match.playerOneScore;
 
   @override
   List<Object> get props => [status, match, match.playerTwoScore, match.playerOneScore];

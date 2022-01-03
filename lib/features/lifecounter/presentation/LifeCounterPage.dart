@@ -89,7 +89,7 @@ class LifeCounterPage extends StatelessWidget {
                                                   KiwiContainer()
                                                       .resolve<InvitationManager>()
                                                       .setOnMessageCallback((message) {
-                                                    if (message.type == MessageType.MATCH) {
+                                                    if (message.type == MessageType.GAME) {
                                                       KiwiContainer().resolve<MatchBloc>().add(
                                                           PlayerQuitsGame(
                                                               matchState.user(message.sender)));
