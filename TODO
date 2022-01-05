@@ -1,0 +1,8 @@
+[ ] Reset game when surrending game
+[ ] Close match when surrending match
+[ ] Alert for new match or rejoin old match
+[ ] Add an "in progress" label in Quick Match button
+[ ] Profile page & stats (games/matches won, simple log of opponents)
+[ ] Remove everything not completed
+[ ] Fix colors in splashscreen
+[ ] Check login procedure for offline startup
