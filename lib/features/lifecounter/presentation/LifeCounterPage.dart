@@ -110,7 +110,9 @@ class LifeCounterPage extends StatelessWidget {
                                                           builder: (context, state) {
                                                             return Column(
                                                               children: getPointRows(
-                                                                  context, state.opponentOf(user)),
+                                                                  context, state.opponentOf(user),
+                                                                  enabled: matchState.match.type ==
+                                                                      MatchType.offline),
                                                             );
                                                           }),
                                                       settingsBlocBuilder: matchState.match.type ==

@@ -43,17 +43,19 @@ class PlayerPointsWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                   child: Container(child: pointSectionBlocBuilder),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 12.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: Colors.black87,
-                    ),
-                    height: 5,
-                    width: 20,
-                  ),
-                ),
+                settingsBlocBuilder != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 12.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: Colors.black87,
+                          ),
+                          height: 5,
+                          width: 20,
+                        ),
+                      )
+                    : Container(),
               ],
             ),
           )
@@ -125,10 +127,11 @@ class _SlidableWidgetState extends State<SlidableWidget> with SingleTickerProvid
 }
 
 class PlayerPointRow extends StatelessWidget {
-  const PlayerPointRow({required this.player, required this.points}) : super();
+  const PlayerPointRow({required this.player, required this.points, this.enabled = true}) : super();
 
   final Player player;
   final PlayerPoints points;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -153,11 +156,13 @@ class PlayerPointRow extends StatelessWidget {
             flex: 50,
             child: Stack(
               children: [
-                ColorAnimatedContainer(),
+                enabled ? ColorAnimatedContainer() : Container(),
                 GestureDetector(
-                  onTap: () => context
-                      .read<LifeCounterBloc>()
-                      .add(GamePlayerPointsChanged(player, points.copyWith(points.value - 1))),
+                  onTap: enabled
+                      ? () => context
+                          .read<LifeCounterBloc>()
+                          .add(GamePlayerPointsChanged(player, points.copyWith(points.value - 1)))
+                      : null,
                 ),
               ],
             ),
@@ -166,11 +171,13 @@ class PlayerPointRow extends StatelessWidget {
             flex: 50,
             child: Stack(
               children: [
-                ColorAnimatedContainer(),
+                enabled ? ColorAnimatedContainer() : Container(),
                 GestureDetector(
-                  onTap: () => context
-                      .read<LifeCounterBloc>()
-                      .add(GamePlayerPointsChanged(player, points.copyWith(points.value + 1))),
+                  onTap: enabled
+                      ? () => context
+                          .read<LifeCounterBloc>()
+                          .add(GamePlayerPointsChanged(player, points.copyWith(points.value + 1)))
+                      : null,
                 ),
               ],
             ),
@@ -235,11 +242,15 @@ class _ColorAnimatedContainer extends State<ColorAnimatedContainer>
   }
 }
 
-List<Widget> getPointRows(BuildContext context, Player player) {
+List<Widget> getPointRows(BuildContext context, Player player, {bool enabled = true}) {
   return new List.generate(player.points.length, (int index) {
     return new Expanded(
         flex: (index == 0 ? mainFlex[player.points.length] : secondaryFlex[player.points.length])!,
-        child: PlayerPointRow(player: player, points: player.points.elementAt(index)));
+        child: PlayerPointRow(
+          player: player,
+          points: player.points.elementAt(index),
+          enabled: enabled,
+        ));
   });
 }
 
