@@ -33,6 +33,8 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
       yield await _mapPlayerPointsAddedToState(event, state);
     } else if (event is GamePlayerPointsRemoved) {
       yield await _mapPlayerPointsRemovedToState(event, state);
+    } else if (event is ResetGame) {
+      yield await _mapResetGameToState(event, state);
     }
   }
 
@@ -112,5 +114,16 @@ class LifeCounterBloc extends Bloc<LifeCounterEvent, LifeCounterState> {
   Future<void> close() {
     _gameStatusObserver.cancel();
     return super.close();
+  }
+
+  Future<LifeCounterState> _mapResetGameToState(ResetGame event, LifeCounterState state) async {
+    Game currentGame = await gameRepository.getCurrentGame();
+    currentGame.opponents[0] =
+        Player(user: currentGame.opponents[0].user, points: {LifePoints(20)});
+    currentGame.team[0] = Player(user: currentGame.team[0].user, points: {LifePoints(20)});
+
+    gameRepository.updateGame(currentGame);
+
+    return state.copyWith(user: currentGame.team[0], opponent: currentGame.opponents[0]);
   }
 }

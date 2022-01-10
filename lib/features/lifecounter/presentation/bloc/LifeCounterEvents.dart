@@ -49,3 +49,10 @@ class GamePlayerPointsRemoved extends LifeCounterEvent {
   @override
   List<Object> get props => [player, points];
 }
+
+class ResetGame extends LifeCounterEvent {
+  const ResetGame();
+
+  @override
+  List<Object> get props => [];
+}

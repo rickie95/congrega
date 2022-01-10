@@ -26,8 +26,7 @@ class LifeCounterState extends Equatable {
         this.user = Player.empty,
         this.opponent = Player.empty;
 
-  LifeCounterState copyWith(
-      {GameStatus? status, Player? user, Player? opponent, int? userScore, int? opponentScore}) {
+  LifeCounterState copyWith({GameStatus? status, Player? user, Player? opponent}) {
     return LifeCounterState(
         status: status ?? this.status,
         user: user ?? this.user,

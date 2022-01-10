@@ -1,6 +1,8 @@
 import 'package:congrega/features/dashboard/presentation/HomePage.dart';
 import 'package:congrega/features/lifecounter/model/Match.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterBloc.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
@@ -203,6 +205,7 @@ class SurrenderGameDialog extends StatelessWidget {
             context
                 .read<MatchBloc>()
                 .add(PlayerQuitsGame(context.read<MatchBloc>().state.user(user)));
+            KiwiContainer().resolve<LifeCounterBloc>().add(ResetGame());
             Navigator.of(context).pop();
           },
         ),

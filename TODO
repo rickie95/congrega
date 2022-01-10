@@ -1,4 +1,4 @@
-[ ] Reset game when surrending game
+[X] Reset game when surrending game
 [ ] Close match when surrending match
 [ ] Alert for new match or rejoin old match
 [ ] Add an "in progress" label in Quick Match button

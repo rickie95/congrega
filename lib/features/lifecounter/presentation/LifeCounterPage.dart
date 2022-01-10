@@ -93,6 +93,9 @@ class LifeCounterPage extends StatelessWidget {
                                                       KiwiContainer().resolve<MatchBloc>().add(
                                                           PlayerQuitsGame(
                                                               matchState.user(message.sender)));
+                                                      KiwiContainer()
+                                                          .resolve<LifeCounterBloc>()
+                                                          .add(ResetGame());
                                                     }
                                                   });
 
