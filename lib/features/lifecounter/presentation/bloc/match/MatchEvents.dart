@@ -38,11 +38,13 @@ class MatchPlayerWinsGame extends MatchEvent {
   List<Object> get props => [player];
 }
 
-class MatchAvailable extends MatchEvent {
-  const MatchAvailable();
+class StatusChanged extends MatchEvent {
+  const StatusChanged(this.status);
+
+  final MatchStatus status;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [status];
 }
 
 class GameUpdated extends MatchEvent {
