@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:congrega/features/loginSignup/data/AuthenticationHttpClient.dart';
+import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
 import 'package:congrega/features/users/UserRepository.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -8,8 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
-
-  static const TOKEN  = "congrega_auth_token";
+  static const TOKEN = "congrega_auth_token";
 
   AuthenticationRepository({
     required this.storage,
@@ -20,11 +20,13 @@ class AuthenticationRepository {
   final UserRepository userRepository;
   final FlutterSecureStorage storage;
   final AuthenticationHttpClient authClient;
-  final StreamController<AuthenticationStatus> _controller = StreamController<AuthenticationStatus>();
+  final StreamController<AuthenticationStatus> _controller =
+      StreamController<AuthenticationStatus>();
 
   Stream<AuthenticationStatus> get status async* {
-    yield await hasToken().then((isAuthenticated) => isAuthenticated ?
-    AuthenticationStatus.authenticated : AuthenticationStatus.unauthenticated);
+    yield await hasToken().then((isAuthenticated) => isAuthenticated
+        ? AuthenticationStatus.authenticated
+        : AuthenticationStatus.unauthenticated);
     yield* _controller.stream;
   }
 
@@ -33,15 +35,12 @@ class AuthenticationRepository {
     _controller.add(AuthenticationStatus.unauthenticated);
   }
 
-  Future<void> logIn({required UserCredentials user }) async {
-
-    await authClient.logIn(user)
-        .then((String token) {
+  Future<void> logIn({required UserCredentials user}) async {
+    await authClient.logIn(user).then((String token) {
       persistToken(token);
       userRepository.saveUserInfo(user);
       _controller.add(AuthenticationStatus.authenticated);
     });
-
   }
 
   Future<void> signIn({required UserCredentials user}) async {
@@ -61,6 +60,12 @@ class AuthenticationRepository {
     /// write to keystore/keychain
     await storage.write(key: TOKEN, value: token);
     return;
+  }
+
+  Future<String?> getToken() async {
+    User u = await userRepository.getUser();
+    UserCredentials cred = UserCredentials(username: u.username, password: u.password);
+    return await authClient.logIn(cred);
   }
 
   Future<bool> hasToken() async {

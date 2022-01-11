@@ -5,17 +5,16 @@ import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/
 import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_state.dart';
 import 'package:congrega/features/friends/data/friends_repository.dart';
 import 'package:congrega/features/friends/presentation/search_friends_page.dart';
-import 'package:congrega/features/lifecounter/model/Player.dart';
+import 'package:congrega/features/lifecounter/data/match/MatchController.dart';
 import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart';
-import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/websocket/invitation_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:kiwi/kiwi.dart';
-import 'package:provider/provider.dart';
 
 import '../DashboardWideTile.dart';
 
@@ -206,10 +205,6 @@ class FriendBottomSheet extends StatelessWidget {
                             onPressed: () {
                               Navigator.of(context).pop();
                               showWaitForChallengedUserAlert(context);
-                              // KiwiContainer()
-                              //     .resolve<MatchBloc>()
-                              //     .add(Create1V1Match(opponent: user));
-                              // Navigator.of(context).push(LifeCounterPage.route());
                             },
                             child: Text("Send"))
                       ],
@@ -225,8 +220,8 @@ class FriendBottomSheet extends StatelessWidget {
 
     final Duration opponentConfirmTimemout = Duration(seconds: 4);
 
-    Future<bool> askOpponentForAnswer(User user) {
-      return Future.delayed(Duration(seconds: 2), () => false);
+    Future<Message> askOpponentForAnswer(User user) {
+      return KiwiContainer().resolve<InvitationManager>().sendInvite(user);
     }
 
     showDialog(
@@ -234,20 +229,19 @@ class FriendBottomSheet extends StatelessWidget {
         builder: (context) {
           askOpponentForAnswer(user)
               .timeout(opponentConfirmTimemout, onTimeout: () => throw TimeoutError())
-              .then((bool value) {
+              .then((Message acceptedInvite) {
             Navigator.of(context).pop();
-            value
-                ? showSuccessDialog(context)
+            acceptedInvite.type == MessageType.ACCEPT
+                ? showSuccessDialog(context, acceptedInvite)
                 : showErrorDialog(
                     context, "Invite refused", "${user.username} refused your challenge!");
           }).onError((error, stackTrace) {
-            if (error is TimeoutError) {
-              Navigator.of(context).pop();
-              showErrorDialog(
-                  context, "Timeout!", "${user.username} didn't answer your invite in time.");
-            }
-            showErrorDialog(context, "Something gone wrong",
-                "We tried to reach ${user.username}, really, but an error occurred: $error");
+            Navigator.of(context).pop();
+            error is TimeoutError
+                ? showErrorDialog(
+                    context, "Timeout!", "${user.username} didn't answer your invite in time.")
+                : showErrorDialog(context, "Something gone wrong",
+                    "We tried to reach ${user.username}, really, but an error occurred: $error");
           });
 
           return AlertDialog(
@@ -280,14 +274,18 @@ class FriendBottomSheet extends StatelessWidget {
             ));
   }
 
-  showSuccessDialog(BuildContext context) {
+  showSuccessDialog(BuildContext context, Message acceptedInvite) {
     showDialog(
         barrierDismissible: false,
         context: context,
         builder: (context) {
-          Future.delayed(Duration(seconds: 2), () {
+          KiwiContainer()
+              .resolve<MatchController>()
+              .createOnlineMatch(acceptedInvite)
+              .then((match) {
+            KiwiContainer().resolve<InvitationManager>().sendMatchDetails(acceptedInvite, match);
             Navigator.of(context).pop();
-            KiwiContainer().resolve<MatchBloc>().add(Create1V1Match(opponent: user));
+            KiwiContainer().resolve<MatchBloc>().add(Online1vs1Match(match: match));
             Navigator.of(context).push(LifeCounterPage.route());
           });
           return AlertDialog(

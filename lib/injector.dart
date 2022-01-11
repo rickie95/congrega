@@ -4,6 +4,9 @@ import 'package:congrega/features/friends/data/friends_repository.dart';
 import 'package:congrega/features/lifecounter/data/game/GamePersistance.dart';
 import 'package:congrega/features/lifecounter/data/game/GameRepository.dart';
 import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
+import 'package:congrega/features/lifecounter/data/game/game_client.dart';
+import 'package:congrega/features/lifecounter/data/game/game_live_manager.dart';
+import 'package:congrega/features/lifecounter/data/match/MatchClient.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/LoginBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/signup/SignUpBloc.dart';
@@ -15,6 +18,7 @@ import 'package:congrega/features/tournaments/data/repositories/TournamentReposi
 import 'package:congrega/features/tournaments/presentation/event_form_bloc/event_form_bloc.dart';
 import 'package:congrega/features/users/UserHttpClient.dart';
 import 'package:congrega/features/users/UserRepository.dart';
+import 'package:congrega/features/websocket/invitation_manager.dart';
 import 'package:congrega/utils/Arcano.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
@@ -42,6 +46,8 @@ abstract class Injector {
     _configureMatchBlocModuleFactories();
     _configureGraphQLClient();
     _configureFriendsModule();
+    _configureWebSocketServices();
+    _configureGameFactories();
   }
 
   @Register.factory(EventFormBloc)
@@ -50,17 +56,22 @@ abstract class Injector {
   @Register.singleton(ArcanoGraphQLClient)
   void _configureGraphQLClient();
 
+  @Register.factory(MatchClient)
   @Register.factory(MatchPersistence)
   @Register.factory(MatchRepository)
   @Register.factory(MatchController)
   @Register.singleton(MatchBloc)
   void _configureMatchBlocModuleFactories();
 
-  @Register.factory(GamePersistence)
   @Register.singleton(PlayerRepository)
-  @Register.singleton(GameRepository)
   @Register.factory(LifeCounterBloc)
   void _configureGameBlocModuleFactories();
+
+  @Register.singleton(GameLiveManager)
+  @Register.factory(GameClient)
+  @Register.factory(GamePersistence)
+  @Register.singleton(GameRepository)
+  void _configureGameFactories();
 
   @Register.singleton(FlutterSecureStorage)
   @Register.factory(http.Client)
@@ -90,6 +101,9 @@ abstract class Injector {
   @Register.singleton(FriendsWidgetBloc)
   @Register.factory(FriendRepository)
   void _configureFriendsModule();
+
+  @Register.singleton(InvitationManager)
+  void _configureWebSocketServices();
 }
 
 class DepInj {
