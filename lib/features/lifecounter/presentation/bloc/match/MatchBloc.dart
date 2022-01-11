@@ -11,9 +11,8 @@ import 'MatchState.dart';
 
 class MatchBloc extends Bloc<MatchEvent, MatchState> {
   MatchBloc({required this.matchController}) : super(const MatchState.unknown()) {
-    _matchStatusObserver = matchController.status.listen((MatchStatus status) {
-      if (status == MatchStatus.updated || status == MatchStatus.inProgress) add(MatchAvailable());
-    });
+    _matchStatusObserver =
+        matchController.status.listen((MatchStatus status) => add(StatusChanged(status)));
     _gameStatusObserver = matchController.gameStatus.listen((GameStatus gameAvailable) {
       if (gameAvailable == GameStatus.inProgress) add(GameUpdated());
     });
@@ -27,8 +26,8 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   @override
   Stream<MatchState> mapEventToState(MatchEvent event) async* {
-    if (event is MatchAvailable) {
-      yield await _mapMatchAvailableToState(event, state);
+    if (event is StatusChanged) {
+      yield await _mapMatchStatusChangedToState(event, state);
     } else if (event is CreateOffline1V1Match) {
       yield await _mapCreate1vs1MatchToState(event, state);
     } else if (event is Online1vs1Match) {
@@ -44,10 +43,13 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     }
   }
 
-  Future<MatchState> _mapMatchAvailableToState(MatchAvailable event, MatchState state) async {
-    return await matchController
-        .getCurrentMatch()
-        .then((Match match) => state.copyWith(match: match, status: MatchStatus.inProgress));
+  Future<MatchState> _mapMatchStatusChangedToState(StatusChanged event, MatchState state) async {
+    if (event.status == MatchStatus.updated || event.status == MatchStatus.inProgress)
+      return await matchController
+          .getCurrentMatch()
+          .then((Match match) => state.copyWith(match: match, status: MatchStatus.inProgress));
+
+    return state.copyWith(status: event.status);
   }
 
   Future<MatchState> _mapGameAvailableToState(GameUpdated event, MatchState state) async {
@@ -64,7 +66,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   Future<MatchState> _mapPlayerLeaveMatch(PlayerLeavesMatch event, MatchState state) async {
     return await matchController
         .playerResign(state.match, event.player)
-        .then((updatedMatch) => state.copyWith(match: updatedMatch));
+        .then((updatedMatch) => MatchState.unknown());
   }
 
   Future<MatchState> _mapCreate1vs1MatchToState(
