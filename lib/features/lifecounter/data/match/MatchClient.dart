@@ -63,6 +63,11 @@ class MatchClient {
         body: jsonEncode(match),
         headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ${token!}'});
 
-    logger.i("Response status code: " + response.statusCode.toString());
+    if (response.statusCode > 300) {
+      logger.w("Response status code: " +
+          response.statusCode.toString() +
+          ", response body: " +
+          response.body);
+    }
   }
 }

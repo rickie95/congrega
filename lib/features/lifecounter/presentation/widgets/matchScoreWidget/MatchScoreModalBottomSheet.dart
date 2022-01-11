@@ -166,14 +166,11 @@ class LeaveMatchDialog extends StatelessWidget {
               .toString()
               .toUpperCase()),
           style: elevatedDangerButtonStyle,
-          onPressed: () {
-            Player user = context.read<MatchBloc>().state.match.playerOne;
-            context.read<MatchBloc>().add(PlayerLeavesMatch(user));
-            if (context.read<MatchBloc>().isAnOfflineMatch()) {
-              Navigator.of(context).pushAndRemoveUntil<void>(HomePage.route(), (route) => false);
-            } else {
-              throw Exception("Online match?");
-            }
+          onPressed: () async {
+            User user = await KiwiContainer().resolve<UserRepository>().getUser();
+            Player player = context.read<MatchBloc>().state.user(user);
+            context.read<MatchBloc>().add(PlayerLeavesMatch(player));
+            Navigator.of(context).pushAndRemoveUntil<void>(HomePage.route(), (route) => false);
           },
         ),
       ],

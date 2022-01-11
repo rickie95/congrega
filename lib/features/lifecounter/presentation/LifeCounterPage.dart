@@ -1,3 +1,4 @@
+import 'package:congrega/features/dashboard/presentation/HomePage.dart';
 import 'package:congrega/features/lifecounter/data/game/game_live_manager.dart';
 import 'package:congrega/features/lifecounter/model/Match.dart';
 import 'package:congrega/features/lifecounter/model/PlayerPoints.dart';
@@ -92,10 +93,33 @@ class LifeCounterPage extends StatelessWidget {
                                                     if (message.type == MessageType.GAME) {
                                                       KiwiContainer().resolve<MatchBloc>().add(
                                                           PlayerQuitsGame(
-                                                              matchState.user(message.sender)));
+                                                              matchState.opponent(user)));
                                                       KiwiContainer()
                                                           .resolve<LifeCounterBloc>()
                                                           .add(ResetGame());
+                                                    } else if (message.type == MessageType.MATCH &&
+                                                        message.data == "END") {
+                                                      KiwiContainer().resolve<MatchBloc>().add(
+                                                            PlayerLeavesMatch(
+                                                              matchState.opponent(user),
+                                                            ),
+                                                          );
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (contex) => AlertDialog(
+                                                                title: Text("You've won!"),
+                                                                content: Text(
+                                                                    "Your opponent resigned, congratulations for your victory!"),
+                                                                actions: [
+                                                                  ElevatedButton(
+                                                                      onPressed: () => Navigator.of(
+                                                                              context)
+                                                                          .pushAndRemoveUntil<void>(
+                                                                              HomePage.route(),
+                                                                              (route) => false),
+                                                                      child: Text("OK")),
+                                                                ],
+                                                              ));
                                                     }
                                                   });
 

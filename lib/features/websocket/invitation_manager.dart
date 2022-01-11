@@ -28,7 +28,7 @@ class InvitationManager {
   void setOnMessageCallback(Function(Message) onMessage) {
     wsClient.setOnMessage((message) {
       // parse message
-      print("[${authenticatedUser.username}] => " + message);
+      print("[IN ${authenticatedUser.username}] => " + message);
       Message m = Message.parseMessage(message);
       // forward only good messages
       if (m.type == MessageType.MALFORMED) return;

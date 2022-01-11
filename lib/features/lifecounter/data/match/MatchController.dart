@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:congrega/features/lifecounter/data/PlayerRepository.dart';
 import 'package:congrega/features/lifecounter/data/game/GameRepository.dart';
+import 'package:congrega/features/lifecounter/data/match/MatchClient.dart';
 import 'package:congrega/features/lifecounter/model/Game.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterState.dart';
@@ -125,10 +126,28 @@ class MatchController {
     }
   }
 
-  Match playerResign(Match match, Player player) {
+  Future<Match> playerResign(Match match, Player player) async {
+    User currentUser = await KiwiContainer().resolve<UserRepository>().getUser();
+    // 1) considera una sconfitta a tavolino per player
     Match updatedMatch = match.copyWith(
         opponentScore: player.id == match.playerOne.id ? 2 : 0,
         userScore: player.id == match.playerTwo.id ? 2 : 0);
+
+    // se il player è l'utente corrente
+    if (player.id == currentUser.id) {
+      // 3) aggiorna via http
+      KiwiContainer().resolve<MatchClient>().updateMatch(updatedMatch);
+      // 4) invia una notifica all'avversario
+      KiwiContainer().resolve<InvitationManager>().sendMatchUpdate(
+            Message(
+                type: MessageType.MATCH,
+                recipient: updatedMatch.opponentOf(currentUser).user,
+                sender: currentUser,
+                data: "END"),
+          );
+    }
+
+    // 2) chiudi il match ed eventuali game aperti
     matchRepository.endMatch(updatedMatch).then((_) => _controller.add(MatchStatus.ended));
     gameRepository.endGame();
     return updatedMatch;

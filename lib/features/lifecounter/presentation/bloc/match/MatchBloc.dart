@@ -40,7 +40,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     } else if (event is PlayerQuitsGame) {
       yield _mapPlayerQuitsGameToState(event, state);
     } else if (event is PlayerLeavesMatch) {
-      yield _mapPlayerLeaveMatch(event, state);
+      yield await _mapPlayerLeaveMatch(event, state);
     }
   }
 
@@ -61,8 +61,10 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     return state.copyWith(match: updatedMatch);
   }
 
-  MatchState _mapPlayerLeaveMatch(PlayerLeavesMatch event, MatchState state) {
-    return state.copyWith(match: matchController.playerResign(state.match, event.player));
+  Future<MatchState> _mapPlayerLeaveMatch(PlayerLeavesMatch event, MatchState state) async {
+    return await matchController
+        .playerResign(state.match, event.player)
+        .then((updatedMatch) => state.copyWith(match: updatedMatch));
   }
 
   Future<MatchState> _mapCreate1vs1MatchToState(
