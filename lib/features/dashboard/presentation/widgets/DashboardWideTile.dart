@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 class DashboardWideTile extends StatelessWidget {
   const DashboardWideTile(
@@ -7,7 +6,7 @@ class DashboardWideTile extends StatelessWidget {
 
   final String title;
   final Widget child;
-  final PopupMenuButton? popupMenuButton;
+  final Widget? popupMenuButton;
   final String? subtitle;
 
   @override
@@ -44,12 +43,7 @@ class DashboardWideTile extends StatelessWidget {
           Expanded(
             child: Text(title, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
           ),
-          this.popupMenuButton != null
-              ? Transform.rotate(
-                  angle: math.pi / 2,
-                  child: popupMenuButton,
-                )
-              : Container()
+          this.popupMenuButton ?? Container()
         ],
       ),
     );

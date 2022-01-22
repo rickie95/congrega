@@ -12,6 +12,9 @@ import 'package:congrega/features/loginSignup/presentation/bloc/LoginBloc.dart';
 import 'package:congrega/features/loginSignup/presentation/bloc/signup/SignUpBloc.dart';
 import 'package:congrega/features/lifecounter/data/match/MatchPersistance.dart';
 import 'package:congrega/features/lifecounter/data/match/MatchRepository.dart';
+import 'package:congrega/features/profile_page/bloc/current_deck_stats_bloc/current_deck_stats_bloc.dart';
+import 'package:congrega/features/profile_page/data/stats_persistence.dart';
+import 'package:congrega/features/profile_page/data/stats_repo.dart';
 import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/data/datasources/TournamentHttpClient.dart';
 import 'package:congrega/features/tournaments/data/repositories/TournamentRepository.dart';
@@ -48,6 +51,7 @@ abstract class Injector {
     _configureFriendsModule();
     _configureWebSocketServices();
     _configureGameFactories();
+    _configureStatsRepo();
   }
 
   @Register.factory(EventFormBloc)
@@ -104,6 +108,11 @@ abstract class Injector {
 
   @Register.singleton(InvitationManager)
   void _configureWebSocketServices();
+
+  @Register.singleton(StatsPersistence)
+  @Register.singleton(StatsRepo)
+  @Register.factory(CurrentDeckStatsBloc)
+  void _configureStatsRepo();
 }
 
 class DepInj {

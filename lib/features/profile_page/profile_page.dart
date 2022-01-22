@@ -1,7 +1,11 @@
 import 'package:congrega/features/dashboard/presentation/widgets/DashboardWideTile.dart';
 import 'package:congrega/features/drawer/CongregaDrawer.dart';
+import 'package:congrega/features/profile_page/bloc/current_deck_stats_bloc/current_deck_stats_bloc.dart';
+import 'package:congrega/features/profile_page/data/stats_repo.dart';
 import 'package:congrega/ui/page_title.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kiwi/kiwi.dart';
 
 enum ProfilePageAppBarActions { RESTORE_STATS, MANAGE_DECK }
 
@@ -31,64 +35,108 @@ class ProfilePage extends StatelessWidget {
         ],
       ),
       drawer: CongregaDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: ListView(
-          children: [
-            PageTitle(child: PageTitle.createTitleText("Pixel")),
-
-            DashboardWideTile(
-              title: "Matches",
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Column(
-                  children: [
-                    createStatRow(statEntry("Total Matches"), statEntry("34")),
-                    createStatRow(statEntry("Winrate"), statEntry("50%")),
-                  ],
+      body: BlocProvider(
+        create: (context) =>
+            KiwiContainer().resolve<CurrentDeckStatsBloc>()..add(LoadCurrentDeck()),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: ListView(
+            children: [
+              PageTitle(child: PageTitle.createTitleText("Pixel")),
+              DashboardWideTile(
+                title: "Matches",
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: Column(
+                    children: [
+                      createStatRow(
+                          statEntry("Total Matches"),
+                          statEntry(
+                              KiwiContainer().resolve<StatsRepo>().recordListLength().toString())),
+                      createStatRow(
+                          statEntry("Winrate"),
+                          statEntry(
+                              "${(KiwiContainer().resolve<StatsRepo>().getWinrate() * 100).truncate()}%")),
+                    ],
+                  ),
                 ),
               ),
-            ),
+              BlocBuilder<CurrentDeckStatsBloc, CurrentDeckState>(
+                buildWhen: (previous, current) =>
+                    previous != current ||
+                    previous is CurrentDeckUnknownState && current is CurrentDeckStatsState ||
+                    previous as CurrentDeckStatsState != current as CurrentDeckStatsState,
+                builder: (context, state) {
+                  return DashboardWideTile(
+                    title: "Current Deck",
+                    subtitle: state is CurrentDeckUnknownState
+                        ? "..."
+                        : "${(state as CurrentDeckStatsState).currentDeck.name}",
+                    popupMenuButton: IconButton(
+                      icon: Icon(Icons.view_module),
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => showDeckDialog(context),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Column(
+                        children: [
+                          createStatRow(
+                            statEntry("Total Matches"),
+                            FutureBuilder(
+                              future: KiwiContainer()
+                                  .resolve<StatsRepo>()
+                                  .getRecordLengthForCurrentDeck(),
+                              builder: (context, AsyncSnapshot<int> lengthSnap) {
+                                if (lengthSnap.hasData && lengthSnap.data != null)
+                                  return statEntry(lengthSnap.data.toString());
 
-            DashboardWideTile(
-              title: "Current Deck",
-              subtitle: "MB PESTILENCE",
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Column(
-                  children: [
-                    createStatRow(statEntry("Total Matches"), statEntry("5")),
-                    createStatRow(statEntry("Winrate"), statEntry("80%")),
-                  ],
-                ),
+                                return statEntry("-");
+                              },
+                            ),
+                          ),
+                          createStatRow(
+                            statEntry("Winrate"),
+                            FutureBuilder(
+                              future:
+                                  KiwiContainer().resolve<StatsRepo>().getWinrateForCurrentDeck(),
+                              builder: (context, AsyncSnapshot<double> winrateSnap) {
+                                if (winrateSnap.hasData && winrateSnap.data != null)
+                                  return statEntry("${(winrateSnap.data! * 100).truncate()}%");
+
+                                return statEntry("-");
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
-            ),
-
-            DashboardWideTile(
-              title: "Recent History",
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Column(
-                  children: [
-                    createStatRow(statEntry("LGG2"), statEntry("2 - 0")),
-                    createStatRow(statEntry("DanBor"), statEntry("2 - 1")),
-                    createStatRow(statEntry("MagicMike"), statEntry("0 - 2")),
-                    createStatRow(statEntry("DanBor"), statEntry("2 - 1")),
-                  ],
+              DashboardWideTile(
+                title: "Recent History",
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: Column(
+                      children:
+                          getRecordList(KiwiContainer().resolve<StatsRepo>().getRecordList())),
                 ),
-              ),
-            )
-            // Stats totali
-            // totale incontri
-            // % vinte
-
-            // breakdown per deck corrente
-
-            // Ultimi tre match
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  List<Widget> getRecordList(List<StatsRecord> recordList) {
+    return List.generate(
+        recordList.length,
+        (index) => createStatRow(statEntry(recordList[index].opponentUsername),
+            statEntry("${recordList[index].userScore} - ${recordList[index].opponentScore}")));
   }
 
   _handleSelection(BuildContext context, ProfilePageAppBarActions selection) {
@@ -122,4 +170,52 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Text(text, style: textEntryStyle),
       );
+
+  showDeckDialog(BuildContext context) {
+    return BlocProvider<CurrentDeckStatsBloc>(
+      create: (newContext) => BlocProvider.of<CurrentDeckStatsBloc>(context),
+      child: AlertDialog(
+        title: Text("Deck management"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Current selection:"),
+            Center(
+              child: BlocBuilder<CurrentDeckStatsBloc, CurrentDeckState>(
+                buildWhen: (previous, current) =>
+                    previous != current ||
+                    previous is CurrentDeckUnknownState && current is CurrentDeckStatsState ||
+                    (previous as CurrentDeckStatsState) != (current as CurrentDeckStatsState),
+                builder: (dialogContext, state) {
+                  if (state is CurrentDeckUnknownState)
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+
+                  return DropdownButton<Deck>(
+                    value: (state as CurrentDeckStatsState).currentDeck,
+                    onChanged: (Deck? selectedDeck) => selectedDeck != null
+                        ? BlocProvider.of<CurrentDeckStatsBloc>(dialogContext)
+                            .add(CurrentDeckIsChanged(currentDeck: selectedDeck))
+                        : null,
+                    items: KiwiContainer()
+                        .resolve<StatsRepo>()
+                        .getDeckList()
+                        .map((Deck deck) =>
+                            DropdownMenuItem<Deck>(value: deck, child: Text(deck.name)))
+                        .toList(),
+                  );
+                },
+              ),
+            )
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: Navigator.of(context).pop, child: Text("Cancel")),
+          ElevatedButton(onPressed: () => {}, child: Text("SELECT"))
+        ],
+      ),
+    );
+  }
 }
