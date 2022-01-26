@@ -15,3 +15,12 @@ class LoadCurrentDeck extends CurrentDeckStatsEvent {
   @override
   List<Object?> get props => [];
 }
+
+class AddDeck extends CurrentDeckStatsEvent {
+  final Deck deck;
+
+  const AddDeck({required this.deck});
+
+  @override
+  List<Object?> get props => [deck];
+}

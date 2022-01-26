@@ -12,23 +12,32 @@ class CurrentDeckStatsBloc extends Bloc<CurrentDeckStatsEvent, CurrentDeckState>
 
   @override
   Stream<CurrentDeckState> mapEventToState(CurrentDeckStatsEvent event) async* {
+    print(this.hashCode);
     if (event is LoadCurrentDeck) {
       yield await _mapLoadCurrentDeckToState(event, state);
     } else if (event is CurrentDeckIsChanged) {
-      yield _mapDeckChangedToState(event, state);
+      yield await _mapDeckChangedToState(event, state as CurrentDeckStatsState);
+    } else if (event is AddDeck) {
+      yield await _mapAddDeckToState(event, state as CurrentDeckStatsState);
     }
-  }
-
-  CurrentDeckStatsState _mapDeckChangedToState(CurrentDeckIsChanged event, CurrentDeckState state) {
-    statsRepo.setCurrentDeck(event.currentDeck);
-    if (state is CurrentDeckUnknownState)
-      return CurrentDeckStatsState(currentDeck: event.currentDeck);
-
-    return (state as CurrentDeckStatsState).copyWith(currentDeck: event.currentDeck);
   }
 
   Future<CurrentDeckStatsState> _mapLoadCurrentDeckToState(
       LoadCurrentDeck event, CurrentDeckState state) async {
-    return CurrentDeckStatsState(currentDeck: await statsRepo.getCurrentDeck());
+    return CurrentDeckStatsState(
+        currentDeck: await statsRepo.getCurrentDeck(), deckList: await statsRepo.getDeckList());
+  }
+
+  Future<CurrentDeckStatsState> _mapDeckChangedToState(
+      CurrentDeckIsChanged event, CurrentDeckStatsState state) async {
+    statsRepo.setCurrentDeck(event.currentDeck);
+    return state.copyWith(currentDeck: event.currentDeck);
+  }
+
+  Future<CurrentDeckStatsState> _mapAddDeckToState(
+      AddDeck event, CurrentDeckStatsState state) async {
+    statsRepo.addDeck(event.deck);
+    List<Deck> deckLsit = await statsRepo.getDeckList();
+    return state.copyWith(deckList: deckLsit);
   }
 }

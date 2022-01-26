@@ -24,7 +24,7 @@ class StatsRepo {
   // Decks
   void addDeck(Deck deck) => deckList.add(deck);
   void removeDeck(Deck deck) => deckList.remove(deck);
-  List<Deck> getDeckList() => deckList.toList();
+  Future<List<Deck>> getDeckList() => Future.microtask(() => deckList.toList());
 
   Future<Deck> getCurrentDeck() =>
       statsPersistence.getCurrentDeck().then((deck) => deck ?? Deck.empty());
