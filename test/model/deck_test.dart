@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:math';
-
-import 'package:congrega/features/profile_page/data/stats_repo.dart';
+import 'package:congrega/features/profile_page/model/deck.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
