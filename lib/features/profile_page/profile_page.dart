@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiwi/kiwi.dart';
 
+import 'model/deck.dart';
+import 'model/stats_record.dart';
+
 enum ProfilePageAppBarActions { RESTORE_STATS, MANAGE_DECK }
 
 class ProfilePage extends StatelessWidget {
@@ -75,16 +78,6 @@ class ProfilePage extends StatelessWidget {
                         child: Text("MANAGE DECKS"),
                         onPressed: () {
                           Navigator.of(context).push(DeckPage.route());
-                          // CurrentDeckStatsBloc bloc =
-                          //     BlocProvider.of<CurrentDeckStatsBloc>(context);
-
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (context) => BlocProvider<CurrentDeckStatsBloc>.value(
-                          //     value: bloc,
-                          //     child: showDeckDialog(context),
-                          //   ),
-                          // );
                         }),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -182,54 +175,6 @@ class ProfilePage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Text(text, style: textEntryStyle),
       );
-
-  // showDeckDialog(BuildContext context) {
-  //   return AlertDialog(
-  //     title: Text("Select a Deck"),
-  //     content: Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text("Current deck in use:"),
-  //         Center(
-  //           child: BlocBuilder<CurrentDeckStatsBloc, CurrentDeckState>(
-  //             buildWhen: (previous, current) =>
-  //                 previous != current ||
-  //                 previous is CurrentDeckUnknownState && current is CurrentDeckStatsState ||
-  //                 (previous as CurrentDeckStatsState) != (current as CurrentDeckStatsState),
-  //             builder: (context, state) {
-  //               if (state is CurrentDeckUnknownState)
-  //                 return Center(
-  //                   child: CircularProgressIndicator(),
-  //                 );
-
-  //               return DropdownButton<Deck>(
-  //                 value: (state as CurrentDeckStatsState).currentDeck,
-  //                 onChanged: (Deck? selectedDeck) => selectedDeck != null
-  //                     ? BlocProvider.of<CurrentDeckStatsBloc>(context)
-  //                         .add(CurrentDeckIsChanged(currentDeck: selectedDeck))
-  //                     : null,
-  //                 items: KiwiContainer()
-  //                     .resolve<StatsRepo>()
-  //                     .getDeckList()
-  //                     .map((Deck deck) =>
-  //                         DropdownMenuItem<Deck>(value: deck, child: Text(deck.name)))
-  //                     .toList(),
-  //               );
-  //             },
-  //           ),
-  //         ),
-  //         Center(
-  //             child: OutlinedButton(
-  //                 onPressed: () => Navigator.of(context).push(DeckPage.route()),
-  //                 // showDialog(
-  //                 //     context: context, builder: (context) => createNewDeckDialog(context)),
-  //                 child: Text("ADD NEW DECK")))
-  //       ],
-  //     ),
-  //     actions: [ElevatedButton(onPressed: Navigator.of(context).pop, child: Text("CLOSE"))],
-  //   );
-  // }
 
   createNewDeckDialog(BuildContext context) {
     TextEditingController textController = new TextEditingController();

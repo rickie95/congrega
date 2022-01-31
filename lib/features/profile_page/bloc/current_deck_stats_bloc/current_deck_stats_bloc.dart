@@ -1,4 +1,5 @@
 import 'package:congrega/features/profile_page/data/stats_repo.dart';
+import 'package:congrega/features/profile_page/model/deck.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

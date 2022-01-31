@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:congrega/features/profile_page/data/stats_repo.dart';
+import 'package:congrega/features/profile_page/model/deck.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StatsPersistence {

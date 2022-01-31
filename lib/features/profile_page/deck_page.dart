@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiwi/kiwi.dart';
 
 import 'data/stats_repo.dart';
+import 'model/deck.dart';
 
 class DeckPage extends StatelessWidget {
   static const String pageTitle = "Decks";

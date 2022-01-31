@@ -1,7 +1,8 @@
 import 'dart:core';
 
 import 'package:congrega/features/profile_page/data/stats_persistence.dart';
-import 'package:equatable/equatable.dart';
+import 'package:congrega/features/profile_page/model/deck.dart';
+import 'package:congrega/features/profile_page/model/stats_record.dart';
 
 class StatsRepo {
   // tutti da salvare come json
@@ -61,38 +62,5 @@ class StatsRepo {
         .length);
 
     return wonMatchesWithCurrentDeck / currentDeckRecordLength;
-  }
-}
-
-class StatsRecord {
-  DateTime date;
-  int userScore;
-  int opponentScore;
-  String opponentUsername;
-  Deck deck;
-
-  StatsRecord(this.date, this.userScore, this.opponentScore, this.opponentUsername, this.deck);
-}
-
-class Deck extends Equatable {
-  final String name;
-
-  const Deck({required this.name});
-
-  @override
-  List<Object?> get props => [name];
-
-  static Deck empty() => Deck(name: "Predifined");
-
-  static Deck fromJson(Map<String, dynamic> jsonObj) => Deck(name: jsonObj["name"]);
-
-  Map<String, dynamic> toJson() => {"name": this.name};
-
-  static List<Deck> listFromJson(List<dynamic> jsonObj) {
-    return List.from(jsonObj.map((jsonDeck) => Deck.fromJson(jsonDeck)));
-  }
-
-  static List<Map<String, dynamic>> toJsonArray(List<Deck> deckList) {
-    return List.from(deckList.map((deck) => deck.toJson()));
   }
 }
