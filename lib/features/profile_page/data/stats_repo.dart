@@ -22,9 +22,18 @@ class StatsRepo {
   StatsRepo({required this.statsPersistence});
 
   // Decks
-  void addDeck(Deck deck) => deckList.add(deck);
-  void removeDeck(Deck deck) => deckList.remove(deck);
-  Future<List<Deck>> getDeckList() => Future.microtask(() => deckList.toList());
+  Future<List<Deck>> addDeck(Deck deck) => getDeckList().then((deckList) {
+        deckList.add(deck);
+        setDeckList(deckList);
+        return deckList;
+      });
+
+  void removeDeck(Deck deck) => getDeckList().then((deckList) => deckList.remove(deck));
+
+  Future<List<Deck>> getDeckList() =>
+      statsPersistence.getDeckList().then((deckList) => deckList ?? [Deck.empty()]);
+
+  void setDeckList(List<Deck> deckList) => statsPersistence.persistDeckList(deckList);
 
   Future<Deck> getCurrentDeck() =>
       statsPersistence.getCurrentDeck().then((deck) => deck ?? Deck.empty());
@@ -78,4 +87,12 @@ class Deck extends Equatable {
   static Deck fromJson(Map<String, dynamic> jsonObj) => Deck(name: jsonObj["name"]);
 
   Map<String, dynamic> toJson() => {"name": this.name};
+
+  static List<Deck> listFromJson(List<dynamic> jsonObj) {
+    return List.from(jsonObj.map((jsonDeck) => Deck.fromJson(jsonDeck)));
+  }
+
+  static List<Map<String, dynamic>> toJsonArray(List<Deck> deckList) {
+    return List.from(deckList.map((deck) => deck.toJson()));
+  }
 }

@@ -12,7 +12,6 @@ class CurrentDeckStatsBloc extends Bloc<CurrentDeckStatsEvent, CurrentDeckState>
 
   @override
   Stream<CurrentDeckState> mapEventToState(CurrentDeckStatsEvent event) async* {
-    print(this.hashCode);
     if (event is LoadCurrentDeck) {
       yield await _mapLoadCurrentDeckToState(event, state);
     } else if (event is CurrentDeckIsChanged) {
@@ -36,8 +35,7 @@ class CurrentDeckStatsBloc extends Bloc<CurrentDeckStatsEvent, CurrentDeckState>
 
   Future<CurrentDeckStatsState> _mapAddDeckToState(
       AddDeck event, CurrentDeckStatsState state) async {
-    statsRepo.addDeck(event.deck);
-    List<Deck> deckLsit = await statsRepo.getDeckList();
-    return state.copyWith(deckList: deckLsit);
+    List<Deck> deckList = await statsRepo.addDeck(event.deck);
+    return state.copyWith(deckList: deckList);
   }
 }
