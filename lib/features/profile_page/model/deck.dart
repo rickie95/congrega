@@ -13,6 +13,8 @@ class Deck extends Equatable {
 
   static Deck empty() => Deck(name: "Predifined", id: "predifined");
 
+  Deck copyWith({String? name, String? id}) => Deck(name: name ?? this.name, id: id ?? this.id);
+
   static Deck fromJson(Map<String, dynamic> jsonObj) =>
       Deck(name: jsonObj["name"], id: jsonObj["id"]);
 

@@ -64,17 +64,13 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               BlocBuilder<CurrentDeckStatsBloc, CurrentDeckState>(
-                buildWhen: (previous, current) =>
-                    previous != current ||
-                    previous is CurrentDeckUnknownState && current is CurrentDeckStatsState ||
-                    previous as CurrentDeckStatsState != current as CurrentDeckStatsState,
                 builder: (context, state) {
                   return DashboardWideTile(
                     title: "Current Deck",
                     subtitle: state is CurrentDeckUnknownState
                         ? "..."
                         : "${(state as CurrentDeckStatsState).currentDeck.name}",
-                    popupMenuButton: OutlinedButton(
+                    popupMenuButton: TextButton(
                         child: Text("MANAGE DECKS"),
                         onPressed: () {
                           Navigator.of(context).push(DeckPage.route());
@@ -119,7 +115,7 @@ class ProfilePage extends StatelessWidget {
               DashboardWideTile(
                 title: "Recent History",
                 subtitle: "LATEST 10 MATCHES",
-                popupMenuButton: OutlinedButton(
+                popupMenuButton: TextButton(
                   onPressed: null,
                   child: Container(),
                 ),

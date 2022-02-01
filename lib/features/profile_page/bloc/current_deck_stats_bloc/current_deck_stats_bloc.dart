@@ -19,6 +19,10 @@ class CurrentDeckStatsBloc extends Bloc<CurrentDeckStatsEvent, CurrentDeckState>
       yield await _mapDeckChangedToState(event, state as CurrentDeckStatsState);
     } else if (event is AddDeck) {
       yield await _mapAddDeckToState(event, state as CurrentDeckStatsState);
+    } else if (event is UpdateDeck) {
+      yield await _mapUpdateDeckToState(event, state as CurrentDeckStatsState);
+    } else if (event is RemoveDeck) {
+      yield await _mapRemoveDeckToState(event, state as CurrentDeckStatsState);
     }
   }
 
@@ -37,6 +41,18 @@ class CurrentDeckStatsBloc extends Bloc<CurrentDeckStatsEvent, CurrentDeckState>
   Future<CurrentDeckStatsState> _mapAddDeckToState(
       AddDeck event, CurrentDeckStatsState state) async {
     List<Deck> deckList = await statsRepo.addDeck(event.deck);
+    return state.copyWith(deckList: deckList);
+  }
+
+  Future<CurrentDeckStatsState> _mapUpdateDeckToState(
+      UpdateDeck event, CurrentDeckStatsState state) async {
+    List<Deck> deckList = await statsRepo.updateDeck(event.deck);
+    return state.copyWith(deckList: deckList);
+  }
+
+  Future<CurrentDeckStatsState> _mapRemoveDeckToState(
+      RemoveDeck event, CurrentDeckStatsState state) async {
+    List<Deck> deckList = await statsRepo.removeDeck(event.deck);
     return state.copyWith(deckList: deckList);
   }
 }

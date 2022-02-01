@@ -29,7 +29,18 @@ class StatsRepo {
         return deckList;
       });
 
-  void removeDeck(Deck deck) => getDeckList().then((deckList) => deckList.remove(deck));
+  Future<List<Deck>> removeDeck(Deck deck) => getDeckList().then((deckList) {
+        deckList.remove(deck);
+        setDeckList(deckList);
+        return deckList;
+      });
+
+  Future<List<Deck>> updateDeck(Deck updatedDeck) => getDeckList().then((deckList) {
+        deckList.removeWhere((element) => element.id == updatedDeck.id);
+        deckList.add(updatedDeck);
+        setDeckList(deckList);
+        return deckList;
+      });
 
   Future<List<Deck>> getDeckList() =>
       statsPersistence.getDeckList().then((deckList) => deckList ?? [Deck.empty()]);
@@ -42,22 +53,39 @@ class StatsRepo {
   Future<void> setCurrentDeck(Deck deck) => statsPersistence.persistCurrentDeck(deck);
 
   // Records
-  void addRecord(StatsRecord record) => records.add(record);
-  List<StatsRecord> getRecordList({int latestN = 10}) =>
-      records.getRange(0, records.length < latestN ? records.length : latestN).toList();
-  int recordListLength() => records.length;
-  double getWinrate() => records.length != 0
-      ? records.where((record) => record.userScore > record.opponentScore).length / records.length
+  List<StatsRecord> addStatsRecord(StatsRecord record) => statsPersistence.addRecord(record);
+
+  void addRecord(String opponentUsername, int userScore, int opponentScore) async =>
+      statsPersistence.addRecord(
+        StatsRecord(
+          DateTime.now(),
+          userScore,
+          opponentScore,
+          opponentUsername,
+          await getCurrentDeck(),
+        ),
+      );
+
+  List<StatsRecord> getRecordList({int? latestN}) => statsPersistence.getRecords(latestN: latestN);
+
+  int recordListLength() => StatsPersistence.records.length;
+  double getWinrate() => StatsPersistence.records.length != 0
+      ? statsPersistence
+              .getRecords()
+              .where((record) => record.userScore > record.opponentScore)
+              .length /
+          StatsPersistence.records.length
       : 0;
 
   // Current Deck stats
-  Future<int> getRecordLengthForCurrentDeck() => getCurrentDeck()
-      .then((currentDeck) => records.where((record) => record.deck == currentDeck).length);
+  Future<int> getRecordLengthForCurrentDeck() => getCurrentDeck().then((currentDeck) =>
+      statsPersistence.getRecords().where((record) => record.deck == currentDeck).length);
 
   Future<double> getWinrateForCurrentDeck() async {
     int currentDeckRecordLength = await getRecordLengthForCurrentDeck();
     if (currentDeckRecordLength == 0) return 0;
-    int wonMatchesWithCurrentDeck = await getCurrentDeck().then((currentDeck) => records
+    int wonMatchesWithCurrentDeck = await getCurrentDeck().then((currentDeck) => statsPersistence
+        .getRecords()
         .where((record) => record.deck == currentDeck && record.userScore > record.opponentScore)
         .length);
 

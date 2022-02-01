@@ -111,7 +111,7 @@ abstract class Injector {
 
   @Register.singleton(StatsPersistence)
   @Register.singleton(StatsRepo)
-  @Register.factory(CurrentDeckStatsBloc)
+  @Register.singleton(CurrentDeckStatsBloc)
   void _configureStatsRepo();
 }
 

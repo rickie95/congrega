@@ -24,3 +24,21 @@ class AddDeck extends CurrentDeckStatsEvent {
   @override
   List<Object?> get props => [deck];
 }
+
+class UpdateDeck extends CurrentDeckStatsEvent {
+  final Deck deck;
+
+  const UpdateDeck({required this.deck});
+
+  @override
+  List<Object?> get props => [deck];
+}
+
+class RemoveDeck extends CurrentDeckStatsEvent {
+  final Deck deck;
+
+  const RemoveDeck({required this.deck});
+
+  @override
+  List<Object?> get props => [deck];
+}
