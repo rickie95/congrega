@@ -1,3 +1,4 @@
+import 'package:congrega/features/lifecounter/data/match/MatchController.dart';
 import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart';
 import 'package:congrega/features/drawer/CongregaDrawer.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
@@ -190,22 +191,11 @@ class HomePageWidgetList extends StatelessWidget {
             children: [
               Expanded(
                 flex: 50,
-                child: DashboardTinyTile(
-                    AppLocalizations.of(context)!.quick_match,
-                    AppLocalizations.of(context)!.quick_match_subtitle,
-                    Icons.favorite,
-                    Colors.redAccent,
-                    () => Navigator.of(context).push(LifeCounterPage.route())),
+                child: QuickMatchButton(),
               ),
               Expanded(
                 flex: 50,
-                child: DashboardTinyTile(
-                  AppLocalizations.of(context)!.my_profile_title,
-                  AppLocalizations.of(context)!.my_profile_subtitle,
-                  Icons.account_circle_sharp,
-                  Colors.orange,
-                  () => Navigator.of(context).push(ProfilePage.route()),
-                ),
+                child: ProfilePageButton(),
               ),
             ],
           ),
@@ -214,5 +204,75 @@ class HomePageWidgetList extends StatelessWidget {
         FriendsWidget(),
       ],
     );
+  }
+}
+
+class ProfilePageButton extends StatelessWidget {
+  const ProfilePageButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DashboardTinyTile(
+      AppLocalizations.of(context)!.my_profile_title,
+      DashboardTinyTile.createSubtitle(AppLocalizations.of(context)!.my_profile_subtitle),
+      Icons.account_circle_sharp,
+      Colors.orange,
+      () => Navigator.of(context).push(ProfilePage.route()),
+    );
+  }
+}
+
+class QuickMatchButton extends StatelessWidget {
+  const QuickMatchButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DashboardTinyTile(
+        AppLocalizations.of(context)!.quick_match,
+        FutureBuilder(
+          future: KiwiContainer().resolve<MatchController>().isMatchInProgress(),
+          builder: (context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.hasData && snapshot.data != null)
+              return DashboardTinyTile.createSubtitle(snapshot.data!
+                  ? "IN PROGRESS"
+                  : AppLocalizations.of(context)!.quick_match_subtitle);
+
+            return DashboardTinyTile.createSubtitle(
+                AppLocalizations.of(context)!.quick_match_subtitle);
+          },
+        ),
+        Icons.favorite,
+        Colors.redAccent,
+        () => routeToLifeCounterPage(context));
+  }
+
+  void routeToLifeCounterPage(BuildContext context) async {
+    // if a match is already in progress ask for resume or start a new match
+
+    if (await KiwiContainer().resolve<MatchController>().isMatchInProgress()) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Match in progress"),
+          content: Text("There's a match in progress, what would you like to do?"),
+          actions: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(LifeCounterPage.route());
+                },
+                child: Text("NEW MATCH")),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(LifeCounterPage.route());
+                },
+                child: Text("RESUME"))
+          ],
+        ),
+      );
+    }
   }
 }
