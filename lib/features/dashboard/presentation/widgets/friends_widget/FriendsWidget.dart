@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_bloc.dart';
 import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_events.dart';
 import 'package:congrega/features/dashboard/presentation/widgets/friends_widget/bloc/friends_widget_state.dart';

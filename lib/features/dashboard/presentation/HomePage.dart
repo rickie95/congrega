@@ -3,8 +3,10 @@ import 'package:congrega/features/drawer/CongregaDrawer.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/profile_page/profile_page.dart';
 import 'package:congrega/features/users/UserRepository.dart';
 import 'package:congrega/features/websocket/invitation_manager.dart';
+import 'package:congrega/ui/page_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:kiwi/kiwi.dart';
@@ -170,21 +172,16 @@ class HomePageWidgetList extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.symmetric(horizontal: 10),
       children: [
-        Container(
+        PageTitle(
           child: FutureBuilder(
             future: getUsername(),
             builder: (context, AsyncSnapshot<String> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) return const Text('');
               if (snapshot.hasData && snapshot.data != null)
-                return Text(AppLocalizations.of(context)!.dashboard_message + " " + snapshot.data!,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold));
+                return PageTitle.createTitleText(
+                    AppLocalizations.of(context)!.dashboard_message + " " + snapshot.data!);
               return const Text('');
             },
-          ),
-          padding: EdgeInsets.symmetric(vertical: 10.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(width: 8, color: Colors.white12),
           ),
         ),
         Padding(
@@ -203,11 +200,12 @@ class HomePageWidgetList extends StatelessWidget {
               Expanded(
                 flex: 50,
                 child: DashboardTinyTile(
-                    AppLocalizations.of(context)!.my_profile_title,
-                    AppLocalizations.of(context)!.my_profile_subtitle,
-                    Icons.account_circle_sharp,
-                    Colors.orange,
-                    () => debugPrint("NOT ASSIGNED YET")),
+                  AppLocalizations.of(context)!.my_profile_title,
+                  AppLocalizations.of(context)!.my_profile_subtitle,
+                  Icons.account_circle_sharp,
+                  Colors.orange,
+                  () => Navigator.of(context).push(ProfilePage.route()),
+                ),
               ),
             ],
           ),
