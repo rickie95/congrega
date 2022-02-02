@@ -1,13 +1,16 @@
+import 'package:congrega/features/lifecounter/data/match/MatchController.dart';
 import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart';
 import 'package:congrega/features/drawer/CongregaDrawer.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/profile_page/profile_page.dart';
 import 'package:congrega/features/users/UserRepository.dart';
 import 'package:congrega/features/websocket/invitation_manager.dart';
 import 'package:congrega/ui/page_title.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:kiwi/kiwi.dart';
 
@@ -191,8 +194,19 @@ class HomePageWidgetList extends StatelessWidget {
               Expanded(
                 flex: 50,
                 child: DashboardTinyTile(
-                    AppLocalizations.of(context)!.quick_match,
-                    AppLocalizations.of(context)!.quick_match_subtitle,
+                    DashboardTinyTile.createTitle(AppLocalizations.of(context)!.quick_match),
+                    BlocBuilder<MatchBloc, MatchState>(
+                      bloc: KiwiContainer().resolve<MatchBloc>(),
+                      buildWhen: (previous, current) => previous.status != current.status,
+                      builder: (context, state) {
+                        if (state.status != MatchStatus.unknown &&
+                            state.status != MatchStatus.ended)
+                          return DashboardTinyTile.createSubtitle("IN PROGRESS");
+
+                        return DashboardTinyTile.createSubtitle(
+                            AppLocalizations.of(context)!.quick_match_subtitle);
+                      },
+                    ),
                     Icons.favorite,
                     Colors.redAccent,
                     () => Navigator.of(context).push(LifeCounterPage.route())),
