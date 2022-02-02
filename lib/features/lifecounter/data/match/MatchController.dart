@@ -174,4 +174,6 @@ class MatchController {
   void dispose() => _controller.close();
 
   Future<Game> getCurrentGame() => gameRepository.getCurrentGame();
+
+  Future<bool> isMatchInProgress() => _matchInProgress();
 }
