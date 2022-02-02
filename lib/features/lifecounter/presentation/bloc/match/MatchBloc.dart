@@ -41,6 +41,8 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
       yield _mapPlayerQuitsGameToState(event, state);
     } else if (event is PlayerLeavesMatch) {
       yield await _mapPlayerLeaveMatch(event, state);
+    } else if (event is MatchPlayerWinsGame) {
+      yield _mapPlayerWinsGameToState(event, state);
     }
   }
 
@@ -91,5 +93,10 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     _matchStatusObserver.cancel();
     _gameStatusObserver.cancel();
     return super.close();
+  }
+
+  MatchState _mapPlayerWinsGameToState(MatchPlayerWinsGame event, MatchState state) {
+    Match updatedMatch = matchController.playerWinsGame(state.match, event.player);
+    return state.copyWith(match: updatedMatch);
   }
 }
