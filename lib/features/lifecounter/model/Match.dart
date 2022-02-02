@@ -71,7 +71,9 @@ class Match extends Equatable {
       playerTwo: Player.fromJson(jsonObj['opponent']),
       playerOneScore: jsonObj['userScore'],
       playerTwoScore: jsonObj['opponentScore'],
-      gameList: List<Game>.from(jsonObj['gameList'].map((val) => Game.fromJson(val))),
+      gameList: jsonObj['gameList'] != null
+          ? List<Game>.from(jsonObj['gameList'].map((val) => Game.fromJson(val)))
+          : [],
     );
   }
 
