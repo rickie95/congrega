@@ -37,13 +37,10 @@ class LifeCounterPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder(
-          future: KiwiContainer().resolve<MatchController>().isMatchInProgress(),
-          builder: (context, AsyncSnapshot<bool> snapshot) {
+          future: createInitialMatchState(),
+          builder: (context, AsyncSnapshot<MatchState> snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
-              FutureBuilder(
-                  future: createInitialMatchState(),
-                  builder: (BuildContext context, AsyncSnapshot<MatchState> snapshot) =>
-                      getShit(context, snapshot));
+              return createLifeCounterView(context, snapshot);
             }
 
             if (snapshot.hasError) return ErrorMaterialAlert();
@@ -55,7 +52,7 @@ class LifeCounterPage extends StatelessWidget {
     );
   }
 
-  Widget getShit(BuildContext context, AsyncSnapshot<MatchState> snapshot) {
+  Widget createLifeCounterView(BuildContext context, AsyncSnapshot<MatchState> snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting)
       return Center(child: Text("Just a sec bro"));
 

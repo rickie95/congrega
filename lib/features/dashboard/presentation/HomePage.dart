@@ -263,6 +263,7 @@ class QuickMatchButton extends StatelessWidget {
             ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  KiwiContainer().resolve<MatchController>().newOfflineMatch();
                   Navigator.of(context).push(LifeCounterPage.route());
                 },
                 child: Text("NEW MATCH")),

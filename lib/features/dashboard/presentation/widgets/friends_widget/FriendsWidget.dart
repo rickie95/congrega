@@ -44,7 +44,6 @@ class FriendsWidget extends StatelessWidget {
         },
       ),
       child: Container(
-        height: 125,
         child: BlocProvider<FriendsWidgetBloc>(
             create: (BuildContext context) => KiwiContainer().resolve<FriendsWidgetBloc>(),
             child: FriendCardList()),
@@ -81,14 +80,28 @@ class FriendsWidgetBody extends StatelessWidget {
     return BlocBuilder<FriendsWidgetBloc, FriendsWidgetState>(
       builder: (context, state) {
         if (KiwiContainer().resolve<FriendRepository>().isEmpty()) {
-          return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(width: 2, color: Colors.black54),
-              ),
-              child: Center(
-                child: Text("You have no friends! Tap here to add someone"),
-              ));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.people,
+                    size: 30,
+                  ),
+                ),
+                Text(
+                  "You've added no friends!",
+                  textAlign: TextAlign.center,
+                ),
+                TextButton(
+                    onPressed: () => Navigator.push(context, SearchFriendPage.route()),
+                    child: Text("ADD FRIEND"))
+              ],
+            ),
+          );
         }
 
         return ListView(
