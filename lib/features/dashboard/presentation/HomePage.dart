@@ -262,11 +262,13 @@ class QuickMatchButton extends StatelessWidget {
           actions: [
             ElevatedButton(
                 onPressed: () {
+                  Navigator.of(context).pop();
                   Navigator.of(context).push(LifeCounterPage.route());
                 },
                 child: Text("NEW MATCH")),
             ElevatedButton(
                 onPressed: () {
+                  Navigator.of(context).pop();
                   Navigator.of(context).push(LifeCounterPage.route());
                 },
                 child: Text("RESUME"))
