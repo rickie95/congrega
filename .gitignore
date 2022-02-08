@@ -121,3 +121,5 @@ app.*.symbols
 /fonts/MyFlutterApp.ttf
 test/**/*.mocks.dart
 tests-log.txt
+lib/injector.g.dart
+injector.g.dart
