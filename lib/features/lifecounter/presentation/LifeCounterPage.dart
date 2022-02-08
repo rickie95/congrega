@@ -30,6 +30,10 @@ class LifeCounterPage extends StatelessWidget {
     KiwiContainer().resolve<MatchController>().initState();
   }
 
+  Future<MatchState> createInitialMatchState() async {
+    return new MatchState.unknown();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

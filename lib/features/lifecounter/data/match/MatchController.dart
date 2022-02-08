@@ -182,5 +182,5 @@ class MatchController {
 
   Future<Game> getCurrentGame() => gameRepository.getCurrentGame();
 
-  Future<bool> isMatchInProgress() => _matchInProgress();
+  Future<bool> isMatchInProgress() => matchInProgress();
 }
