@@ -143,16 +143,20 @@ class MatchController {
         currentUser.id == match.playerOne.id ? match.playerTwoScore : match.playerOneScore);
     // se il player è l'utente corrente
     if (player.id == currentUser.id) {
-      // 3) aggiorna via http
-      KiwiContainer().resolve<MatchClient>().updateMatch(updatedMatch);
-      // 4) invia una notifica all'avversario
-      KiwiContainer().resolve<InvitationManager>().sendMatchUpdate(
-            Message(
-                type: MessageType.MATCH,
-                recipient: updatedMatch.opponentOf(currentUser).user,
-                sender: currentUser,
-                data: "END"),
-          );
+      try {
+        // 3) aggiorna via http
+        KiwiContainer().resolve<MatchClient>().updateMatch(updatedMatch);
+        // 4) invia una notifica all'avversario
+        KiwiContainer().resolve<InvitationManager>().sendMatchUpdate(
+              Message(
+                  type: MessageType.MATCH,
+                  recipient: updatedMatch.opponentOf(currentUser).user,
+                  sender: currentUser,
+                  data: "END"),
+            );
+      } catch (e) {
+        logger.w(e.toString());
+      }
     }
 
     // 2) chiudi il match ed eventuali game aperti

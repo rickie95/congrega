@@ -3,12 +3,14 @@ import 'package:congrega/features/lifecounter/presentation/LifeCounterPage.dart'
 import 'package:congrega/features/drawer/CongregaDrawer.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchBloc.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/profile_page/profile_page.dart';
 import 'package:congrega/features/users/UserRepository.dart';
 import 'package:congrega/features/websocket/invitation_manager.dart';
 import 'package:congrega/ui/page_title.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:kiwi/kiwi.dart';
 
@@ -233,16 +235,21 @@ class QuickMatchButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return DashboardTinyTile(
         AppLocalizations.of(context)!.quick_match,
-        FutureBuilder(
-          future: KiwiContainer().resolve<MatchController>().isMatchInProgress(),
-          builder: (context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.hasData && snapshot.data != null)
-              return DashboardTinyTile.createSubtitle(snapshot.data!
-                  ? "IN PROGRESS"
-                  : AppLocalizations.of(context)!.quick_match_subtitle);
+        BlocBuilder<MatchBloc, MatchState>(
+          bloc: KiwiContainer().resolve<MatchBloc>(),
+          builder: (context, state) {
+            return FutureBuilder(
+              future: KiwiContainer().resolve<MatchController>().isMatchInProgress(),
+              builder: (context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData && snapshot.data != null)
+                  return DashboardTinyTile.createSubtitle(snapshot.data!
+                      ? "IN PROGRESS"
+                      : AppLocalizations.of(context)!.quick_match_subtitle);
 
-            return DashboardTinyTile.createSubtitle(
-                AppLocalizations.of(context)!.quick_match_subtitle);
+                return DashboardTinyTile.createSubtitle(
+                    AppLocalizations.of(context)!.quick_match_subtitle);
+              },
+            );
           },
         ),
         Icons.favorite,
@@ -276,6 +283,8 @@ class QuickMatchButton extends StatelessWidget {
           ],
         ),
       );
+    } else {
+      Navigator.of(context).push(LifeCounterPage.route());
     }
   }
 }
