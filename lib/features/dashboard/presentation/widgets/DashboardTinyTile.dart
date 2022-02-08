@@ -3,19 +3,11 @@ import 'package:flutter/material.dart';
 class DashboardTinyTile extends StatelessWidget {
   const DashboardTinyTile(this.title, this.subtitle, this.icon, this.iconColor, this.callback);
 
-  final Widget title;
+  final String title;
   final Widget subtitle;
   final IconData icon;
   final Color iconColor;
   final Function() callback;
-
-  static Widget createTitle(String titleContent) =>
-      Text(titleContent, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold));
-
-  static Widget createSubtitle(String subtitleContent) => Text(
-        subtitleContent.toUpperCase(),
-        style: TextStyle(fontSize: 12, color: Colors.grey),
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +24,7 @@ class DashboardTinyTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  title,
+                  Text(title, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
                   Padding(
                     padding: EdgeInsets.only(bottom: 1),
                   ),
@@ -56,4 +48,9 @@ class DashboardTinyTile extends StatelessWidget {
       ),
     );
   }
+
+  static createSubtitle(String subtitle) => Text(
+        subtitle.toUpperCase(),
+        style: TextStyle(fontSize: 12, color: Colors.grey),
+      );
 }

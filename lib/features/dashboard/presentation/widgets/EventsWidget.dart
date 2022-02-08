@@ -59,20 +59,27 @@ class EventsWidget extends StatelessWidget {
   Widget _buildErrorWidget(Object? error) {
     String errorMessage = "Couldn't fetch event list.";
 
-    if (error is ConnectionException) errorMessage = "Cannot reach server";
+    if (error is ConnectionException)
+      errorMessage = "Cannot reach server. Check your connection or try again later.";
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
         child: Container(
-          child: Row(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Icon(Icons.warning_sharp),
+              Icon(
+                Icons.cloud_off_outlined,
+                size: 30,
               ),
-              Text(errorMessage)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  errorMessage,
+                  textAlign: TextAlign.center,
+                ),
+              )
             ],
           ),
         ),

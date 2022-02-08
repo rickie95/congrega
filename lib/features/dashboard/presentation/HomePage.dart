@@ -193,33 +193,11 @@ class HomePageWidgetList extends StatelessWidget {
             children: [
               Expanded(
                 flex: 50,
-                child: DashboardTinyTile(
-                    DashboardTinyTile.createTitle(AppLocalizations.of(context)!.quick_match),
-                    BlocBuilder<MatchBloc, MatchState>(
-                      bloc: KiwiContainer().resolve<MatchBloc>(),
-                      buildWhen: (previous, current) => previous.status != current.status,
-                      builder: (context, state) {
-                        if (state.status != MatchStatus.unknown &&
-                            state.status != MatchStatus.ended)
-                          return DashboardTinyTile.createSubtitle("IN PROGRESS");
-
-                        return DashboardTinyTile.createSubtitle(
-                            AppLocalizations.of(context)!.quick_match_subtitle);
-                      },
-                    ),
-                    Icons.favorite,
-                    Colors.redAccent,
-                    () => Navigator.of(context).push(LifeCounterPage.route())),
+                child: QuickMatchButton(),
               ),
               Expanded(
                 flex: 50,
-                child: DashboardTinyTile(
-                  AppLocalizations.of(context)!.my_profile_title,
-                  AppLocalizations.of(context)!.my_profile_subtitle,
-                  Icons.account_circle_sharp,
-                  Colors.orange,
-                  () => Navigator.of(context).push(ProfilePage.route()),
-                ),
+                child: ProfilePageButton(),
               ),
             ],
           ),
@@ -228,5 +206,85 @@ class HomePageWidgetList extends StatelessWidget {
         FriendsWidget(),
       ],
     );
+  }
+}
+
+class ProfilePageButton extends StatelessWidget {
+  const ProfilePageButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DashboardTinyTile(
+      AppLocalizations.of(context)!.my_profile_title,
+      DashboardTinyTile.createSubtitle(AppLocalizations.of(context)!.my_profile_subtitle),
+      Icons.account_circle_sharp,
+      Colors.orange,
+      () => Navigator.of(context).push(ProfilePage.route()),
+    );
+  }
+}
+
+class QuickMatchButton extends StatelessWidget {
+  const QuickMatchButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DashboardTinyTile(
+        AppLocalizations.of(context)!.quick_match,
+        BlocBuilder<MatchBloc, MatchState>(
+          bloc: KiwiContainer().resolve<MatchBloc>(),
+          builder: (context, state) {
+            return FutureBuilder(
+              future: KiwiContainer().resolve<MatchController>().isMatchInProgress(),
+              builder: (context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData && snapshot.data != null)
+                  return DashboardTinyTile.createSubtitle(snapshot.data!
+                      ? "IN PROGRESS"
+                      : AppLocalizations.of(context)!.quick_match_subtitle);
+
+                return DashboardTinyTile.createSubtitle(
+                    AppLocalizations.of(context)!.quick_match_subtitle);
+              },
+            );
+          },
+        ),
+        Icons.favorite,
+        Colors.redAccent,
+        () => routeToLifeCounterPage(context));
+  }
+
+  void routeToLifeCounterPage(BuildContext context) async {
+    // if a match is already in progress ask for resume or start a new match
+
+    if (await KiwiContainer().resolve<MatchController>().isMatchInProgress()) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Match in progress"),
+          content: Text("There's a match in progress, what would you like to do?"),
+          actions: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  KiwiContainer().resolve<MatchController>().newOfflineMatch();
+                  Navigator.of(context).push(LifeCounterPage.route());
+                },
+                child: Text("NEW MATCH")),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(LifeCounterPage.route());
+                },
+                child: Text("RESUME"))
+          ],
+        ),
+      );
+    } else {
+      Navigator.of(context).push(LifeCounterPage.route());
+    }
   }
 }

@@ -10,7 +10,7 @@ class StatsRecord {
   StatsRecord(this.date, this.userScore, this.opponentScore, this.opponentUsername, this.deck);
 
   static StatsRecord fromJson(Map<String, dynamic> jsonObject) => StatsRecord(
-        jsonObject["date"],
+        DateTime.parse(jsonObject["date"]),
         jsonObject["userScore"],
         jsonObject["opponentScore"],
         jsonObject["opponentUsername"],
@@ -18,7 +18,7 @@ class StatsRecord {
       );
 
   Map<String, dynamic> toJson() => {
-        "date": this.date,
+        "date": this.date.toIso8601String(),
         "userScore": this.userScore,
         "opponentScore": this.opponentScore,
         "opponentUsername": this.opponentUsername,

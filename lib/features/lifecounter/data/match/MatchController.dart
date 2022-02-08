@@ -9,6 +9,7 @@ import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterState
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
+import 'package:congrega/features/profile_page/data/stats_repo.dart';
 import 'package:congrega/features/users/UserRepository.dart';
 import 'package:congrega/features/websocket/invitation_manager.dart';
 import 'package:kiwi/kiwi.dart';
@@ -131,23 +132,34 @@ class MatchController {
 
   Future<Match> playerResign(Match match, Player player) async {
     User currentUser = await KiwiContainer().resolve<UserRepository>().getUser();
-    // 1) considera una sconfitta a tavolino per player
-    Match updatedMatch = match.copyWith(
-        opponentScore: player.id == match.playerOne.id ? 2 : 0,
-        userScore: player.id == match.playerTwo.id ? 2 : 0);
 
+    // 1) aggiorna il match e salva la statistica
+    Match updatedMatch = match.copyWith(
+        opponentScore:
+            player.id == match.playerOne.id ? match.playerOneScore : match.playerOneScore + 1,
+        userScore:
+            player.id == match.playerTwo.id ? match.playerTwoScore : match.playerTwoScore + 1);
+
+    KiwiContainer().resolve<StatsRepo>().addRecord(
+        currentUser.id == match.playerOne.id ? match.playerTwo.username : match.playerOne.username,
+        currentUser.id == match.playerOne.id ? match.playerOneScore : match.playerTwoScore,
+        currentUser.id == match.playerOne.id ? match.playerTwoScore : match.playerOneScore);
     // se il player è l'utente corrente
     if (player.id == currentUser.id) {
-      // 3) aggiorna via http
-      KiwiContainer().resolve<MatchClient>().updateMatch(updatedMatch);
-      // 4) invia una notifica all'avversario
-      KiwiContainer().resolve<InvitationManager>().sendMatchUpdate(
-            Message(
-                type: MessageType.MATCH,
-                recipient: updatedMatch.opponentOf(currentUser).user,
-                sender: currentUser,
-                data: "END"),
-          );
+      try {
+        // 3) aggiorna via http
+        KiwiContainer().resolve<MatchClient>().updateMatch(updatedMatch);
+        // 4) invia una notifica all'avversario
+        KiwiContainer().resolve<InvitationManager>().sendMatchUpdate(
+              Message(
+                  type: MessageType.MATCH,
+                  recipient: updatedMatch.opponentOf(currentUser).user,
+                  sender: currentUser,
+                  data: "END"),
+            );
+      } catch (e) {
+        logger.w(e.toString());
+      }
     }
 
     // 2) chiudi il match ed eventuali game aperti
@@ -169,4 +181,6 @@ class MatchController {
   void dispose() => _controller.close();
 
   Future<Game> getCurrentGame() => gameRepository.getCurrentGame();
+
+  Future<bool> isMatchInProgress() => _matchInProgress();
 }
