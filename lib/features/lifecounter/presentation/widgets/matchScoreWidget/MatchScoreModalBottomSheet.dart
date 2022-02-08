@@ -169,7 +169,8 @@ class LeaveMatchDialog extends StatelessWidget {
           onPressed: () async {
             User user = await KiwiContainer().resolve<UserRepository>().getUser();
             Player player = context.read<MatchBloc>().state.user(user);
-            context.read<MatchBloc>().add(PlayerLeavesMatch(player));
+            KiwiContainer().resolve<LifeCounterBloc>().add(ResetGame());
+            KiwiContainer().resolve<MatchBloc>().add(PlayerLeavesMatch(player));
             Navigator.of(context).pushAndRemoveUntil<void>(HomePage.route(), (route) => false);
           },
         ),

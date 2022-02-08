@@ -6,6 +6,7 @@ import 'package:congrega/features/lifecounter/data/match/MatchClient.dart';
 import 'package:congrega/features/lifecounter/model/Game.dart';
 import 'package:congrega/features/lifecounter/model/Player.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/LifeCounterState.dart';
+import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchEvents.dart';
 import 'package:congrega/features/lifecounter/presentation/bloc/match/MatchState.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/profile_page/data/stats_repo.dart';
@@ -38,8 +39,10 @@ class MatchController {
     yield* gameRepository.status;
   }
 
+  void initState() => _controller.add(MatchStatus.updated);
+
   Stream<MatchStatus> get status async* {
-    yield await _matchInProgress().then((_) => MatchStatus.updated);
+    yield await matchInProgress().then((_) => MatchStatus.updated);
     yield* _controller.stream;
   }
 
@@ -75,7 +78,7 @@ class MatchController {
   }
 
   Future<Match> getCurrentMatch() async {
-    return _matchInProgress()
+    return matchInProgress()
         .then((bool isInProgress) => isInProgress ? _recoverMatch() : newOfflineMatch());
   }
 
@@ -96,7 +99,7 @@ class MatchController {
     return createdMatch;
   }
 
-  Future<bool> _matchInProgress() async {
+  Future<bool> matchInProgress() async {
     return await matchRepository.checkPreviousMatch();
   }
 

@@ -26,10 +26,8 @@ class LifeCounterPage extends StatelessWidget {
     return MaterialPageRoute<void>(builder: (_) => LifeCounterPage());
   }
 
-  LifeCounterPage() : super();
-
-  Future<MatchState> createInitialMatchState() async {
-    return new MatchState.unknown();
+  LifeCounterPage() : super() {
+    KiwiContainer().resolve<MatchController>().initState();
   }
 
   @override
