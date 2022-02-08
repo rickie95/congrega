@@ -2,6 +2,7 @@ import 'package:congrega/injector.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kiwi/kiwi.dart';
 
+import 'features/authentication/AuthenticationEvent.dart';
 import 'features/authentication/AuthenticationRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,6 +64,10 @@ class _CongregaViewState extends State<CongregaView> {
                 listener: (context, state) {
                   switch (state.status) {
                     case AuthenticationStatus.authenticated:
+                      // Try to login
+                      KiwiContainer()
+                          .resolve<AuthenticationBloc>()
+                          .add(AuthenticationLoginRequested());
                       _navigator!.pushAndRemoveUntil<void>(HomePage.route(), (route) => false);
                       break;
                     case AuthenticationStatus.unauthenticated:

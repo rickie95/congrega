@@ -4,6 +4,12 @@ class UnauthorizedException implements Exception {
   final String message;
 }
 
+class ForbiddenException implements Exception {
+  const ForbiddenException({this.message = ""}) : super();
+
+  final String message;
+}
+
 class NotFoundException implements Exception {
   const NotFoundException({this.message = ""}) : super();
 

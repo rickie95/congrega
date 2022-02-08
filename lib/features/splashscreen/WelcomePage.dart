@@ -5,13 +5,7 @@ import 'package:congrega/theme/CongregaTheme.dart';
 import 'package:congrega/ui/CongregaCallToActionAnimatedButton.dart';
 import 'package:congrega/ui/animations/DelayedAnimation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:congrega/ui/CongregaCircleLogo.dart';
-
-void main() {
-  SystemChrome.setEnabledSystemUIOverlays([]);
-  runApp(WelcomePage());
-}
 
 class WelcomePage extends StatefulWidget {
   static Route route() {
@@ -22,8 +16,7 @@ class WelcomePage extends StatefulWidget {
   _WelcomePageState createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage>
-    with SingleTickerProviderStateMixin {
+class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStateMixin {
   final int delayedAmount = 500;
   late double _scale;
   late AnimationController _controller;
@@ -67,8 +60,7 @@ class _WelcomePageState extends State<WelcomePage>
     final Widget loginButton = Container(
       child: Text(
         loginButtonMessage.toUpperCase(),
-        style: TextStyle(
-            fontSize: 20.0, fontWeight: FontWeight.bold, color: color),
+        style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: color),
       ),
       decoration: BoxDecoration(
         border: Border.all(width: 1, color: Colors.white),
@@ -94,10 +86,8 @@ class _WelcomePageState extends State<WelcomePage>
                   repeat: true,
                   repeatPauseDuration: Duration(seconds: 2),
                   startDelay: Duration(seconds: 1),
-                  child: Material(
-                      elevation: 8.0,
-                      shape: CircleBorder(),
-                      child: CongregaCircleLogo()),
+                  child:
+                      Material(elevation: 8.0, shape: CircleBorder(), child: CongregaCircleLogo()),
                 ),
               ),
               Expanded(
@@ -107,20 +97,14 @@ class _WelcomePageState extends State<WelcomePage>
                     DelayedAnimation(
                       child: Text(
                         greetingLineOne,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 35.0,
-                            color: color),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35.0, color: color),
                       ),
                       delay: delayedAmount + 1000,
                     ),
                     DelayedAnimation(
                       child: Text(
                         greetingLineTwo,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 35.0,
-                            color: color),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35.0, color: color),
                       ),
                       delay: delayedAmount + 2000,
                     ),

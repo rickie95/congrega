@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 
 import 'AuthenticationRepository.dart';
@@ -20,3 +19,5 @@ class AuthenticationStatusChanged extends AuthenticationEvent {
 }
 
 class AuthenticationLogoutRequested extends AuthenticationEvent {}
+
+class AuthenticationLoginRequested extends AuthenticationEvent {}

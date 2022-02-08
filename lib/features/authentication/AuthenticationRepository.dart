@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:congrega/features/exceptions/HttpExceptions.dart';
 import 'package:congrega/features/loginSignup/data/AuthenticationHttpClient.dart';
 import 'package:congrega/features/loginSignup/model/User.dart';
 import 'package:congrega/features/loginSignup/model/UserCredentials.dart';
@@ -10,6 +12,7 @@ enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
   static const TOKEN = "congrega_auth_token";
+  static const OFFLINE_TOKEN = "OFFLINE";
 
   AuthenticationRepository({
     required this.storage,
@@ -24,7 +27,7 @@ class AuthenticationRepository {
       StreamController<AuthenticationStatus>();
 
   Stream<AuthenticationStatus> get status async* {
-    yield await hasToken().then((isAuthenticated) => isAuthenticated
+    yield await credentialsSaved().then((isAuthenticated) => isAuthenticated
         ? AuthenticationStatus.authenticated
         : AuthenticationStatus.unauthenticated);
     yield* _controller.stream;
@@ -35,31 +38,53 @@ class AuthenticationRepository {
     _controller.add(AuthenticationStatus.unauthenticated);
   }
 
-  Future<void> logIn({required UserCredentials user}) async {
-    await authClient.logIn(user).then((String token) {
-      persistToken(token);
-      userRepository.saveUserInfo(user);
-      _controller.add(AuthenticationStatus.authenticated);
+  void logInCurrentUser() async {
+    User currentUser = await userRepository.getUser();
+    UserCredentials credentials = UserCredentials(
+        username: currentUser.username, password: currentUser.password, name: currentUser.name);
+    authClient
+        .logIn(credentials)
+        .then((token) => saveUserInfo(credentials, token))
+        .then((_) => _controller.add(AuthenticationStatus.authenticated))
+        .onError((error, stackTrace) {
+      if (error is ConnectionException) {
+        saveUserInfo(credentials, OFFLINE_TOKEN);
+      } else if (error is NotFoundException) {
+        signIn(user: credentials);
+      } else if (error is UnauthorizedException) {
+        signIn(user: credentials);
+      } else if (error is ForbiddenException) {
+        _controller.add(AuthenticationStatus.unauthenticated);
+      }
     });
   }
 
+  Future<void> saveUserInfo(UserCredentials user, String token) =>
+      persistToken(token).then((_) => userRepository.saveUserInfo(user));
+
+  Future<void> logIn({required UserCredentials user}) async {
+    authClient
+        .logIn(user)
+        .then((String token) => saveUserInfo(user, token))
+        .then((_) => _controller.add(AuthenticationStatus.authenticated));
+  }
+
   Future<void> signIn({required UserCredentials user}) async {
-    await authClient.signIn(user).then((_) {
-      // If sign in ends well, perform login and get token
-      logIn(user: user);
-    });
+    authClient
+        .signIn(user)
+        .then((_) => saveUserInfo(user, OFFLINE_TOKEN))
+        .then((_) => logIn(user: user))
+        .then((_) => _controller.add(AuthenticationStatus.authenticated));
   }
 
   Future<void> _deleteToken() async {
     /// delete from keystore/keychain
-    await storage.delete(key: TOKEN);
-    return;
+    storage.delete(key: TOKEN);
   }
 
   Future<void> persistToken(String token) async {
     /// write to keystore/keychain
-    await storage.write(key: TOKEN, value: token);
-    return;
+    storage.write(key: TOKEN, value: token);
   }
 
   Future<String?> getToken() async {
@@ -68,9 +93,9 @@ class AuthenticationRepository {
     return await authClient.logIn(cred);
   }
 
-  Future<bool> hasToken() async {
+  Future<bool> credentialsSaved() async {
     /// read from keystore/keychain
-    return !((await storage.read(key: TOKEN)) == null);
+    return ((await storage.read(key: TOKEN)) != null);
   }
 
   void dispose() => _controller.close();

@@ -5,40 +5,39 @@ import 'package:http/http.dart' as http;
 import '../../exceptions/HttpExceptions.dart';
 
 class AuthenticationHttpClient {
-
   AuthenticationHttpClient(http.Client client) : httpClient = client;
 
   final http.Client httpClient;
 
   static Map<String, String> requestHeaders() => {
-  "Content-Type": "application/json",
-  "Accept": "*/*",
-  "Connection": "keep-alive",
-  "Accept-Encoding": "gzip, deflate, br"
-  };
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip, deflate, br"
+      };
 
-  static String createAuthBodyFrom(UserCredentials user){
+  static String createAuthBodyFrom(UserCredentials user) {
     return '{"username" : "${user.username}", "password" : "${user.password}" }';
   }
 
-  static String createSignInBodyFrom(UserCredentials user){
+  static String createSignInBodyFrom(UserCredentials user) {
     return '{"username":"${user.username}", "password" : "${user.password}", "name" : "${user.name}"}';
   }
-  
-  Future<String> logIn(UserCredentials user) async {
-    final response = await httpClient.post(
-        Arcano.getAuthUri(),
-        body: createAuthBodyFrom(user),
-        headers: requestHeaders());
 
-    switch(response.statusCode){
-      case(200):
+  Future<String> logIn(UserCredentials user) async {
+    final response = await httpClient.post(Arcano.getAuthUri(),
+        body: createAuthBodyFrom(user), headers: requestHeaders());
+
+    switch (response.statusCode) {
+      case (200):
         return response.body;
-      case(404):
-        throw NotFoundException();
-      case(403):
+      case (401):
         throw UnauthorizedException();
-      case(500):
+      case (403):
+        throw ForbiddenException();
+      case (404):
+        throw NotFoundException();
+      case (500):
         throw ServerErrorException();
     }
 
@@ -46,24 +45,20 @@ class AuthenticationHttpClient {
   }
 
   Future<void> signIn(UserCredentials user) async {
-    final response = await httpClient.post(
-        Arcano.getUsersUri(),
-        body: createSignInBodyFrom(user),
-        headers: requestHeaders());
+    final response = await httpClient.post(Arcano.getUsersUri(),
+        body: createSignInBodyFrom(user), headers: requestHeaders());
 
-    switch(response.statusCode){
-      case(201):
+    switch (response.statusCode) {
+      case (201):
         return null;
-      case(404):
+      case (404):
         throw NotFoundException();
-      case(409):
+      case (409):
         throw ConflictException();
-      case(500):
+      case (500):
         throw ServerErrorException();
     }
 
     throw OtherErrorException();
-
   }
-
 }

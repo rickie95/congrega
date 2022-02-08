@@ -52,9 +52,21 @@ class UserRepository {
   }
 
   Future<void> saveUserInfo(UserCredentials user) async {
-    User userInfo = await userHttpClient.getUserByUsername(user.username);
+    User userInfo;
+    try {
+      userInfo = await userHttpClient.getUserByUsername(user.username);
+      userInfo = userInfo.copyWith(password: user.password);
+    } catch (error) {
+      print(error.toString());
+      userInfo = User(
+          id: '-',
+          username: user.username,
+          password: user.password,
+          name: user.name ?? user.username);
+    }
+
     print(userInfo);
-    saveUserAccountInfo(userInfo.copyWith(password: user.password));
+    saveUserAccountInfo(userInfo);
   }
 
   Future<List<User>> searchByUsername(String username) {
