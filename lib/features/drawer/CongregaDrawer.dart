@@ -25,13 +25,13 @@ class CongregaDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.push(context, HomePage.route());
               }),
-          ListTile(
-            leading: Icon(Icons.star),
-            title: Text(AppLocalizations.of(context)!.tournament_page_title),
-            onTap: () {
-              Navigator.push(context, TournamentPage.route());
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.star),
+          //   title: Text(AppLocalizations.of(context)!.tournament_page_title),
+          //   onTap: () {
+          //     Navigator.push(context, TournamentPage.route());
+          //   },
+          // ),
           ListTile(
             leading: Icon(Icons.favorite),
             title: Text(AppLocalizations.of(context)!.lifecounter_page_title),
@@ -48,14 +48,14 @@ class CongregaDrawer extends StatelessWidget {
               // ...
             },
           ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text(AppLocalizations.of(context)!.settings_page_title),
-            onTap: () {
-              // Update the state of the app.
-              // ...
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.settings),
+          //   title: Text(AppLocalizations.of(context)!.settings_page_title),
+          //   onTap: () {
+          //     // Update the state of the app.
+          //     // ...
+          //   },
+          // ),
           Divider(),
           ListTile(
             leading: Icon(Icons.logout),
@@ -93,21 +93,42 @@ class _CongregaDrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DrawerHeader(
+      decoration: BoxDecoration(
+          color: Colors.blue,
+          image: DecorationImage(image: AssetImage("assets/jacke.png"), fit: BoxFit.cover)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Congrega',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           Divider(),
           BlocProvider(
             create: (BuildContext context) => KiwiContainer().resolve<AuthenticationBloc>(),
             child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {
-                String headerUsername = state.user.username;
-                if (state.user.name.isNotEmpty) headerUsername += ' (${state.user.name})';
-                return Text(headerUsername);
+                return Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        child: Icon(Icons.account_circle_rounded),
+                        radius: 20,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text("${state.user.username}",
+                          style: TextStyle(fontSize: 17, color: Colors.white)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2.0),
+                        child: Text(
+                          "${state.user.name}",
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                      )
+                    ]);
               },
             ),
           )
