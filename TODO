@@ -3,6 +3,6 @@
 [X] Add an "in progress" label in Quick Match button
 [X] Alert for new match or rejoin old match
 [X] Profile page & stats (games/matches won, simple log of opponents)
-[ ] Remove everything not completed
-[ ] Fix colors in splashscreen
-[ ] Check login procedure for offline startup
+[X] Remove everything not completed
+[X] Fix colors in splashscreen
+[X] Check login procedure for offline startup
