@@ -24,9 +24,13 @@ enum POPMENU_ACTIONS {
 }
 
 class TournamentStatusPage extends StatelessWidget {
+  final Tournament tournament;
+
   static Route route(Tournament t) {
-    return MaterialPageRoute<void>(builder: (_) => TournamentStatusPage());
+    return MaterialPageRoute<void>(builder: (_) => TournamentStatusPage(t));
   }
+
+  const TournamentStatusPage(this.tournament);
 
   @override
   Widget build(BuildContext context) {
@@ -34,50 +38,26 @@ class TournamentStatusPage extends StatelessWidget {
         length: 2,
         child: BlocProvider.value(
             value: KiwiContainer().resolve<TournamentBloc>(),
-            child: _TournamentStatusPageScaffold()));
+            child: _TournamentStatusPageScaffold(tournament)));
   }
 }
 
 class _TournamentStatusPageScaffold extends StatelessWidget {
+  const _TournamentStatusPageScaffold(this.tournament);
+
+  final Tournament tournament;
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TournamentBloc, TournamentState>(
-        buildWhen: (previous, current) =>
-            previous.tournament != current.tournament,
-        builder: (BuildContext context, TournamentState state) {
-          if (state.tournament == Tournament.empty)
-            return Scaffold(
-                appBar: AppBar(
-                  title: Text("Loading..."),
-                ),
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [CircularProgressIndicator()],
-                  ),
-                ));
-
-          return Scaffold(
-              appBar: AppBar(
-                title: Text(BlocProvider.of<TournamentBloc>(context)
-                    .state
-                    .tournament
-                    .name),
-                actions: [
-                  _popMenuButton(context),
-                ],
-                bottom: TabBar(
-                  tabs: [Tab(child: Text("Round")), Tab(child: Text("Chart"))],
-                ),
-              ),
-              drawer: BlocProvider.of<TournamentBloc>(context).state.enrolled
-                  ? CongregaDrawer()
-                  : null,
-              body: TabBarView(
-                children: [eventRoundView(context), TournamentChartTab()],
-              ));
-        });
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(BlocProvider.of<TournamentBloc>(context).state.tournament.name),
+          actions: [
+            _popMenuButton(context),
+          ],
+        ),
+        drawer: BlocProvider.of<TournamentBloc>(context).state.enrolled ? CongregaDrawer() : null,
+        body: eventRoundView(context));
   }
 
   String formattedDate(DateTime now) =>
@@ -88,9 +68,7 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
   String adminsListToString(Set<User> admins) {
     String string = "";
     for (User ad in admins) {
-      string += (ad.name.isEmpty
-          ? "${ad.username} "
-          : "${ad.username} (${ad.name}) ");
+      string += (ad.name.isEmpty ? "${ad.username} " : "${ad.username} (${ad.name}) ");
     }
     return string;
   }
@@ -103,9 +81,7 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
       child: Column(
         children: [
           Expanded(
-              flex: 20,
-              child: Center(
-                  child: Text("Round 1 of 3", style: TextStyle(fontSize: 20)))),
+              flex: 20, child: Center(child: Text("Round 1 of 3", style: TextStyle(fontSize: 20)))),
           Expanded(
               flex: 70,
               child: Container(
@@ -119,8 +95,7 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
                             children: [
                               Text(
                                 "You",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                               ),
                               Container(
                                 padding: EdgeInsets.only(top: 20),
@@ -138,8 +113,7 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
                             children: [
                               Text(
                                 opponent.username,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                               ),
                               Container(
                                 padding: EdgeInsets.only(top: 20),
@@ -175,8 +149,7 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
               flex: 10,
               child: Container(
                 child: ElevatedButton(
-                  onPressed: () =>
-                      Navigator.of(context).push(LifeCounterPage.route()),
+                  onPressed: () => Navigator.of(context).push(LifeCounterPage.route()),
                   child: Text("LIFE COUNTER"),
                 ),
               ))
@@ -186,6 +159,8 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
   }
 
   Widget eventRoundView(BuildContext context) {
+    return TournamentEventDetailsView(tournament: this.tournament);
+
     return BlocBuilder<TournamentBloc, TournamentState>(
         buildWhen: (previous, current) =>
             (previous.tournament.round != current.tournament.round) ||
@@ -195,13 +170,12 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
           // If ENDED or the user is not enrolled show the details page
           if (state.status == TournamentStatus.ENDED ||
               state.status == TournamentStatus.SCHEDULED ||
-              !state.tournament.isUserEnrolled(
-                  BlocProvider.of<AuthenticationBloc>(context).state.user))
+              !state.tournament
+                  .isUserEnrolled(BlocProvider.of<AuthenticationBloc>(context).state.user))
             return TournamentEventDetailsView(tournament: state.tournament);
 
           // If WAITING then standby until admin's action
-          if (state.status == TournamentStatus.WAITING)
-            return _standbyForAdmin(context);
+          if (state.status == TournamentStatus.WAITING) return _standbyForAdmin(context);
 
           // Otherwise is in INPROGRESS, then show the round page
           return _roundInProgressPage(context);
@@ -244,13 +218,11 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
                     padding: EdgeInsets.only(top: 30, left: 12, right: 12),
                     child: Text(
                       "Notes",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
                     )),
                 Container(
                     padding: EdgeInsets.only(top: 10, left: 12, right: 12),
-                    child:
-                        Text("Follow indications from organizers and judges.")),
+                    child: Text("Follow indications from organizers and judges.")),
                 Container(
                     padding: EdgeInsets.only(top: 10, left: 12, right: 12),
                     child: Text("Be kind and help people around you")),

@@ -6,3 +6,5 @@
 [X] Remove everything not completed
 [X] Fix colors in splashscreen
 [X] Check login procedure for offline startup
+[ ] Disable screensaver in life counter
+[ ] Event page opened from dashboard widget

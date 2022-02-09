@@ -1,6 +1,8 @@
 import 'package:congrega/features/exceptions/HttpExceptions.dart';
 import 'package:congrega/features/tournaments/data/TournamentController.dart';
 import 'package:congrega/features/tournaments/model/Tournament.dart';
+import 'package:congrega/features/tournaments/presentation/tournamentStatusPage/TournamentEventDetailsView.dart';
+import 'package:congrega/features/tournaments/presentation/tournamentStatusPage/TournamentStatusPage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -51,7 +53,8 @@ class EventsWidget extends StatelessWidget {
     return new List.generate(
         tournamentList.length,
         (index) => ElevatedButton(
-              onPressed: () {},
+              onPressed: () =>
+                  Navigator.of(context).push(TournamentStatusPage.route(tournamentList[index])),
               child: Text(tournamentList[index].name),
             ));
   }

@@ -26,12 +26,11 @@ class TournamentPage extends StatelessWidget {
   static Route route() {
     return MaterialPageRoute<void>(
         settings: RouteSettings(name: ROUTE_NAME),
-        builder: (_) => TournamentPage(new TournamentController(
-            repository: KiwiContainer().resolve<TournamentRepository>())));
+        builder: (_) => TournamentPage(
+            new TournamentController(repository: KiwiContainer().resolve<TournamentRepository>())));
   }
 
-  TournamentPage(TournamentController controller)
-      : _tournamentController = controller;
+  TournamentPage(TournamentController controller) : _tournamentController = controller;
 
   final TournamentController _tournamentController;
 
@@ -43,18 +42,15 @@ class TournamentPage extends StatelessWidget {
           actions: [
             IconButton(icon: Icon(Icons.search), onPressed: () => {}),
             PopupMenuButton(
-              onSelected: (EventPageActions selection) =>
-                  _handleSelection(context, selection),
+              onSelected: (EventPageActions selection) => _handleSelection(context, selection),
               itemBuilder: (BuildContext context) {
                 return <PopupMenuEntry<EventPageActions>>[
                   new PopupMenuItem<EventPageActions>(
                       value: EventPageActions.CREATE,
-                      child: Text(
-                          AppLocalizations.of(context)!.events_action_create)),
+                      child: Text(AppLocalizations.of(context)!.events_action_create)),
                   new PopupMenuItem<EventPageActions>(
                       value: EventPageActions.SEARCH,
-                      child: Text(
-                          AppLocalizations.of(context)!.events_action_search)),
+                      child: Text(AppLocalizations.of(context)!.events_action_search)),
                 ];
               },
             ),
@@ -62,10 +58,7 @@ class TournamentPage extends StatelessWidget {
         ),
         drawer: CongregaDrawer(),
         floatingActionButton: FloatingActionButton.extended(
-          label: Text(AppLocalizations.of(context)!
-              .events_join_by_code
-              .toString()
-              .toUpperCase()),
+          label: Text(AppLocalizations.of(context)!.events_join_by_code.toString().toUpperCase()),
           onPressed: () => _showJoinByCodeDialog(context),
         ),
         body: BlocProvider.value(
@@ -133,8 +126,7 @@ class _EventListState extends State<_EventList> {
     setState(() {
       this.tournamentList = tournamentList;
       if (callback != null)
-        callback(
-            error == null ? 'Event list updated' : "Error during list update");
+        callback(error == null ? 'Event list updated' : "Error during list update");
       initialized = true;
     });
   }
@@ -156,51 +148,34 @@ class _EventListState extends State<_EventList> {
           child: SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(), child: _ErrorWidget()));
 
-    return RefreshWidget(
-        onRefresh: refreshList, child: _buildListView(context, tournamentList));
+    return RefreshWidget(onRefresh: refreshList, child: _buildListView(context, tournamentList));
   }
 
   Widget _buildListView(BuildContext context, List<Tournament> eventList) {
-    List<Tournament> participatedList =
-        tournamentController.getParticipatedEvents();
+    List<Tournament> participatedList = tournamentController.getParticipatedEvents();
     List<Tournament> createdList = tournamentController.getCreatedEvents();
 
     return ListView(physics: const AlwaysScrollableScrollPhysics(), children: [
+      ..._buildSubList(participatedList,
+          AppLocalizations.of(context)!.events_inProgress_label.toString().toUpperCase()),
+      ..._buildSubList(createdList,
+          AppLocalizations.of(context)!.events_myevents_label.toString().toUpperCase()),
       ..._buildSubList(
-          participatedList,
-          AppLocalizations.of(context)!
-              .events_inProgress_label
-              .toString()
-              .toUpperCase()),
-      ..._buildSubList(
-          createdList,
-          AppLocalizations.of(context)!
-              .events_myevents_label
-              .toString()
-              .toUpperCase()),
-      ..._buildSubList(
-          eventList,
-          AppLocalizations.of(context)!
-              .events_nearby_label
-              .toString()
-              .toUpperCase()),
+          eventList, AppLocalizations.of(context)!.events_nearby_label.toString().toUpperCase()),
     ]);
   }
 
   Widget _eventRow(BuildContext context, Tournament tournament) {
     return OpenContainer(
       transitionType: ContainerTransitionType.fade,
-      openBuilder: (BuildContext _, VoidCallback openContainer) =>
-          TournamentStatusPage(),
+      openBuilder: (BuildContext _, VoidCallback openContainer) => TournamentStatusPage(tournament),
       closedBuilder: (BuildContext _, VoidCallback openContainer) => ListTile(
         onTap: () {
-          BlocProvider.of<TournamentBloc>(context)
-              .add(SetTournament(tournament));
+          BlocProvider.of<TournamentBloc>(context).add(SetTournament(tournament));
           openContainer();
         },
         leading: CircleAvatar(child: Text(tournament.name[0])),
-        title: Text(tournament.name,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+        title: Text(tournament.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
         subtitle: Text(tournament.type),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -227,19 +202,17 @@ class _EventListState extends State<_EventList> {
     return DateFormat("dd/MM").format(localDateTime);
   }
 
-  List<Widget> _buildSubList(
-      List<Tournament> eventList, String? sectionHeader) {
+  List<Widget> _buildSubList(List<Tournament> eventList, String? sectionHeader) {
     return [
       _buildSectionHeader(sectionHeader),
-      ...new List.generate(eventList.length,
-          (index) => _eventRow(context, eventList.elementAt(index))),
+      ...new List.generate(
+          eventList.length, (index) => _eventRow(context, eventList.elementAt(index))),
       Divider(),
     ];
   }
 
   Widget _buildSectionHeader(String? sectionHeaderText) {
-    if (sectionHeaderText == null || sectionHeaderText.isEmpty)
-      return Divider();
+    if (sectionHeaderText == null || sectionHeaderText.isEmpty) return Divider();
 
     return Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -261,8 +234,7 @@ class _ErrorWidget extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: Text("Oh no!",
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+            child: Text("Oh no!", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
           ),
           Center(
             child: Icon(
