@@ -14,7 +14,6 @@ import 'package:kiwi/kiwi.dart';
 import 'package:uuid/uuid.dart';
 
 import 'ConfirmLeavingTournamentDialog.dart';
-import 'TournamentChartTab.dart';
 import 'TournamentEventDetailsView.dart';
 
 enum POPMENU_ACTIONS {
@@ -34,11 +33,9 @@ class TournamentStatusPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 2,
-        child: BlocProvider.value(
-            value: KiwiContainer().resolve<TournamentBloc>(),
-            child: _TournamentStatusPageScaffold(tournament)));
+    return BlocProvider.value(
+        value: KiwiContainer().resolve<TournamentBloc>(),
+        child: _TournamentStatusPageScaffold(tournament));
   }
 }
 
@@ -51,12 +48,11 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(BlocProvider.of<TournamentBloc>(context).state.tournament.name),
+          title: Text(tournament.name),
           actions: [
             _popMenuButton(context),
           ],
         ),
-        drawer: BlocProvider.of<TournamentBloc>(context).state.enrolled ? CongregaDrawer() : null,
         body: eventRoundView(context));
   }
 
@@ -73,168 +69,8 @@ class _TournamentStatusPageScaffold extends StatelessWidget {
     return string;
   }
 
-  Widget _roundInProgressPage(BuildContext context) {
-    User opponent = User(id: Uuid().toString(), username: "WizeWizard");
-
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        children: [
-          Expanded(
-              flex: 20, child: Center(child: Text("Round 1 of 3", style: TextStyle(fontSize: 20)))),
-          Expanded(
-              flex: 70,
-              child: Container(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 50,
-                          child: Column(
-                            children: [
-                              Text(
-                                "You",
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(top: 20),
-                                child: Text(
-                                  "0",
-                                  style: TextStyle(fontSize: 50),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          flex: 50,
-                          child: Column(
-                            children: [
-                              Text(
-                                opponent.username,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(top: 20),
-                                child: Text(
-                                  "0",
-                                  style: TextStyle(fontSize: 50),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                        padding: EdgeInsets.only(top: 20),
-                        child: Column(children: [
-                          Text(
-                            "Ending 16:00",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(top: 5, bottom: 5),
-                            child: Text(
-                              "Table 13",
-                              style: TextStyle(fontSize: 25),
-                            ),
-                          )
-                        ])),
-                  ],
-                ),
-              )),
-          Expanded(
-              flex: 10,
-              child: Container(
-                child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).push(LifeCounterPage.route()),
-                  child: Text("LIFE COUNTER"),
-                ),
-              ))
-        ],
-      ),
-    );
-  }
-
   Widget eventRoundView(BuildContext context) {
     return TournamentEventDetailsView(tournament: this.tournament);
-
-    return BlocBuilder<TournamentBloc, TournamentState>(
-        buildWhen: (previous, current) =>
-            (previous.tournament.round != current.tournament.round) ||
-            (previous.enrolled != current.enrolled) ||
-            (previous.status != current.status),
-        builder: (context, state) {
-          // If ENDED or the user is not enrolled show the details page
-          if (state.status == TournamentStatus.ENDED ||
-              state.status == TournamentStatus.SCHEDULED ||
-              !state.tournament
-                  .isUserEnrolled(BlocProvider.of<AuthenticationBloc>(context).state.user))
-            return TournamentEventDetailsView(tournament: state.tournament);
-
-          // If WAITING then standby until admin's action
-          if (state.status == TournamentStatus.WAITING) return _standbyForAdmin(context);
-
-          // Otherwise is in INPROGRESS, then show the round page
-          return _roundInProgressPage(context);
-        });
-  }
-
-  Widget _standbyForAdmin(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      child: Material(
-        elevation: 14,
-        borderRadius: BorderRadius.circular(12),
-        shadowColor: Colors.grey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-                padding: EdgeInsets.only(top: 20),
-                child: Text(
-                  "PLEASE STANDBY",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                )),
-            Container(
-                padding: EdgeInsets.only(top: 20),
-                child: Text(
-                  "Wait for the round's start",
-                  style: TextStyle(fontSize: 20),
-                )),
-            Container(
-              padding: EdgeInsets.only(top: 30),
-              child: Icon(
-                Icons.access_time_outlined,
-                size: 100,
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                    padding: EdgeInsets.only(top: 30, left: 12, right: 12),
-                    child: Text(
-                      "Notes",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                    )),
-                Container(
-                    padding: EdgeInsets.only(top: 10, left: 12, right: 12),
-                    child: Text("Follow indications from organizers and judges.")),
-                Container(
-                    padding: EdgeInsets.only(top: 10, left: 12, right: 12),
-                    child: Text("Be kind and help people around you")),
-                Container(
-                    padding: EdgeInsets.only(top: 10, left: 12, right: 12),
-                    child: Text("Have fun!")),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _popMenuButton(BuildContext context) {

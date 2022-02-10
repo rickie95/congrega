@@ -10,17 +10,17 @@ extension TournamentStatusValueToString on TournamentStatus {
 }
 
 class Tournament extends Equatable {
-  const Tournament({
-    required this.id,
-    required this.name,
-    required this.playerList,
-    required this.adminList,
-    required this.judgeList,
-    required this.type,
-    required this.startingTime,
-    required this.status,
-    required this.round,
-  });
+  const Tournament(
+      {required this.id,
+      required this.name,
+      required this.playerList,
+      required this.adminList,
+      required this.judgeList,
+      required this.type,
+      required this.startingTime,
+      required this.status,
+      required this.round,
+      this.location});
 
   final String id;
   final String name;
@@ -31,6 +31,7 @@ class Tournament extends Equatable {
   final DateTime? startingTime;
   final TournamentStatus status;
   final int round;
+  final String? location;
 
   TournamentStatus getStatus() {
     if (this.status == TournamentStatus.ENDED) return TournamentStatus.ENDED;
