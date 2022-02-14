@@ -1,10 +1,4 @@
-[X] Reset game when surrending game
-[X] Close match when surrending match
-[X] Add an "in progress" label in Quick Match button
-[X] Alert for new match or rejoin old match
-[X] Profile page & stats (games/matches won, simple log of opponents)
-[X] Remove everything not completed
-[X] Fix colors in splashscreen
-[X] Check login procedure for offline startup
-[X] Event page opened from dashboard widget
-[ ] Disable screensaver in life counter
+[X] Friends widget doesn't show added friends (BUG)
+[ ] Disable screensaver in life counter page
+[ ] Drawer doesn't show current page
+[ ] "ADD TO CALENDAR" button seems bugged in physical devices

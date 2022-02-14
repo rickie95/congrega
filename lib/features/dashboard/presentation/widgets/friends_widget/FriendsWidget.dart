@@ -104,13 +104,16 @@ class FriendsWidgetBody extends StatelessWidget {
           );
         }
 
-        return ListView(
-          scrollDirection: Axis.horizontal,
-          children: KiwiContainer()
-              .resolve<FriendRepository>()
-              .getFriendsList()
-              .map((friend) => FriendCard(user: friend))
-              .toList(),
+        return Container(
+          height: 122,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: KiwiContainer()
+                .resolve<FriendRepository>()
+                .getFriendsList()
+                .map((friend) => FriendCard(user: friend))
+                .toList(),
+          ),
         );
       },
     );
@@ -134,14 +137,14 @@ class FriendCard extends StatelessWidget {
           child: Column(
             children: [
               CircleAvatar(
-                radius: 40,
+                radius: 35,
                 child: Text(
                   user.username[0].toUpperCase(),
                   style: TextStyle(fontSize: 30),
                 ),
               ),
               SizedBox(
-                height: 6,
+                height: 10,
               ),
               Text(user.username)
             ],
